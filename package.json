@@ -7,7 +7,8 @@
     "coverage": "mocha --reporter mochawesome",
     "db-migrate": "sequelize db:migrate",
     "lint": "eslint routes models config index.js",
-    "test": "mocha --exit"
+    "test": "mocha --exit",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -23,16 +24,16 @@
     "jsonwebtoken": "^8.3.0",
     "method-override": "^2.3.10",
     "methods": "^1.1.2",
-    "mongoose": "^5.2.2",
+    "mongoose": "^5.4.16",
     "mongoose-unique-validator": "^2.0.1",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pg": "^7.8.1",
     "request": "^2.87.0",
     "sequelize": "^4.42.1",
-    "slug": "^0.9.1",
-    "underscore": "^1.9.1"
+    "underscore": "^1.9.1",
+    "slug": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
@@ -41,6 +42,9 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
     "mocha": "^6.0.2",
-    "mochawesome": "^3.1.1"
+    "mochawesome": "^3.1.1",
+    "underscore": "^1.9.1",
+    "coveralls": "^3.0.3",
+    "nyc": "^13.3.0"
   }
 }
