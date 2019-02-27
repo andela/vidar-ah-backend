@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/andela/vidar-ah-backend/badge.svg?branch=master)](https://coveralls.io/github/andela/vidar-ah-backend?branch=master)
 Authors Haven - A Social platform for the creative at heart.
 [![Build Status](https://travis-ci.com/andela/vidar-ah-backend.svg?branch=develop)](https://travis-ci.com/andela/vidar-ah-backend)
 =======
