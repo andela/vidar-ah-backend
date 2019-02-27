@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "eslint routes models config index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db-migrate": "sequelize db:migrate",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "db-migrate": "sequelize db:migrate"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
