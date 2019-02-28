@@ -5,18 +5,18 @@ dotenv.config();
 
 const {
   EMAIL_PASSWORD,
-  EMAIL_ADDRESS
+  EMAIL_ADDRESS,
 } = process.env;
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: EMAIL_ADDRESS,
-    pass: EMAIL_PASSWORD
-  }
+    pass: EMAIL_PASSWORD,
+  },
 });
 
-const sendMail = payload => {
+const sendMail = (payload) => {
   const { email, name, link } = payload;
   const mailOptions = {
     from: 'ezetech234@gmail.com',

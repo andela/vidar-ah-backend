@@ -7,7 +7,7 @@ export const returnValidationErrors = (req, res, next) => {
     .array()
     .map(error => error.msg);
   if (!errors.length) return next();
-  return res.status(422).json({ errors, success: false })
+  return res.status(422).json({ errors, success: false });
 };
 
 export const validateSignup = [
@@ -35,5 +35,5 @@ export const validateSignup = [
     .isLength({ min: 5, max: 15 })
     .withMessage('Username must be at least 5 characters long and not more than 15.')
     .custom(value => !/\s/.test(value))
-    .withMessage('No spaces are allowed in the username.')
+    .withMessage('No spaces are allowed in the username.'),
 ];
