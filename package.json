@@ -4,6 +4,7 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint routes models config index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db-migrate": "sequelize db:migrate"
   },
@@ -31,5 +32,10 @@
     "sequelize": "^4.42.1",
     "slug": "^0.9.1",
     "underscore": "^1.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
   }
 }
