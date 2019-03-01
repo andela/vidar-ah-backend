@@ -37,3 +37,8 @@ node_modules
 # Report files for Mochawesome HTML report
 mochawesome-report
 
+# Ignore environmental variables
+.env
+
+# Ignore yarn generated files
+yarn.lock
