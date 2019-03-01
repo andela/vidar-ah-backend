@@ -1,5 +1,5 @@
 Authors Haven - A Social platform for the creative at heart.
-[![Build Status](https://travis-ci.com/andela/vidar-ah-backend.svg?branch=develop)](https://travis-ci.com/andela/vidar-ah-backend)
+[![Build Status](https://travis-ci.com/andela/vidar-ah-backend.svg?branch=develop)](https://travis-ci.com/andela/vidar-ah-backend) [![](https://img.shields.io/badge/Protected_by-Hound-a873d1.svg)](https://houndci.com)
 =======
 
 ## Vision
