@@ -1,57 +1,73 @@
-const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
-const crypto = require("crypto");
-const secret = require("../config").secret;
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
+import shortId from 'shortid';
+import sendMail from '../helpers/emails';
 
-const UserSchema = new mongoose.Schema(
-    {
-        username: {
-            type: String,
-            lowercase: true,
-            unique: true,
-            required: [true, "can't be blank"],
-            match: [/^[a-zA-Z0-9]+$/, "is invalid"],
-            index: true
-        },
-        email: {
-            type: String,
-            lowercase: true,
-            unique: true,
-            required: [true, "can't be blank"],
-            match: [/\S+@\S+\.\S+/, "is invalid"],
-            index: true
-        },
-        bio: String,
-        image: String,
-        favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
-        following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-        hash: String,
-        salt: String
+dotenv.config();
+
+const { HOST_URL } = process.env;
+
+module.exports = (sequelize, DataTypes) => {
+  const userSchema = {
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: 'Email already exists',
+      },
     },
-    { timestamps: true }
-);
-
-UserSchema.plugin(uniqueValidator, { message: "is already taken." });
-
-UserSchema.methods.validPassword = function(password) {
-    const hash = crypto
-        .pbkdf2Sync(password, this.salt, 10000, 512, "sha512")
-        .toString("hex");
-    return this.hash === hash;
-};
-
-UserSchema.methods.setPassword = function(password) {
-    this.salt = crypto.randomBytes(16).toString("hex");
-    this.hash = crypto
-        .pbkdf2Sync(password, this.salt, 10000, 512, "sha512")
-        .toString("hex");
-};
-
-UserSchema.methods.toAuthJSON = function() {
-    return {
-        username: this.username,
-        email: this.email
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: {
+        args: true,
+        msg: 'Username already exists',
+      },
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    verified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    verificationId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    bio: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  };
+  const User = sequelize.define('User', userSchema);
+  User.hook('beforeValidate', (user) => {
+    user.verificationId = shortId.generate();
+    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
+  });
+  User.hook('afterCreate', (user) => {
+    const { email, name, verificationId } = user;
+    const emailPayload = {
+      name,
+      email,
+      link: `${HOST_URL}/api/v1/verify/${verificationId}`,
     };
-};
+    sendMail(emailPayload);
+  });
 
-mongoose.model("User", UserSchema);
+  // eslint-disable-next-line func-names
+  User.prototype.verifyAccount = async function () {
+    this.verified = true;
+    this.verificationId = null;
+    await this.save();
+    return this;
+  };
+  return User;
+};
