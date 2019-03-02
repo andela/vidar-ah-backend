@@ -4,12 +4,13 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "coverage": "mocha --reporter mochawesome",
+    "coverage": "npm run db-migrate && mocha --reporter mochawesome --timeout=20000 --require babel-register --exit",
     "db-migrate": "sequelize db:migrate:undo:all && sequelize db:migrate",
     "lint": "eslint routes models config test index.js",
     "test": "npm run db-migrate && mocha test/index.js --timeout=20000 --require babel-register --exit",
-    "start": "babel-node index.js",
-    "start:dev": "babel-watch index.js"
+    "start": "sequelize db:migrate && babel-node index.js",
+    "start:dev": "babel-watch index.js",
+    "coveralls": "nyc --reporter=lcov --reporter=text-lcov npm run test"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -27,7 +28,7 @@
     "jsonwebtoken": "^8.5.0",
     "method-override": "^2.3.10",
     "methods": "^1.1.2",
-    "mongoose": "^5.2.2",
+    "mongoose": "^5.4.16",
     "mongoose-unique-validator": "^2.0.1",
     "morgan": "^1.9.0",
     "nodemailer": "^5.1.1",
@@ -55,6 +56,9 @@
     "eslint-plugin-import": "^2.16.0",
     "faker": "^4.1.0",
     "mocha": "^6.0.2",
-    "mochawesome": "^3.1.1"
+    "mochawesome": "^3.1.1",
+    "underscore": "^1.9.1",
+    "coveralls": "^3.0.3",
+    "nyc": "^13.3.0"
   }
 }
