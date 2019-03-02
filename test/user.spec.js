@@ -29,6 +29,22 @@ describe('Make a request to an unidentified route', () => {
   });
 });
 
+describe('Make a request to signup with valid details', () => {
+  it('Returns an invalid error.', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/user')
+      .send(validUser)
+      .end((err, res) => {
+        const { status, body: { message, success } } = res;
+        expect(status).to.be.equal(201);
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal('You have signed up successfully.');
+        done(err);
+      });
+  });
+});
+
 describe('Make a request to signup with empty signup fields', () => {
   it('Returns an invalid error.', (done) => {
     chai
@@ -134,34 +150,12 @@ describe('Make a request to signup with an empty password', () => {
   });
 });
 
-describe('Make a request to signup with valid details', () => {
+describe('Make a request to signup with existing email', () => {
   it('Returns an invalid error.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
       .send(validUser)
-      .end((err, res) => {
-        const { status, body: { message, success } } = res;
-        expect(status).to.be.equal(201);
-        expect(success).to.be.equal(true);
-        expect(message).to.be.equal('You have signed up successfully.');
-        done(err);
-      });
-  });
-});
-
-describe('Make a request to signup with existing email', () => {
-  it('Returns an invalid error.', (done) => {
-    const { email } = validUser;
-    chai
-      .request(app)
-      .post('/api/v1/user')
-      .send({
-        username: faker.internet.userName(),
-        password: faker.internet.password(),
-        name: faker.name.findName(),
-        email,
-      })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(409);
