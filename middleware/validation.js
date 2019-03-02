@@ -18,8 +18,6 @@ export const validateSignup = [
     .withMessage('No spaces are allowed in the email.'),
 
   check('password')
-    .isString()
-    .withMessage('Password must be alphanumeric characters.')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters long.')
     .custom(value => !/\s/.test(value))

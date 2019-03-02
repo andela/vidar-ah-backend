@@ -4,4 +4,10 @@ module.exports = {
     type: 'unique',
     name: 'Email already exists.',
   }),
+  down(queryInterface) {
+    return queryInterface.removeColumn(
+      'Users',
+      'email'
+    );
+  },
 };
