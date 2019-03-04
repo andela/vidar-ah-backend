@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "coverage": "npm run db-migrate && mocha --reporter mochawesome --timeout=20000 --require babel-register --exit",
-    "db-migrate": "sequelize db:migrate:undo:all && sequelize db:migrate",
+    "db-migrate": "node_modules/.bin/sequelize db:migrate:undo:all && sequelize db:migrate",
     "lint": "eslint routes models config test index.js",
     "test": "npm run db-migrate && mocha test/index.js --timeout=20000 --require babel-register --exit",
-    "start": "sequelize db:migrate && babel-node index.js",
+    "start": "node_modules/.bin/sequelize db:migrate && babel-node index.js",
     "start:dev": "babel-watch index.js",
-    "coveralls": "nyc --reporter=lcov --reporter=text-lcov npm run test"
+    "coveralls": "nyc --reporter=lcov --reporter=text-lcov npm run test",
+    "postinstall": "npm i sequelize-cli babel-cli -g"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
