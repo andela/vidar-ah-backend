@@ -1,2 +1,7 @@
 language: node_js
 script: npm run test
+node_js:
+  - "10"
+script:
+  - npm install && npm install sequelize-cli -g
+  - npm run test
