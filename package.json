@@ -39,15 +39,15 @@
     "sequelize": "^4.42.0",
     "shortid": "^2.2.14",
     "slug": "^0.9.1",
-    "underscore": "^1.9.1"
-  },
-  "devDependencies": {
+    "underscore": "^1.9.1",
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "@babel/register": "^7.0.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
-    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1"
+  },
+  "devDependencies": {
     "babel-watch": "^2.0.7",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
