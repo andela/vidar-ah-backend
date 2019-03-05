@@ -34,7 +34,7 @@ if (!isProduction) {
 
 // / catch 404 and forward to error handler
 app.all('*', (req, res) => res.status(404).json({
-  error: 'Page not found.',
+  error: 'Page not found.'
 }));
 
 // / error handlers
@@ -47,8 +47,8 @@ if (!isProduction) {
     res.json({
       errors: {
         message: err.message,
-        error: err,
-      },
+        error: err
+      }
     });
   });
 }
@@ -60,8 +60,8 @@ app.use((err, res) => {
   res.json({
     errors: {
       message: err.message,
-      error: {},
-    },
+      error: {}
+    }
   });
 });
 

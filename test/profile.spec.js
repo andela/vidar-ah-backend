@@ -10,7 +10,7 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 // Keep Token
-let userToken = [];
+let userToken;
 
 describe('Make a request to signup with valid details', () => {
   it('returns successfully signed up message', (done) => {
@@ -23,6 +23,7 @@ describe('Make a request to signup with valid details', () => {
           status,
           body: { message, success, token }
         } = res;
+        userToken = token;
         expect(status).to.be.equal(201);
         expect(success).to.be.equal(true);
         expect(message).to.be.equal('You have signed up successfully.');

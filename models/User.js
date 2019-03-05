@@ -14,38 +14,38 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: {
         args: true,
-        msg: 'Email already exists',
-      },
+        msg: 'Email already exists'
+      }
     },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: {
         args: true,
-        msg: 'Username already exists',
-      },
+        msg: 'Username already exists'
+      }
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     verified: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false,
+      defaultValue: false
     },
     verificationId: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     bio: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
+      allowNull: true
+    }
   };
   const User = sequelize.define('User', userSchema);
   User.hook('beforeValidate', (user) => {
@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
     const emailPayload = {
       name,
       email,
-      link: `${HOST_URL}/api/v1/verify/${verificationId}`,
+      link: `${HOST_URL}/api/v1/verify/${verificationId}`
     };
     sendMail(emailPayload);
   });
