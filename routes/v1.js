@@ -2,7 +2,10 @@ import express from 'express';
 import UserController from '../controllers/user';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
-import { validateSignup, validateProfileChange, returnValidationErrors } from '../middleware/validation';
+import {
+  validateSignup, validateLogin,
+  validateProfileChange, returnValidationErrors
+} from '../middleware/validation';
 
 const apiRoutes = express.Router();
 
@@ -32,6 +35,13 @@ apiRoutes.patch(
   validateProfileChange,
   returnValidationErrors,
   ProfileController.editProfile
+);
+
+apiRoutes.post(
+  '/user/login',
+  validateLogin,
+  returnValidationErrors,
+  UserController.loginUser,
 );
 
 export default apiRoutes;

@@ -1,14 +1,14 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { compareSync } from 'bcrypt';
 import { User } from '../models';
-// import sendMail from '../helpers/emails';
 
 dotenv.config();
 const { JWT_SECRET } = process.env;
-const generateToken = id => jwt.sign(
+const generateToken = (id, expiresIn = '24h') => jwt.sign(
   { id },
   JWT_SECRET,
-  { expiresIn: '24h' },
+  { expiresIn },
 );
 
 
@@ -64,6 +64,58 @@ export default class UserController {
   }
 
   /**
+   * @description - login a user
+   * @static
+   *
+   * @param {object} req - HTTP Request
+   * @param {object} res - HTTP Response
+   *
+   * @memberof UserController
+   *
+   * @returns {object} Class instance
+   */
+  static async loginUser(req, res) {
+    const { email, password, rememberMe } = req.body;
+    try {
+      const foundUser = await User.findOne({
+        where: { email }
+      });
+      if (!foundUser) {
+        return res.status(404).json({
+          success: false,
+          errors: ['Invalid credentials'],
+        });
+      }
+      const passwordMatch = compareSync(password, foundUser.password);
+      if (!passwordMatch) {
+        return res.status(401).json({
+          success: false,
+          errors: ['Invalid credentials'],
+        });
+      }
+      const expiresIn = rememberMe ? '240h' : '24h';
+      try {
+        const token = generateToken(foundUser.id, expiresIn);
+        return res.status(200).json({
+          success: true,
+          message: `Welcome ${foundUser.username}`,
+          token
+        });
+      } catch (err) {
+        return res.status(500).json({
+          sucess: false,
+          errors: [err.message]
+        });
+      }
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        errors: [err.message]
+      });
+    }
+  }
+
+  /**
      * @description - Verifies a user's account
      * @static
      *
@@ -88,13 +140,13 @@ export default class UserController {
                 message: 'Account verified successfully.',
               }))
             .catch(error => res.json({
+              error: error.message,
               success: false,
-              message: error.message,
             }));
         }
         return res.json({
-          success: false,
           message: 'User not found',
+          success: false,
         });
       });
   }
