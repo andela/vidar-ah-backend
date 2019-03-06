@@ -7,7 +7,7 @@
     "coverage": "npm run db-migrate && mocha --reporter mochawesome --timeout=20000 --require babel-register --exit",
     "db-migrate": "sequelize db:migrate",
     "db:undo-migration": "sequelize db:migrate:undo:all",
-    "lint": "eslint routes models config test index.js",
+    "lint": "eslint routes models controllers config test index.js",
     "test": "npm run db:undo-migration && npm run db-migrate && mocha test/index.js --timeout=20000 --require babel-register --exit",
     "start": "sequelize db:migrate && node dist/index",
     "start:dev": "babel-watch index.js",

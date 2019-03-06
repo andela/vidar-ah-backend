@@ -49,3 +49,19 @@ export const validateProfileChange = [
     .isString()
     .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.'),
 ];
+
+export const validateEmail = [
+  check('email')
+    .isEmail()
+    .withMessage('Email is invalid.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('No spaces are allowed in the email.')
+];
+
+export const validatePassword = [
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('No spaces are allowed in the password.')
+];
