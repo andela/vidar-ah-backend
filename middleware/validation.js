@@ -13,7 +13,7 @@ export const returnValidationErrors = (req, res, next) => {
 export const validateSignup = [
   check('email')
     .isEmail()
-    .withMessage('Email is invalid.')
+    .withMessage('Please enter a valid email address')
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the email.'),
 
@@ -29,9 +29,23 @@ export const validateSignup = [
 
   check('username')
     .isAlphanumeric()
-    .withMessage('Username is invalid.')
+    .withMessage('Username is should be alphamumeric, no special characters and spaces.')
     .isLength({ min: 5, max: 15 })
     .withMessage('Username must be at least 5 characters long and not more than 15.')
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the username.'),
+];
+
+export const validateProfileChange = [
+  check('firstname')
+    .isAlphanumeric()
+    .withMessage('Firstname must be alphanumeric characters, please remove leading and trailing whitespaces.'),
+
+  check('lastname')
+    .isAlphanumeric()
+    .withMessage('Lastname must be alphanumeric characters, please remove leading and trailing whitespaces.'),
+
+  check('bio')
+    .isString()
+    .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.'),
 ];

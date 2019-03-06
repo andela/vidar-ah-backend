@@ -30,7 +30,7 @@ describe('Make a request to an unidentified route', () => {
 });
 
 describe('Make a request to signup with valid details', () => {
-  it('Returns an invalid error.', (done) => {
+  it('Returns sucessfully signed up.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
@@ -55,10 +55,10 @@ describe('Make a request to signup with empty signup fields', () => {
         expect(status).to.be.equal(422);
         expect(success).to.be.equal(false);
         expect(errors).to.be.an('Array');
-        expect(errors[0]).to.be.equal('Email is invalid.');
+        expect(errors[0]).to.be.equal('Please enter a valid email address');
         expect(errors[1]).to.be.equal('Password must be at least 6 characters long.');
         expect(errors[2]).to.be.equal('Name must be alphanumeric characters.');
-        expect(errors[3]).to.be.equal('Username is invalid.');
+        expect(errors[3]).to.be.equal('Username is should be alphamumeric, no special characters and spaces.');
         expect(errors[4]).to.be.equal('Username must be at least 5 characters long and not more than 15.');
         done(err);
       });
@@ -80,7 +80,7 @@ describe('Make a request to signup with an empty username', () => {
         expect(status).to.be.equal(422);
         expect(success).to.be.equal(false);
         expect(errors).to.be.an('Array');
-        expect(errors[0]).to.be.equal('Username is invalid.');
+        expect(errors[0]).to.be.equal('Username is should be alphamumeric, no special characters and spaces.');
         expect(errors[1]).to.be.equal('Username must be at least 5 characters long and not more than 15.');
         done(err);
       });
@@ -102,7 +102,7 @@ describe('Make a request to signup with an empty email', () => {
         expect(status).to.be.equal(422);
         expect(success).to.be.equal(false);
         expect(errors).to.be.an('Array');
-        expect(errors[0]).to.be.equal('Email is invalid.');
+        expect(errors[0]).to.be.equal('Please enter a valid email address');
         done(err);
       });
   });
@@ -137,7 +137,7 @@ describe('Make a request to signup with an empty password', () => {
       .send({
         username: faker.internet.userName(),
         email: faker.internet.email(),
-        name: faker.name.findName(),
+        name: faker.name.findName()
       })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
