@@ -43,3 +43,6 @@ mochawesome-report
 # Ignore yarn generated files
 yarn.lock
 dist/
+
+#coveralls code coverage reports
+.nyc_output/

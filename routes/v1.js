@@ -1,19 +1,20 @@
 import express from 'express';
 import UserController from '../controllers/user';
-import { validateSignup, returnValidationErrors } from '../middleware/validation';
+import ArticleController from '../controllers/articles';
+import { validateSignup, returnValidationErrors, validateArticle } from '../middleware/validation';
+import authUser from '../middleware/auth';
+
+const { createArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.post(
-  '/user',
-  validateSignup,
-  returnValidationErrors,
-  UserController.registerUser,
-);
+apiRoutes.route('/user')
+  .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
-apiRoutes.get(
-  '/verify/:verificationId',
-  UserController.verifyAccount,
-);
+apiRoutes.route('/verify/:verificationId')
+  .get(UserController.verifyAccount);
+
+apiRoutes.route('/articles')
+  .post(authUser, validateArticle, returnValidationErrors, createArticle);
 
 export default apiRoutes;

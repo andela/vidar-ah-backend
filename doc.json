@@ -13,7 +13,7 @@
       "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
     }
   },
-  "host": "https://vidar-ah-backend-staging.herokuapp.com",
+  "host": "vidar-ah-backend-staging.herokuapp.com",
   "basePath": "/api/v1",
   "schemes": [
     "https",
@@ -23,7 +23,7 @@
     "/api/v1/user": {
       "post": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration",
         "description": "A Social platform for the creative at heart",
@@ -39,6 +39,29 @@
           },
           "409": {
             "description": "User already exists"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/v1/article": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Create an article",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "New article created successfully"
           },
           "422": {
             "description": "Validation error"

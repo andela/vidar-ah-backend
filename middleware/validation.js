@@ -35,3 +35,21 @@ export const validateSignup = [
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the username.'),
 ];
+
+export const validateArticle = [
+  check('title')
+    .exists()
+    .withMessage('Article should have a title.'),
+
+  check('description')
+    .exists()
+    .withMessage('Article should have a description.')
+    .isLength({ min: 6 })
+    .withMessage('Description must be at least 6 characters long.'),
+
+  check('body')
+    .exists()
+    .withMessage('Article should have a body.')
+    .isLength({ min: 6 })
+    .withMessage('Article should have a body with at least 6 characters long.'),
+];

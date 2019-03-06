@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { User } from '../models';
-// import sendMail from '../helpers/emails';
 
 dotenv.config();
 const { JWT_SECRET } = process.env;
@@ -11,23 +10,18 @@ const generateToken = id => jwt.sign(
   { expiresIn: '24h' },
 );
 
-
 /**
  * @class UserController
  *  @override
  * @export
- *
  */
 export default class UserController {
   /**
      * @description - Creates a new user
      * @static
-     *
      * @param {object} req - HTTP Request
      * @param {object} res - HTTP Response
-     *
      * @memberof UserController
-     *
      * @returns {object} Class instance
      */
   static registerUser(req, res) {
@@ -66,12 +60,9 @@ export default class UserController {
   /**
      * @description - Verifies a user's account
      * @static
-     *
      * @param {object} req - HTTP Request
      * @param {object} res - HTTP Response
-     *
      * @memberof UserController
-     *
      * @returns {object} Class instance
      */
   static verifyAccount(req, res) {
