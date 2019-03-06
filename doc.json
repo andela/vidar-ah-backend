@@ -57,15 +57,15 @@
         }
       }
     },
-    "/userprofile": {
-      "get": {
+    "/articles": {
+      "post": {
         "tags": [
-          "Profile"
+          "Articles"
         ],
-        "summary": "View user profile",
-        "description": "Get user's profile information",
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
         "consumes": [
-          "application/x-www-form-urlencoded",
           "application/json"
         ],
         "produces": [
@@ -73,38 +73,7 @@
         ],
         "parameters": [
           {
-            "name": "x-access-token",
-            "in": "header",
-            "description": "A token to verify the user",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Return's user's profile details"
-          },
-          "401": {
-            "description": "Authentication error"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Profile"
-        ],
-        "summary": "Update user's profile ",
-        "description": "Update user's profile information",
-        "consumes": [
-          "application/x-www-form-urlencoded",
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "x-access-token",
+            "name": "authorization",
             "in": "header",
             "description": "A token to verify the user",
             "required": true,
@@ -112,60 +81,36 @@
           },
           {
             "in": "body",
-            "name": "Request body",
+            "name": "body",
             "description": "Update user profile",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/profile"
+              "$ref": "#/definitions/articles"
             }
           }
         ],
         "responses": {
-          "205": {
-            "description": "Returns updated profile"
+          "201": {
+            "description": "New article created successfully"
           },
           "422": {
-            "description": "Required fields not present"
-          },
-          "401": {
-            "description": "Authentication error"
+            "description": "Invalid title/description/body supplied"
           }
         }
       }
     }
   },
   "definitions": {
-    "user": {
+    "articles": {
       "type": "object",
       "properties": {
-        "username": {
-          "type": "string",
-          "format": "int64"
-        },
-        "email": {
-          "type": "string",
-          "format": "int64"
-        },
-        "password": {
-          "type": "string",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
-    "profile": {
-      "type": "object",
-      "properties": {
-        "firstname": {
+        "title": {
           "type": "string"
         },
-        "lastname": {
+        "description": {
           "type": "string"
         },
-        "bio": {
+        "body": {
           "type": "string"
         }
       }

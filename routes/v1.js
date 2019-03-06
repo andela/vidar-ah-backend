@@ -3,29 +3,30 @@ import UserController from '../controllers/user';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
 import isUserVerified from '../middleware/verifyUser';
+import ArticleController from '../controllers/articles';
 import {
   validateSignup,
   validateProfileChange,
-  returnValidationErrors
+  returnValidationErrors,
+  validateArticle,
 } from '../middleware/validation';
+
+const { createArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.post('/user', validateSignup, returnValidationErrors, UserController.registerUser);
+apiRoutes.route('/user')
+  .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
-apiRoutes.get('/verify/:verificationId', UserController.verifyAccount);
+apiRoutes.route('/userprofile')
+  .get(Auth.verifyUser, isUserVerified, ProfileController.viewProfile)
+  .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
+    returnValidationErrors, ProfileController.editProfile);
 
-// Profiles route
+apiRoutes.route('/verify/:verificationId')
+  .get(UserController.verifyAccount);
 
-apiRoutes.get('/userprofile', Auth.verifyUser, isUserVerified, ProfileController.viewProfile);
-
-apiRoutes.patch(
-  '/userprofile',
-  Auth.verifyUser,
-  isUserVerified,
-  validateProfileChange,
-  returnValidationErrors,
-  ProfileController.editProfile
-);
+apiRoutes.route('/articles')
+  .post(Auth.verifyUser, isUserVerified, validateArticle, returnValidationErrors, createArticle);
 
 export default apiRoutes;

@@ -47,5 +47,25 @@ export const validateProfileChange = [
 
   check('bio')
     .isString()
-    .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.'),
+    .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.')
+];
+
+export const validateArticle = [
+  check('title')
+    .exists()
+    .withMessage('Article should have a title.')
+    .isLength({ min: 6 })
+    .withMessage('Article must be at least 6 characters long.'),
+
+  check('description')
+    .exists()
+    .withMessage('Article should have a description.')
+    .isLength({ min: 6 })
+    .withMessage('Description must be at least 6 characters long.'),
+
+  check('body')
+    .exists()
+    .withMessage('Article should have a body.')
+    .isLength({ min: 6 })
+    .withMessage('Article should have a body with at least 6 characters long.')
 ];
