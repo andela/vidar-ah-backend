@@ -50,7 +50,9 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', userSchema);
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();
-    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
+    if (user.password) {
+      user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
+    }
   });
   User.hook('afterCreate', (user) => {
     const { email, name, verificationId } = user;
