@@ -230,6 +230,116 @@
           }
         }
       }
+    },
+    "/resetpassword": {
+      "post": {
+        "tags": [
+          "Reset password"
+        ],
+        "summary": "Send reset link to user email",
+        "description": "Send reset link to user email",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Reset user password",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/resetpassword"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Save password reset key in database and send link to email"
+          },
+          "404": {
+            "description": "User not registered or verified."
+          },
+          "422": {
+            "description": "Email is invalid"
+          }
+        }
+      }
+    },
+    "/verifypasswordkey/{key}": {
+      "get": {
+        "tags": [
+          "Reset password"
+        ],
+        "summary": "Verify user reset password key",
+        "description": "Verify user reset password key",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "description": "key sent with the link to the user email",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "You can now reset your password."
+          },
+          "410": {
+            "description": "Your link has expired. Please try to reset password again."
+          },
+          "404": {
+            "description": "Password reset token not found."
+          }
+        }
+      }
+    },
+    "/changepassword": {
+      "post": {
+        "tags": [
+          "Reset password"
+        ],
+        "summary": "Reset user password",
+        "description": "Reset user password and delete password token",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Reset user password",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/resetpassword3"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Password changed successfully."
+          },
+          "422": {
+            "description": "Password must be at least 6 characters long."
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -284,6 +394,22 @@
           "type": "string"
         },
         "bio": {
+          "type": "string"
+        }
+      }
+    },
+    "resetpassword": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "changepassword": {
+      "type": "object",
+      "properties": {
+        "password": {
           "type": "string"
         }
       }

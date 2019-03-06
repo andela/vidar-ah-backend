@@ -17,13 +17,20 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendMail = (payload) => {
-  const { email, name, link } = payload;
+  const {
+    email,
+    name,
+    link,
+    subject,
+    message
+  } = payload;
+
   const mailOptions = {
     from: EMAIL_ADDRESS,
     to: email,
-    subject: 'Welcome to Authors Haven',
+    subject,
     html: `<h1>Hi ${name}</h1>
-      <p>Please click <a href="${link}">here</a> to verify your account.</p>
+      <p>Please click <a href="${link}">here</a> to ${message}.</p>
     `,
   };
   return transporter.sendMail(mailOptions);

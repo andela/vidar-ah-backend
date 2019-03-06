@@ -12,23 +12,43 @@ export default (req, res, next) => {
   }
 
   const { fieldName, fieldValue } = options;
-  User.findOne({ where: { [fieldName]: fieldValue } }).then((foundUser) => {
-    if (foundUser) {
-      const {
-        dataValues: { verified }
-      } = foundUser;
-      if (!verified) {
-        return res.status(403).json({
-          success: false,
-          errors: ['User has not been verified.']
-        });
+  User.findOne({ where: { [fieldName]: fieldValue } })
+    .then((foundUser) => {
+      if (foundUser) {
+        const {
+          id,
+          email,
+          username,
+          name,
+          verified,
+          verificationId,
+          bio,
+          password
+        } = foundUser.dataValues;
+        const userObj = {
+          id,
+          email,
+          username,
+          name,
+          verified,
+          verificationId,
+          bio,
+          password
+        };
+        if (!verified) {
+          return res.status(403).json({
+            success: false,
+            errors: [
+              'User has not been verified.'
+            ]
+          });
+        }
+        req.user = userObj;
+        return next();
       }
-      req.user = foundUser.dataValues;
-      return next();
-    }
-    return res.status(404).json({
-      success: false,
-      errors: ['User not found.']
+      return res.status(404).json({
+        success: false,
+        errors: ['User not found.']
+      });
     });
-  });
 };

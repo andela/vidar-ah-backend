@@ -50,3 +50,15 @@ export const validLoginUser = {
   email: 'testing123559@gmail.com',
   password: 'testing'
 };
+
+export const validUser2 = {
+  username: 'testuser',
+  email: 'jessam7009@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
+};
+
+export const invalidUser = {
+  email: 'email@domain.com'
+};
