@@ -43,3 +43,6 @@ mochawesome-report
 # Ignore yarn generated files
 yarn.lock
 dist/
+
+# Ignore vscode files
+.vscode/
