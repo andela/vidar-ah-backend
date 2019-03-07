@@ -1,11 +1,12 @@
 import passport from 'passport';
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+import googlePassport from 'passport-google-oauth'
 import { User } from '../models/';
 
+const GoogleStrategy = googlePassport.OAuth2Strategy;
 
 passport.use(new GoogleStrategy({
-    clientID: "82790996682-n2ln8cnl9huo3pnagmm9olqm50jgmvbb.apps.googleusercontent.com",
-    clientSecret: "Yq_f6I9YjsVC0hECiRzpUMqb",
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: "http://127.0.0.1:7000/api/v1/auth/google/callback",
 },
   (accessToken, refreshToken, profile, done) => {

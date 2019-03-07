@@ -2,6 +2,7 @@ import express from 'express';
 import UserController from '../controllers/user';
 import { validateSignup, returnValidationErrors } from '../middleware/validation';
 import passportGoogle from '../auth/google';
+import passportFacebook from '../auth/facebook';
 
 const apiRoutes = express.Router();
 
@@ -28,5 +29,17 @@ apiRoutes.get('/auth/google/callback',
     res.redirect('/');
     // res.send('Yayyy it worked')
   });
+
+  /* FACEBOOK ROUTER */
+apiRoutes.get('/auth/facebook', passportFacebook.authenticate('facebook', {
+  scope: ['email', 'profile']
+}));
+
+apiRoutes.get('/auth/facebook/callback',
+passportFacebook.authenticate('facebook', { failureRedirect: '/login' }),
+(req, res) => {
+  // Successful authentication, redirect home.
+  res.redirect('/');
+});
 
 export default apiRoutes;
