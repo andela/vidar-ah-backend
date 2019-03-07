@@ -49,3 +49,17 @@ export const validateProfileChange = [
     .isString()
     .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.'),
 ];
+
+export const validateLogin = [
+  check('email')
+    .isEmail()
+    .withMessage('Please provide a valid email.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('Please provide a valid email.'),
+
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Please provide a valid password.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('Please provide a valid password.'),
+];
