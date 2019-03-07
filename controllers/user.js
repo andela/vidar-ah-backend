@@ -150,4 +150,5 @@ export default class UserController {
         });
       });
   }
+
 }
