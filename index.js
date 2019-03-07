@@ -41,7 +41,9 @@ app.use('/api', routes);
 if (!isProduction) {
   app.use(errorhandler());
 }
-
+app.get('/', (req, res) => res.status(200).json({
+  message: 'Welcome to Author Haven'
+}));
 // / catch 404 and forward to error handler
 app.all('*', (req, res) => res.status(404).json({
   error: 'Page not found.',
