@@ -23,7 +23,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(session({
-  secret: 'keyboard cat',
+  secret: 'team vidar',
+  key: 'vidar',
   resave: true,
   saveUninitialized: true,
   cookie: {

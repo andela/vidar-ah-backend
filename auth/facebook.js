@@ -1,17 +1,27 @@
 import passport from 'passport';
-import facebookPassport from 'passport-facebook';
-import { User } from '../models/';
-
-const FacebookStrategy = facebookPassport.Strategy;
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { User } from '../models';
 
 passport.use(new FacebookStrategy({
-    clientID: "998262500369173",
-    clientSecret: "3f1b0303b9d5c13d1c1a809e43d15ced",
-    callbackURL: "http://localhost:7000/api/v1/auth/facebook/callback",
-  },
-  (accessToken, refreshToken, profile, done) => {
-    console.log(profile)
-  }
-));
+  clientID: process.env.FACEBOOK_CLIENT_ID,
+  clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+  callbackURL: 'http://vidar-ah-backend-staging.herokuapp.com/api/v1/auth/facebook/callback',
+},
+(accessToken, refreshToken, profile, done) => {
+  done(null, profile);
+  console.log(profile);
+
+  // const email = profile.emails[0].value;
+  // User.findOrCreate(
+  //   {
+  //     where: { email },
+  //     defaults: {
+  //       name: profile.displayName,
+  //       username: profile.name.givenName,
+  //       email
+  //     }
+  //   }
+  // );
+}));
 
 export default passport;
