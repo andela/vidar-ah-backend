@@ -45,7 +45,7 @@ describe('Make a request to an unidentified route', function () {
 });
 
 describe('Make a request to signup with valid details', function () {
-  it('Returns sucessfully signed up.', function (done) {
+  it('Returns an invalid error.', function (done) {
     _chai2.default.request(_index2.default).post('/api/v1/user').send(validUser).end(function (err, res) {
       var status = res.status,
           _res$body = res.body,
@@ -71,10 +71,10 @@ describe('Make a request to signup with empty signup fields', function () {
       expect(status).to.be.equal(422);
       expect(success).to.be.equal(false);
       expect(errors).to.be.an('Array');
-      expect(errors[0]).to.be.equal('Please enter a valid email address');
+      expect(errors[0]).to.be.equal('Email is invalid.');
       expect(errors[1]).to.be.equal('Password must be at least 6 characters long.');
       expect(errors[2]).to.be.equal('Name must be alphanumeric characters.');
-      expect(errors[3]).to.be.equal('Username is should be alphamumeric, no special characters and spaces.');
+      expect(errors[3]).to.be.equal('Username is invalid.');
       expect(errors[4]).to.be.equal('Username must be at least 5 characters long and not more than 15.');
       done(err);
     });
@@ -96,7 +96,7 @@ describe('Make a request to signup with an empty username', function () {
       expect(status).to.be.equal(422);
       expect(success).to.be.equal(false);
       expect(errors).to.be.an('Array');
-      expect(errors[0]).to.be.equal('Username is should be alphamumeric, no special characters and spaces.');
+      expect(errors[0]).to.be.equal('Username is invalid.');
       expect(errors[1]).to.be.equal('Username must be at least 5 characters long and not more than 15.');
       done(err);
     });
@@ -118,7 +118,7 @@ describe('Make a request to signup with an empty email', function () {
       expect(status).to.be.equal(422);
       expect(success).to.be.equal(false);
       expect(errors).to.be.an('Array');
-      expect(errors[0]).to.be.equal('Please enter a valid email address');
+      expect(errors[0]).to.be.equal('Email is invalid.');
       done(err);
     });
   });

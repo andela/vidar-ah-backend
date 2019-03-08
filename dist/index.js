@@ -65,7 +65,8 @@ app.use(_bodyParser2.default.urlencoded({ extended: false }));
 app.use(_bodyParser2.default.json());
 
 app.use((0, _expressSession2.default)({
-  secret: 'keyboard cat',
+  secret: 'team vidar',
+  key: 'vidar',
   resave: true,
   saveUninitialized: true,
   cookie: {
@@ -85,7 +86,11 @@ app.use('/api-docs', _swaggerUiExpress2.default.serve, _swaggerUiExpress2.defaul
 if (!isProduction) {
   app.use((0, _errorhandler2.default)());
 }
-
+app.get('/', function (req, res) {
+  return res.status(200).json({
+    message: 'Welcome to Author Haven'
+  });
+});
 // / catch 404 and forward to error handler
 app.all('*', function (req, res) {
   return res.status(404).json({

@@ -42,3 +42,4 @@ mochawesome-report
 
 # Ignore yarn generated files
 yarn.lock
+dist/

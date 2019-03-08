@@ -6,7 +6,9 @@ import cors from 'cors';
 import passport from 'passport';
 import errorhandler from 'errorhandler';
 import dotenv from 'dotenv';
+import swaggerUI from 'swagger-ui-express';
 import routes from './routes/index';
+import doc from './doc.json';
 
 // read .env config
 dotenv.config();
@@ -37,6 +39,9 @@ app.use(passport.session());
 
 // configure router
 app.use('/api', routes);
+
+// api doc
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));
 
 if (!isProduction) {
   app.use(errorhandler());
