@@ -2,29 +2,18 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
+import updateVerifiedStatus from './helpers/updateVerifiedStatus';
+import { validUser, profileDetails } from './helpers/userDummyData';
 
 // Configure chai
 chai.use(chaiHttp);
 const { expect } = chai;
 
 // Keep Token
-let userToken;
-
-const validUser = {
-  username: 'JamesBond',
-  email: 'jamesbondxxc@gmail.com',
-  name: 'James Bond',
-  password: '1234567'
-};
-
-const profileDetails = {
-  firstname: 'NewFirstName',
-  lastname: 'NewLastName',
-  bio: 'I love playing basketball'
-};
+let userToken = [];
 
 describe('Make a request to signup with valid details', () => {
-  it('Returns successfully signed up message', (done) => {
+  it('returns successfully signed up message', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
@@ -34,17 +23,55 @@ describe('Make a request to signup with valid details', () => {
           status,
           body: { message, success, token }
         } = res;
-        userToken = token;
         expect(status).to.be.equal(201);
         expect(success).to.be.equal(true);
         expect(message).to.be.equal('You have signed up successfully.');
+        userToken = token;
         done(err);
       });
   });
 });
 
 describe('View default profile details', () => {
-  it('Returns default profile details', (done) => {
+  it('returns unauthorised access, user not verified', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/userprofile')
+      .set('x-access-token', userToken)
+      .end((err, res) => {
+        const {
+          status,
+          body: { success }
+        } = res;
+        expect(status).to.be.equal(403);
+        expect(success).to.be.equal(false);
+        done(err);
+      });
+  });
+});
+
+describe('Update profile details', () => {
+  it('returns unauthorised access, user not verified', (done) => {
+    chai
+      .request(app)
+      .patch('/api/v1/userprofile')
+      .set('x-access-token', userToken)
+      .send(profileDetails)
+      .end((err, res) => {
+        const {
+          status,
+          body: { success }
+        } = res;
+        expect(status).to.be.equal(403);
+        expect(success).to.be.equal(false);
+        done(err);
+      });
+  });
+});
+
+describe('View default profile details', () => {
+  before(() => updateVerifiedStatus(validUser.email));
+  it('returns default profile details', (done) => {
     chai
       .request(app)
       .get('/api/v1/userprofile')
@@ -66,7 +93,8 @@ describe('View default profile details', () => {
 });
 
 describe('Update profile details', () => {
-  it('Returns successfully profile details', (done) => {
+  before(() => updateVerifiedStatus(validUser.email));
+  it('returns successfully updated profile details', (done) => {
     chai
       .request(app)
       .patch('/api/v1/userprofile')
@@ -90,7 +118,8 @@ describe('Update profile details', () => {
 });
 
 describe('View updated profile details', () => {
-  it('Returns updated profile details', (done) => {
+  before(() => updateVerifiedStatus(validUser.email));
+  it('returns updated profile details', (done) => {
     chai
       .request(app)
       .get('/api/v1/userprofile')
