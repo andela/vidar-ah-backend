@@ -1,2 +1,2 @@
-require('./user.spec');
-require('./socialLoginSpec');
+import './user.spec';
+import './socialLoginSpec';

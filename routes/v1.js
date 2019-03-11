@@ -20,7 +20,8 @@ apiRoutes.get(
 );
 
 apiRoutes.get(
-  '/auth/google', passportGoogle.authenticate('google', {
+  '/auth/google',
+  passportGoogle.authenticate('google', {
     scope: ['email', 'profile']
   })
 );
@@ -34,7 +35,8 @@ apiRoutes.get(
 );
 
 apiRoutes.get(
-  '/auth/facebook', passportFacebook.authenticate('facebook', {
+  '/auth/facebook',
+  passportFacebook.authenticate('facebook', {
     scope: ['email']
   })
 );

@@ -23,17 +23,23 @@ async (accessToken, refreshToken, profile, done) => {
    * @param {function} done end of function
    * @returns {object} createOrFindUser
    */
+  const {
+    displayName,
+    name: { givenName }
+  } = profile;
   const user = await User.findOrCreate(
     {
       where: { email },
       defaults: {
-        name: profile.displayName,
-        username: profile.name.givenName,
+        name: displayName,
+        username: givenName,
         email
       }
     }
   );
-  return done(null, user[0].dataValues);
+  return done(
+    null, user[0].dataValues
+  );
 }));
 
 /**
