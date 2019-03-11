@@ -169,6 +169,66 @@
           "type": "string"
         }
       }
+    },
+    "/auth/google": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "google api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/twitter": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "twitter api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/facebook": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "facebook api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
     }
   },
   "externalDocs": {
