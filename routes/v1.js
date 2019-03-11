@@ -2,6 +2,7 @@ import express from 'express';
 import UserController from '../controllers/user';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
+import isUserVerified from '../middleware/verifyUser';
 import {
   validateSignup, validateLogin,
   validateProfileChange, returnValidationErrors
@@ -12,29 +13,18 @@ import passportTwitter from '../auth/twitter';
 
 const apiRoutes = express.Router();
 
-apiRoutes.post(
-  '/user',
-  validateSignup,
-  returnValidationErrors,
-  UserController.registerUser,
-);
+apiRoutes.post('/user', validateSignup, returnValidationErrors, UserController.registerUser);
 
-apiRoutes.get(
-  '/verify/:verificationId',
-  UserController.verifyAccount,
-);
+apiRoutes.get('/verify/:verificationId', UserController.verifyAccount);
 
 // Profiles route
 
-apiRoutes.get(
-  '/userprofile',
-  Auth.verifyUser,
-  ProfileController.viewProfile,
-);
+apiRoutes.get('/userprofile', Auth.verifyUser, isUserVerified, ProfileController.viewProfile);
 
 apiRoutes.patch(
   '/userprofile',
   Auth.verifyUser,
+  isUserVerified,
   validateProfileChange,
   returnValidationErrors,
   ProfileController.editProfile

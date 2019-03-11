@@ -3,20 +3,14 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
 import app from '../index';
+import { validUser1 } from './helpers/userDummyData';
 
 // Configure chai
 chai.use(chaiHttp);
 const { expect } = chai;
 
-const validUser = {
-  username: 'flippin',
-  email: 'flipping2234@gmail.com',
-  name: 'Flipping James',
-  password: '1234567'
-};
-
 describe('Make a request to an unidentified route', () => {
-  it('Returns 404 error', (done) => {
+  it('returns 404 error', (done) => {
     chai
       .request(app)
       .get('/wrong-url')
@@ -30,11 +24,11 @@ describe('Make a request to an unidentified route', () => {
 });
 
 describe('Make a request to signup with valid details', () => {
-  it('Returns sucessfully signed up.', (done) => {
+  it('returns sucessfully signed up.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
-      .send(validUser)
+      .send(validUser1)
       .end((err, res) => {
         const { status, body: { message, success } } = res;
         expect(status).to.be.equal(201);
@@ -46,7 +40,7 @@ describe('Make a request to signup with valid details', () => {
 });
 
 describe('Make a request to signup with empty signup fields', () => {
-  it('Returns an invalid error.', (done) => {
+  it('returns an invalid error.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
@@ -66,7 +60,7 @@ describe('Make a request to signup with empty signup fields', () => {
 });
 
 describe('Make a request to signup with an empty username', () => {
-  it('Returns an invalid error.', (done) => {
+  it('returns an invalid error.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
@@ -88,7 +82,7 @@ describe('Make a request to signup with an empty username', () => {
 });
 
 describe('Make a request to signup with an empty email', () => {
-  it('Returns an invalid error.', (done) => {
+  it('returns an invalid error.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
@@ -109,7 +103,7 @@ describe('Make a request to signup with an empty email', () => {
 });
 
 describe('Make a request to signup with an empty name', () => {
-  it('Returns an invalid error.', (done) => {
+  it('returns an invalid error.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
@@ -130,7 +124,7 @@ describe('Make a request to signup with an empty name', () => {
 });
 
 describe('Make a request to signup with an empty password', () => {
-  it('Returns an invalid error.', (done) => {
+  it('returns an invalid error.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
@@ -151,11 +145,11 @@ describe('Make a request to signup with an empty password', () => {
 });
 
 describe('Make a request to signup with existing email', () => {
-  it('Returns an invalid error.', (done) => {
+  it('returns an invalid error.', (done) => {
     chai
       .request(app)
       .post('/api/v1/user')
-      .send(validUser)
+      .send(validUser1)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(409);
@@ -168,8 +162,8 @@ describe('Make a request to signup with existing email', () => {
 });
 
 describe('Make a request to signup with existing username', () => {
-  it('Returns an invalid error.', (done) => {
-    const { username } = validUser;
+  it('returns an invalid error.', (done) => {
+    const { username } = validUser1;
     chai
       .request(app)
       .post('/api/v1/user')

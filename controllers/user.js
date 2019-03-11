@@ -5,12 +5,7 @@ import { User } from '../models';
 
 dotenv.config();
 const { JWT_SECRET } = process.env;
-const generateToken = (id, expiresIn = '24h') => jwt.sign(
-  { id },
-  JWT_SECRET,
-  { expiresIn },
-);
-
+const generateToken = id => jwt.sign({ id }, JWT_SECRET, { expiresIn: '24h' });
 
 /**
  * @class UserController
@@ -20,32 +15,38 @@ const generateToken = (id, expiresIn = '24h') => jwt.sign(
  */
 export default class UserController {
   /**
-     * @description - Creates a new user
-     * @static
-     *
-     * @param {object} req - HTTP Request
-     * @param {object} res - HTTP Response
-     *
-     * @memberof UserController
-     *
-     * @returns {object} Class instance
-     */
+   * @description - Creates a new user
+   * @static
+   *
+   * @param {object} req - HTTP Request
+   * @param {object} res - HTTP Response
+   *
+   * @memberof UserController
+   *
+   * @returns {object} Class instance
+   */
   static registerUser(req, res) {
-    const { body } = req;
-    User.create(body)
+    const {
+      body: {
+        email, username, password, name
+      }
+    } = req;
+    User.create({
+      email,
+      username,
+      password,
+      name
+    })
       .then((newUser) => {
         const {
-          dataValues: {
-            id,
-          },
+          dataValues: { id }
         } = newUser;
         const token = generateToken(id);
-        return res.status(201)
-          .json({
-            success: true,
-            message: 'You have signed up successfully.',
-            token,
-          });
+        return res.status(201).json({
+          success: true,
+          message: 'You have signed up successfully.',
+          token
+        });
       })
       .catch((error) => {
         const errors = [];
@@ -55,16 +56,15 @@ export default class UserController {
         if (error.errors[0].path === 'email') {
           errors.push(error.errors[0].message);
         }
-        return res.status(409)
-          .json({
-            success: false,
-            errors,
-          });
+        return res.status(409).json({
+          success: false,
+          errors
+        });
       });
   }
 
   /**
-   * @description - login a user
+   * @description - Verifies a user's account
    * @static
    *
    * @param {object} req - HTTP Request
@@ -127,28 +127,28 @@ export default class UserController {
      * @returns {object} Class instance
      */
   static verifyAccount(req, res) {
-    const { params: { verificationId } } = req;
+    const {
+      params: { verificationId }
+    } = req;
     User.findOne({
-      where: { verificationId },
-    })
-      .then((foundUser) => {
-        if (foundUser) {
-          return foundUser.verifyAccount()
-            .then(() => res.status(200)
-              .json({
-                success: true,
-                message: 'Account verified successfully.',
-              }))
-            .catch(error => res.json({
-              error: error.message,
-              success: false,
-            }));
-        }
-        return res.json({
-          message: 'User not found',
-          success: false,
-        });
+      where: { verificationId }
+    }).then((foundUser) => {
+      if (foundUser) {
+        return foundUser
+          .verifyAccount()
+          .then(() => res.status(200).json({
+            success: true,
+            message: 'Account verified successfully.'
+          }))
+          .catch(error => res.json({
+            success: false,
+            message: error.message
+          }));
+      }
+      return res.json({
+        success: false,
+        message: 'User not found'
       });
+    });
   }
-
 }

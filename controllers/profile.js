@@ -1,7 +1,6 @@
 import _ from 'underscore';
 import { User } from '../models';
 import splitName from '../helpers/splitName';
-// import sendMail from '../helpers/emails';
 
 /**
  * @class ProfileController
@@ -11,16 +10,16 @@ import splitName from '../helpers/splitName';
  */
 export default class ProfileController {
   /**
-     * @description - Renders a user's profile
-     * @static
-     *
-     * @param {object} req - HTTP Request
-     * @param {object} res - HTTP Response
-     *
-     * @memberof ProfileController
-     *
-     * @returns {object} User Profile
-     */
+   * @description - Renders a user's profile
+   * @static
+   *
+   * @param {object} req - HTTP Request
+   * @param {object} res - HTTP Response
+   *
+   * @memberof ProfileController
+   *
+   * @returns {object} User Profile
+   */
   static async viewProfile(req, res) {
     const { id } = req.user;
 
@@ -31,16 +30,26 @@ export default class ProfileController {
           id
         }
       });
-      delete foundUser.password;
-      delete foundUser.verificationId;
+
+      const {
+        email, username, name, bio, createdAt, updatedAt
+      } = foundUser;
+      const userProfile = {
+        id,
+        email,
+        username,
+        name,
+        bio,
+        createdAt,
+        updatedAt
+      };
 
       const splitNamesObject = splitName(foundUser);
 
-      return res.status(200)
-        .json({
-          success: true,
-          body: _.extendOwn(foundUser, splitNamesObject)
-        });
+      return res.status(200).json({
+        success: true,
+        body: _.extendOwn(userProfile, splitNamesObject)
+      });
     } catch (error) {
       return res.status(409).json({
         success: false,
@@ -62,10 +71,11 @@ export default class ProfileController {
    */
   static async editProfile(req, res) {
     const { id } = req.user;
+    const { bio, firstname, lastname } = req.body;
 
     try {
       const updateResult = await User.update(
-        { bio: req.body.bio, name: `${req.body.firstname} ${req.body.lastname}` },
+        { bio, name: `${firstname} ${lastname}` },
         {
           returning: true,
           raw: true,
@@ -87,11 +97,10 @@ export default class ProfileController {
         body: _.extendOwn(updatedProfile, splitNamesObject)
       });
     } catch (error) {
-      return res.status(409)
-        .json({
-          success: false,
-          errors: [error.message]
-        });
+      return res.status(409).json({
+        success: false,
+        errors: [error.message]
+      });
     }
   }
 }
