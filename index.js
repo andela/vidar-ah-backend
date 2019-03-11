@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import session from 'express-session';
 import cors from 'cors';
 import passport from 'passport';
 import errorhandler from 'errorhandler';
@@ -24,18 +23,7 @@ app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(session({
-  secret: 'team vidar',
-  key: 'vidar',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 60000,
-    expires: false
-  }
-}));
 app.use(passport.initialize());
-app.use(passport.session());
 
 // configure router
 app.use('/api', routes);
