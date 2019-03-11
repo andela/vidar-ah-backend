@@ -1,0 +1,7 @@
+/dist/**
+/mochawesome-report/**
+/migrations
+/node_modules/**
+/.env/**
+!.eslintrc.json
+/coverage/**

@@ -2,6 +2,7 @@ import express from 'express';
 import UserController from '../controllers/user';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
+import isUserVerified from '../middleware/verifyUser';
 import {
   validateSignup, validateLogin,
   validateProfileChange, returnValidationErrors
@@ -23,22 +24,6 @@ apiRoutes.patch(
   '/userprofile',
   Auth.verifyUser,
   isUserVerified,
-  validateProfileChange,
-  returnValidationErrors,
-  ProfileController.editProfile
-);
-
-// Profiles route
-
-apiRoutes.get(
-  '/userprofile',
-  Auth.verifyUser,
-  ProfileController.viewProfile,
-);
-
-apiRoutes.patch(
-  '/userprofile',
-  Auth.verifyUser,
   validateProfileChange,
   returnValidationErrors,
   ProfileController.editProfile
@@ -81,7 +66,7 @@ apiRoutes.get(
     'facebook', { failureRedirect: '/login' }
   ),
   (req, res) => {
-  // Successful authentication, redirect home.
+    // Successful authentication, redirect home.
     res.redirect('/');
   }
 );
