@@ -37,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
         msg: 'Article should have a body'
       }
     },
+    images: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: []
+    },
     taglist: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: []

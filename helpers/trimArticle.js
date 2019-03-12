@@ -3,5 +3,5 @@ export default (req, res, next) => {
   if (title) req.title = title.trim();
   if (description) req.description = description.trim();
   if (body) req.body = body.trim();
-  return next;
+  return next();
 };

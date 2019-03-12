@@ -55,17 +55,17 @@ export const validateArticle = [
     .exists()
     .withMessage('Article should have a title.')
     .isLength({ min: 6 })
-    .withMessage('Article must be at least 6 characters long.'),
+    .withMessage('Title should be at least 6 characters long.'),
 
   check('description')
     .exists()
     .withMessage('Article should have a description.')
     .isLength({ min: 6 })
-    .withMessage('Description must be at least 6 characters long.'),
+    .withMessage('Description should be at least 6 characters long.'),
 
   check('body')
     .exists()
     .withMessage('Article should have a body.')
     .isLength({ min: 6 })
-    .withMessage('Article should have a body with at least 6 characters long.')
+    .withMessage('Article should have a body with at least 6 characters.'),
 ];

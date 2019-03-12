@@ -15,12 +15,18 @@ export default class ArticleController {
  * @returns {Object} class instance
  */
   static async createArticle(req, res) {
-    const { title, description, body } = req.body;
+    const images = req.images || [];
+    const {
+      title, description, body, slug
+    } = req.body;
     const { id } = req.user;
+    const taglist = req.body.taglist ? req.body.taglist.split(',') : [];
     try {
-      const user = await User.findOne(id, { where: { id } });
-      if (user) {
-        const result = await Article.create({ title, description, body });
+      const userExist = await User.findOne({ where: { id } });
+      if (userExist) {
+        const result = await Article.create({
+          title, description, body, slug, images, taglist
+        });
         return res.status(201).json({
           success: true,
           message: 'New article created successfully',
