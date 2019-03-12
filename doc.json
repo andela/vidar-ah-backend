@@ -188,6 +188,49 @@
         }
       },
       "patch": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Update user's profile ",
+        "description": "Update user's profile information",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Update user profile",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profile"
+            }
+          }
+        ],
+        "responses": {
+          "205": {
+            "description": "Returns updated profile"
+          },
+          "422": {
+            "description": "Required fields not present"
+          },
+          "401": {
+            "description": "Authentication error"
+          }
+        }
+      }
+    },
     "/articles": {
       "post": {
         "tags": [
@@ -274,6 +317,20 @@
       ]
     },
     "profile": {
+      "type": "object",
+      "properties": {
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        }
+      }
+    },
+    "articles": {
       "type": "object",
       "properties": {
         "title": {

@@ -37,6 +37,10 @@ module.exports = {
         msg: 'Article should have a body'
       }
     },
+    images: {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+      defaultValue: [],
+    },
     taglist: {
       type: Sequelize.ARRAY(Sequelize.STRING),
       defaultValue: []

@@ -3,6 +3,8 @@ import UserController from '../controllers/user';
 import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
+import addImages from '../middleware/addImage';
+import generateSlug from '../middleware/generateSlug';
 import isUserVerified from '../middleware/verifyUser';
 import ArticleController from '../controllers/articles';
 import {
@@ -29,7 +31,12 @@ apiRoutes.route('/verify/:verificationId')
   .get(UserController.verifyAccount);
 
 apiRoutes.route('/articles')
-  .post(Auth.verifyUser, isUserVerified, validateArticle, returnValidationErrors, createArticle);
+  .post(Auth.verifyUser, isUserVerified,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    generateSlug,
+    createArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
