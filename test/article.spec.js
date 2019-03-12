@@ -91,8 +91,8 @@ describe('ARTICLES', () => {
           expect(success).to.be.equal(false);
           expect(errors).to.be.an('Array');
           expect(errors[0]).to.be.equal('Article should have a title.');
-          expect(errors[1]).to.be.equal('Article should have a description.');
-          expect(errors[2]).to.be.equal('Description must be at least 6 characters long.');
+          expect(errors[1]).to.be.equal('Title should be at least 6 characters long.');
+          expect(errors[2]).to.be.equal('Article should have a description.');
           done(err);
         });
     });
@@ -110,10 +110,11 @@ describe('ARTICLES', () => {
           expect(success).to.be.equal(false);
           expect(errors).to.be.an('Array');
           expect(errors[0]).to.be.equal('Article should have a title.');
-          expect(errors[1]).to.be.equal('Article should have a description.');
-          expect(errors[2]).to.be.equal('Description must be at least 6 characters long.');
-          expect(errors[3]).to.be.equal('Article should have a body.');
-          expect(errors[4]).to.be.equal('Article should have a body with at least 6 characters long.');
+          expect(errors[1]).to.be.equal('Title should be at least 6 characters long.');
+          expect(errors[2]).to.be.equal('Article should have a description.');
+          expect(errors[3]).to.be.equal('Description should be at least 6 characters long.');
+          expect(errors[4]).to.be.equal('Article should have a body.');
+          expect(errors[5]).to.be.equal('Article should have a body with at least 6 characters.');
           done(err);
         });
     });

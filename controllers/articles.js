@@ -1,4 +1,4 @@
-import { Article, User } from '../models';
+import { Article } from '../models';
 
 /**
  * @class ArticleController
@@ -15,19 +15,21 @@ export default class ArticleController {
  * @returns {Object} class instance
  */
   static async createArticle(req, res) {
-    const { title, description, body } = req.body;
+    const images = req.images || [];
+    const {
+      title, description, body, slug
+    } = req.body;
+    const taglist = req.body.taglist ? req.body.taglist.split(',') : [];
     const { id } = req.user;
     try {
-      const user = await User.findOne(id, { where: { id } });
-      if (user) {
-        const result = await Article.create({ title, description, body });
-        return res.status(201).json({
-          success: true,
-          message: 'New article created successfully',
-          article: result,
-        });
-      }
-      return res.status(404).json({ success: false, message: 'User not found' });
+      const result = await Article.create({
+        title, description, body, slug, images, taglist, userId: id
+      });
+      return res.status(201).json({
+        success: true,
+        message: 'New article created successfully',
+        article: result,
+      });
     } catch (error) {
       return res.status(500).json({ success: false, error: [error.message] });
     }
