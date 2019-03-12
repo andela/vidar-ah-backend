@@ -41,6 +41,7 @@ apiRoutes.post(
   '/user/login',
   validateLogin,
   returnValidationErrors,
+  isUserVerified,
   UserController.loginUser,
 );
 

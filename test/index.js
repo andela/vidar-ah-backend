@@ -6,3 +6,4 @@ require('./profile.spec');
 require('./login.spec');
 require('./updateVerifiedStatusHelper.spec');
 require('./resetpassword.spec');
+require('./login.spec');

@@ -57,6 +57,44 @@
         }
       }
     },
+    "/user/login": {
+      "post": {
+        "description": "A user with valid email and password can log in successfully. Optionally, user can set a rememberMe property to true to stay logged in for a very long time.",
+        "summary": "successful login",
+        "tags": [
+          "login with email"
+        ],
+        "operationId": "UserLoginPost",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/successfulloginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
     "/userprofile": {
       "get": {
         "tags": [
@@ -265,6 +303,26 @@
           "format": "int64"
         }
       }
+    },
+    "successfulloginRequest": {
+      "title": "successfulloginRequest",
+      "example": {
+        "email": "testing123559@gmail.com",
+        "password": "testing"
+      },
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
     },
     "profile": {
       "type": "object",
