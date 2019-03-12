@@ -3,8 +3,10 @@ import UserController from '../controllers/user';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
 import isUserVerified from '../middleware/verifyUser';
+
 import {
   validateSignup,
+  validateLogin,
   validateProfileChange,
   returnValidationErrors
 } from '../middleware/validation';
@@ -26,6 +28,14 @@ apiRoutes.patch(
   validateProfileChange,
   returnValidationErrors,
   ProfileController.editProfile
+);
+
+apiRoutes.post(
+  '/user/login',
+  validateLogin,
+  returnValidationErrors,
+  isUserVerified,
+  UserController.loginUser
 );
 
 export default apiRoutes;
