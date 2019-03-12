@@ -18,7 +18,24 @@ export default (req, res, next) => {
   User.findOne({ where: { [fieldName]: fieldValue } })
     .then((foundUser) => {
       if (foundUser) {
-        const { dataValues: { verified } } = foundUser;
+        const {
+          id,
+          email,
+          username,
+          name,
+          verified,
+          verificationId,
+          bio
+        } = foundUser.dataValues;
+        const userObj = {
+          id,
+          email,
+          username,
+          name,
+          verified,
+          verificationId,
+          bio
+        };
         if (!verified) {
           return res.status(403).json({
             success: false,
@@ -27,6 +44,7 @@ export default (req, res, next) => {
             ]
           });
         }
+        req.user = userObj;
         return next();
       }
       return res.status(404).json({

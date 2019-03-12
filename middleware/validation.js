@@ -87,3 +87,18 @@ export const validateArticle = [
     .withMessage('Article should have a body with at least 6 characters.'),
 >>>>>>> ft-create-user-article-#164139686
 ];
+export const validateEmail = [
+  check('email')
+    .isEmail()
+    .withMessage('Email is invalid.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('No spaces are allowed in the email.')
+];
+
+export const validatePassword = [
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('No spaces are allowed in the password.')
+];
