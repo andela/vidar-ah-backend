@@ -11,10 +11,10 @@ const generateToken = id => jwt.sign({ id }, JWT_SECRET, { expiresIn: '24h' });
  * @class UserController
  *  @override
  * @export
- *
  */
 export default class UserController {
   /**
+<<<<<<< HEAD
    * @description - Creates a new user
    * @static
    *
@@ -25,6 +25,15 @@ export default class UserController {
    *
    * @returns {object} Class instance
    */
+=======
+     * @description - Creates a new user
+     * @static
+     * @param {object} req - HTTP Request
+     * @param {object} res - HTTP Response
+     * @memberof UserController
+     * @returns {object} Class instance
+     */
+>>>>>>> ft-create-user-article-#164139686
   static registerUser(req, res) {
     const {
       body: {
@@ -118,12 +127,9 @@ export default class UserController {
   /**
      * @description - Verifies a user's account
      * @static
-     *
      * @param {object} req - HTTP Request
      * @param {object} res - HTTP Response
-     *
      * @memberof UserController
-     *
      * @returns {object} Class instance
      */
   static verifyAccount(req, res) {

@@ -47,6 +47,7 @@ export const validateProfileChange = [
 
   check('bio')
     .isString()
+<<<<<<< HEAD
     .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.'),
 ];
 
@@ -62,4 +63,27 @@ export const validateLogin = [
     .withMessage('Please provide a valid password.')
     .custom(value => !/\s/.test(value))
     .withMessage('Please provide a valid password.'),
+=======
+    .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.')
+];
+
+export const validateArticle = [
+  check('title')
+    .exists()
+    .withMessage('Article should have a title.')
+    .isLength({ min: 6 })
+    .withMessage('Title should be at least 6 characters long.'),
+
+  check('description')
+    .exists()
+    .withMessage('Article should have a description.')
+    .isLength({ min: 6 })
+    .withMessage('Description should be at least 6 characters long.'),
+
+  check('body')
+    .exists()
+    .withMessage('Article should have a body.')
+    .isLength({ min: 6 })
+    .withMessage('Article should have a body with at least 6 characters.'),
+>>>>>>> ft-create-user-article-#164139686
 ];
