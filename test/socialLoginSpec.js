@@ -19,6 +19,7 @@ nock('https://www.facebook.com/')
 describe('google strategy', () => {
   it('should call the google route', async () => {
     const response = await chai.request(index).get('/api/v1/auth/google');
+    // eslint-disable-next-line no-unused-expressions
     expect(response.body).to.be.empty;
   });
 });
