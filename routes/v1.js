@@ -1,5 +1,6 @@
 import express from 'express';
 import UserController from '../controllers/user';
+import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
 import isUserVerified from '../middleware/verifyUser';
@@ -14,9 +15,6 @@ import {
   validatePassword,
   returnValidationErrors
 } from '../middleware/validation';
-import passportGoogle from '../auth/google';
-import passportFacebook from '../auth/facebook';
-import passportTwitter from '../auth/twitter';
 
 const apiRoutes = express.Router();
 
@@ -47,14 +45,14 @@ apiRoutes.post(
 
 apiRoutes.get(
   '/auth/google',
-  passportGoogle.authenticate('google', {
+  passport.authenticate('google', {
     scope: ['email', 'profile']
   })
 );
 
 apiRoutes.get(
   '/auth/google/callback',
-  passportGoogle.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
     res.redirect('/');
   }
@@ -62,31 +60,19 @@ apiRoutes.get(
 
 apiRoutes.get(
   '/auth/facebook',
-  passportFacebook.authenticate('facebook', {
+  passport.authenticate('facebook', {
     scope: ['email']
   })
 );
 
 apiRoutes.get(
   '/auth/facebook/callback',
-  passportFacebook.authenticate('facebook', { failureRedirect: '/login' }),
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
   (req, res) => {
     res.redirect('/');
   }
 );
 
-apiRoutes.get(
-  '/auth/twitter',
-  passportTwitter.authenticate('twitter', { scope: ['email'] })
-);
-
-apiRoutes.get(
-  '/auth/twitter/callback',
-  passportTwitter.authenticate('twitter', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/');
-  }
-);
 
 apiRoutes.post(
   '/resetpassword',
