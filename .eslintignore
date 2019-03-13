@@ -1,0 +1,9 @@
+/dist/**
+/mochawesome-report/**
+/node_modules/**
+/.env/**
+/coverage/**
+.eslintrc.json
+package.json
+package-lock.json
+doc.json

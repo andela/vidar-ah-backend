@@ -8,6 +8,7 @@ import isUserVerified from '../middleware/verifyUser';
 import ArticleController from '../controllers/articles';
 import {
   validateSignup,
+  validateLogin,
   validateProfileChange,
   returnValidationErrors,
   validateArticle,
@@ -35,5 +36,13 @@ apiRoutes.route('/articles')
     returnValidationErrors,
     generateSlug,
     createArticle);
+
+apiRoutes.post(
+  '/user/login',
+  validateLogin,
+  returnValidationErrors,
+  isUserVerified,
+  UserController.loginUser
+);
 
 export default apiRoutes;

@@ -69,3 +69,17 @@ export const validateArticle = [
     .isLength({ min: 6 })
     .withMessage('Article should have a body with at least 6 characters.'),
 ];
+
+export const validateLogin = [
+  check('email')
+    .isEmail()
+    .withMessage('Please provide a valid email.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('Please provide a valid email.'),
+
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Please provide a valid password.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('Please provide a valid password.'),
+];

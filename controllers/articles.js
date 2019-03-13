@@ -35,11 +35,11 @@ export default class ArticleController {
     }
   }
 
-  static async searchForArticles(req, res) {
-    const { 
-      query: {
-        category:
-      }
-    } = req;
-  }
+  // static async searchForArticles(req, res) {
+  //   const { 
+  //     query: {
+  //       category:
+  //     }
+  //   } = req;
+  // }
 }
