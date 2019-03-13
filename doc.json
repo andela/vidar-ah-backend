@@ -231,7 +231,7 @@
         }
       }
     },
-    "/resetpassword": {
+    "/requestpasswordreset": {
       "post": {
         "tags": [
           "Reset password"
@@ -252,7 +252,7 @@
             "description": "Reset user password",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/resetpassword"
+              "$ref": "#/definitions/requestPasswordReset"
             }
           }
         ],
@@ -269,13 +269,13 @@
         }
       }
     },
-    "/verifypasswordkey/{key}": {
-      "get": {
+    "/resetpassword/{key}": {
+      "post": {
         "tags": [
           "Reset password"
         ],
-        "summary": "Verify user reset password key",
-        "description": "Verify user reset password key",
+        "summary": "Verify user reset password key and change password",
+        "description": "Verify user reset password key and change password",
         "consumes": [
           "application/x-www-form-urlencoded",
           "application/json"
@@ -285,12 +285,15 @@
         ],
         "parameters": [
           {
-            "in": "path",
+            "in": "body",
             "name": "key",
             "description": "key sent with the link to the user email",
             "required": true,
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "schema": {
+              "$ref": "#/definitions/resetPassword"
+            }
           }
         ],
         "responses": {
@@ -306,15 +309,15 @@
         }
       }
     },
-    "/changepassword": {
+    "/articles": {
       "post": {
         "tags": [
-          "Reset password"
+          "Articles"
         ],
-        "summary": "Reset user password",
-        "description": "Reset user password and delete password token",
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
         "consumes": [
-          "application/x-www-form-urlencoded",
           "application/json"
         ],
         "produces": [
@@ -322,21 +325,28 @@
         ],
         "parameters": [
           {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
             "in": "body",
-            "name": "Request body",
-            "description": "Reset user password",
+            "name": "body",
+            "description": "Update user profile",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/resetpassword3"
+              "$ref": "#/definitions/articles"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Password changed successfully."
+            "description": "New article created successfully"
           },
           "422": {
-            "description": "Password must be at least 6 characters long."
+            "description": "Invalid title/description/body supplied"
           }
         }
       }
@@ -398,7 +408,7 @@
         }
       }
     },
-    "resetpassword": {
+    "requestPasswordReset": {
       "type": "object",
       "properties": {
         "email": {
@@ -406,17 +416,31 @@
         }
       }
     },
-    "changepassword": {
+    "resetPassword": {
       "type": "object",
       "properties": {
         "password": {
           "type": "string"
         }
       }
+    },
+    "articles": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
+    "externalDocs": {
+      "description": "Find out more about Swagger",
+      "url": "http://swagger.io"
     }
-  },
-  "externalDocs": {
-    "description": "Find out more about Swagger",
-    "url": "http://swagger.io"
   }
 }

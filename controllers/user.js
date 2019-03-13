@@ -16,20 +16,16 @@ const generateToken = (id, expiresIn = '24h') => jwt.sign({ id }, JWT_SECRET, { 
  * @class UserController
  *  @override
  * @export
- *
  */
 export default class UserController {
   /**
-   * @description - Creates a new user
-   * @static
-   *
-   * @param {object} req - HTTP Request
-   * @param {object} res - HTTP Response
-   *
-   * @memberof UserController
-   *
-   * @returns {object} Class instance
-   */
+     * @description - Creates a new user
+     * @static
+     * @param {object} req - HTTP Request
+     * @param {object} res - HTTP Response
+     * @memberof UserController
+     * @returns {object} Class instance
+     */
   static registerUser(req, res) {
     const {
       body: {
@@ -108,16 +104,13 @@ export default class UserController {
   }
 
   /**
-   * @description - Verifies a user's account
-   * @static
-   *
-   * @param {object} req - HTTP Request
-   * @param {object} res - HTTP Response
-   *
-   * @memberof UserController
-   *
-   * @returns {object} Class instance
-   */
+     * @description - Verifies a user's account
+     * @static
+     * @param {object} req - HTTP Request
+     * @param {object} res - HTTP Response
+     * @memberof UserController
+     * @returns {object} Class instance
+     */
   static verifyAccount(req, res) {
     const {
       params: { verificationId }
@@ -150,19 +143,16 @@ export default class UserController {
    * @param {object} res http response object
    * @returns {object} response
    */
-  static async resetPassword(req, res) {
+  static async requestPasswordReset(req, res) {
     const { email } = req.body;
     const passwordResetToken = shortId.generate();
     try {
       // save password reset token to db
       await User.update(
-        { passwordResetToken },
-        { where: { email } }
-      );
-
-      // save token expiration date (1 hr) to db
-      await User.update(
-        { passwordResetTokenExpires: Date.now() + (60 * 60 * 1000) },
+        {
+          passwordResetToken,
+          passwordResetTokenExpires: Date.now() + (60 * 60 * 1000)
+        },
         { where: { email } }
       );
     } catch (error) {
@@ -177,7 +167,7 @@ export default class UserController {
     const emailPayload = {
       name,
       email,
-      link: `${HOST_URL}/api/v1/verifypasswordkey/${passwordResetToken}`,
+      link: `${HOST_URL}/api/v1/resetpassword/${passwordResetToken}`,
       subject: 'Reset your password',
       message: 'reset your password'
     };
@@ -195,7 +185,7 @@ export default class UserController {
    * @param {object} res http response object
    * @returns {object} response
    */
-  static async checkPasswordToken(req, res) {
+  static async resetPassword(req, res) {
     const { params: { passwordResetToken } } = req;
     const { password } = req.body;
     const getPasswordResetToken = await User.findOne({ where: { passwordResetToken } });
@@ -212,9 +202,12 @@ export default class UserController {
       });
     }
     try {
-      // save new password to db
+      // save new password to db and remove password reset token
       await User.update(
-        { password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)) },
+        {
+          password,
+          passwordResetToken: ''
+        },
         { where: { passwordResetToken } }
       );
     } catch (error) {
@@ -224,18 +217,6 @@ export default class UserController {
       });
     }
 
-    try {
-      // delete password token
-      await User.update(
-        { passwordResetToken: '' },
-        { where: { passwordResetToken } }
-      );
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        errors: [error.message]
-      });
-    }
     return res.status(201).json({
       success: true,
       message: 'Password changed successfully.'

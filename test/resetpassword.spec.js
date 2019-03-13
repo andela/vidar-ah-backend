@@ -40,7 +40,7 @@ describe('Make a request to reset password with valid details', () => {
   it('Returns a success message.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/resetpassword')
+      .post('/api/v1/requestpasswordreset')
       .send(validUser2)
       .end((err, res) => {
         const { status, body: { message, success } } = res;
@@ -56,7 +56,7 @@ describe('Make a request to reset password with an empty email', () => {
   it('Returns an invalid error.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/resetpassword')
+      .post('/api/v1/requestpasswordreset')
       .send({ email: '' })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -73,7 +73,7 @@ describe('Make a request to reset password with an invalid email', () => {
   it('Returns an invalid error.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/resetpassword')
+      .post('/api/v1/requestpasswordreset')
       .send(invalidUser)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -89,7 +89,7 @@ describe('Make a request to reset password with an invalid email', () => {
 describe('Make a request to verify password reset token with a valid token and password', () => {
   it('Returns an success message.', async () => {
     const passwordResetToken = await getPasswordResetToken(validUser2.email);
-    const url = `/api/v1/verifypasswordkey/${passwordResetToken}`;
+    const url = `/api/v1/resetpassword/${passwordResetToken}`;
     chai
       .request(app)
       .post(url)
@@ -106,7 +106,7 @@ describe('Make a request to verify password reset token with a valid token and p
 describe('Make a request to verify password reset token with a valid token and invalid password', () => {
   it('Returns an success message.', async () => {
     const passwordResetToken = await getPasswordResetToken(validUser2.email);
-    const url = `/api/v1/verifypasswordkey/${passwordResetToken}`;
+    const url = `/api/v1/resetpassword/${passwordResetToken}`;
     chai
       .request(app)
       .post(url)
@@ -125,7 +125,7 @@ describe('Make a request to verify password reset token with an invalid token an
   it('Returns an error message.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/verifypasswordkey/blabla')
+      .post('/api/v1/resetpassword/blabla')
       .send({ password: 'abcdef' })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
