@@ -6,7 +6,6 @@ import Auth from '../middleware/auth';
 import isUserVerified from '../middleware/verifyUser';
 import PasswordReset from '../controllers/PasswordReset';
 import VerifyPasswordToken from '../controllers/VerifyPasswordToken';
-import ChangePassword from '../controllers/ChangePassword';
 import {
   validateSignup,
   validateLogin,
@@ -105,17 +104,11 @@ apiRoutes.post(
   PasswordReset.resetPassword,
 );
 
-apiRoutes.get(
-  '/verifypasswordkey/:passwordResetToken',
-  VerifyPasswordToken.checkPasswordToken
-);
-
 apiRoutes.post(
-  '/changepassword',
-  Auth.verifyUser,
+  '/verifypasswordkey/:passwordResetToken',
   validatePassword,
   returnValidationErrors,
-  ChangePassword.changePassword,
+  VerifyPasswordToken.checkPasswordToken
 );
 
 export default apiRoutes;
