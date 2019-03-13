@@ -11,7 +11,6 @@ import {
 } from '../middleware/validation';
 import PasswordReset from '../controllers/PasswordReset';
 import VerifyPasswordToken from '../controllers/VerifyPasswordToken';
-import ChangePassword from '../controllers/ChangePassword';
 import Auth from '../middleware/auth';
 
 const apiRoutes = express.Router();
@@ -41,17 +40,11 @@ apiRoutes.post(
   PasswordReset.resetPassword,
 );
 
-apiRoutes.get(
-  '/verifypasswordkey/:passwordResetToken',
-  VerifyPasswordToken.checkPasswordToken
-);
-
 apiRoutes.post(
-  '/changepassword',
-  Auth.verifyUser,
+  '/verifypasswordkey/:passwordResetToken',
   validatePassword,
   returnValidationErrors,
-  ChangePassword.changePassword,
+  VerifyPasswordToken.checkPasswordToken
 );
 
 export default apiRoutes;
