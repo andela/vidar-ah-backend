@@ -38,3 +38,15 @@ export const profileDetails = {
   lastname: 'NewLastName',
   bio: 'I love playing basketball'
 };
+
+export const newUser = {
+  email: 'testing123559@gmail.com',
+  password: 'testing',
+  name: 'testing testing',
+  username: 'testing123559'
+};
+
+export const validLoginUser = {
+  email: 'testing123559@gmail.com',
+  password: 'testing'
+};
