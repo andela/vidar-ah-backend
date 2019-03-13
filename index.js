@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import cors from 'cors';
+import passport from 'passport';
 import errorhandler from 'errorhandler';
 import dotenv from 'dotenv';
 import swaggerUI from 'swagger-ui-express';
@@ -22,6 +23,8 @@ app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use(passport.initialize());
+
 // configure router
 app.use('/api', routes);
 
@@ -31,7 +34,9 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));
 if (!isProduction) {
   app.use(errorhandler());
 }
-
+app.get('/', (req, res) => res.status(200).json({
+  message: 'Welcome to Author Haven'
+}));
 // / catch 404 and forward to error handler
 app.all('*', (req, res) => res.status(404).json({
   error: 'Page not found.',
