@@ -14,7 +14,6 @@ const generateToken = (id, expiresIn = '24h') => jwt.sign({ id }, JWT_SECRET, { 
  */
 export default class UserController {
   /**
-
      * @description - Creates a new user
      * @static
      * @param {object} req - HTTP Request

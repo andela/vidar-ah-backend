@@ -1,17 +1,14 @@
 import express from 'express';
 import UserController from '../controllers/user';
+import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
 import PasswordReset from '../controllers/PasswordReset';
 import VerifyPasswordToken from '../controllers/VerifyPasswordToken';
-import ChangePassword from '../controllers/ChangePassword';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
 import isUserVerified from '../middleware/verifyUser';
 import ArticleController from '../controllers/articles';
-import passportGoogle from '../auth/google';
-import passportFacebook from '../auth/facebook';
-import passportTwitter from '../auth/twitter';
 import {
   validateSignup,
   validateLogin,
@@ -22,18 +19,15 @@ import {
   validateArticle
 } from '../middleware/validation';
 
+const apiRoutes = express.Router();
 const { createArticle } = ArticleController;
 
-const apiRoutes = express.Router();
-
 apiRoutes.post('/user', validateSignup, returnValidationErrors, UserController.registerUser);
-
 apiRoutes.get('/verify/:verificationId', UserController.verifyAccount);
 
 // Profiles route
 
 apiRoutes.get('/userprofile', Auth.verifyUser, isUserVerified, ProfileController.viewProfile);
-
 apiRoutes.patch(
   '/userprofile',
   Auth.verifyUser,
@@ -53,14 +47,14 @@ apiRoutes.post(
 
 apiRoutes.get(
   '/auth/google',
-  passportGoogle.authenticate('google', {
+  passport.authenticate('google', {
     scope: ['email', 'profile']
   })
 );
 
 apiRoutes.get(
   '/auth/google/callback',
-  passportGoogle.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
     res.redirect('/');
   }
@@ -68,27 +62,14 @@ apiRoutes.get(
 
 apiRoutes.get(
   '/auth/facebook',
-  passportFacebook.authenticate('facebook', {
+  passport.authenticate('facebook', {
     scope: ['email']
   })
 );
 
 apiRoutes.get(
   '/auth/facebook/callback',
-  passportFacebook.authenticate('facebook', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/');
-  }
-);
-
-apiRoutes.get(
-  '/auth/twitter',
-  passportTwitter.authenticate('twitter', { scope: ['email'] })
-);
-
-apiRoutes.get(
-  '/auth/twitter/callback',
-  passportTwitter.authenticate('twitter', { failureRedirect: '/login' }),
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
   (req, res) => {
     res.redirect('/');
   }
@@ -121,17 +102,11 @@ apiRoutes.post(
   PasswordReset.resetPassword,
 );
 
-apiRoutes.get(
-  '/verifypasswordkey/:passwordResetToken',
-  VerifyPasswordToken.checkPasswordToken
-);
-
 apiRoutes.post(
-  '/changepassword',
-  Auth.verifyUser,
+  '/verifypasswordkey/:passwordResetToken',
   validatePassword,
   returnValidationErrors,
-  ChangePassword.changePassword,
+  VerifyPasswordToken.checkPasswordToken
 );
 
 export default apiRoutes;

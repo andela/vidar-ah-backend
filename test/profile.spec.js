@@ -94,11 +94,7 @@ describe('View default profile details', () => {
 
 describe('Update profile details', () => {
   before(() => updateVerifiedStatus(validUser.email));
-<<<<<<< HEAD
   it('returns successfully updated profile details', (done) => {
-=======
-  it('returns successfully profile details', (done) => {
->>>>>>> ft-create-user-article-#164139686
     chai
       .request(app)
       .patch('/api/v1/userprofile')

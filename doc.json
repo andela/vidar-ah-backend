@@ -57,6 +57,66 @@
         }
       }
     },
+    "/auth/google": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "google api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/twitter": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "twitter api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/facebook": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "facebook api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
     "/user/login": {
       "post": {
         "description": "A user with valid email and password can log in successfully. Optionally, user can set a rememberMe property to true to stay logged in for a very long time.",
@@ -128,15 +188,13 @@
         }
       },
       "patch": {
-    "/articles": {
-      "post": {
         "tags": [
-          "Articles"
+          "Profile"
         ],
-        "summary": "Create an article",
-        "description": "",
-        "operationId": "addArticle",
+        "summary": "Update user's profile ",
+        "description": "Update user's profile information",
         "consumes": [
+          "application/x-www-form-urlencoded",
           "application/json"
         ],
         "produces": [
@@ -144,7 +202,7 @@
         ],
         "parameters": [
           {
-            "name": "authorization",
+            "name": "x-access-token",
             "in": "header",
             "description": "A token to verify the user",
             "required": true,
@@ -152,20 +210,23 @@
           },
           {
             "in": "body",
-            "name": "body",
+            "name": "Request body",
             "description": "Update user profile",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/articles"
+              "$ref": "#/definitions/profile"
             }
           }
         ],
         "responses": {
-          "201": {
-            "description": "New article created successfully"
+          "205": {
+            "description": "Returns updated profile"
           },
           "422": {
-            "description": "Invalid title/description/body supplied"
+            "description": "Required fields not present"
+          },
+          "401": {
+            "description": "Authentication error"
           }
         }
       }
@@ -279,6 +340,48 @@
           }
         }
       }
+    },
+    "/articles": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update user profile",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New article created successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -324,6 +427,19 @@
       ]
     },
     "profile": {
+      "type": "object",
+      "properties": {
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        }
+      }
+    },
     "articles": {
       "type": "object",
       "properties": {
@@ -337,70 +453,10 @@
           "type": "string"
         }
       }
-    },
-    "/auth/google": {
-      "get": {
-        "tags": [
-          "authentication"
-        ],
-        "summary": "User registration or login",
-        "description": "A Social platform for the creative at heart",
-        "consumes": [
-          "google api"
-        ],
-        "produces": [
-          "authorization token"
-        ],
-        "responses": {
-          "200": {
-            "description": "Signup or login successful"
-          }
-        }
-      }
-    },
-    "/auth/twitter": {
-      "get": {
-        "tags": [
-          "authentication"
-        ],
-        "summary": "User registration or login",
-        "description": "A Social platform for the creative at heart",
-        "consumes": [
-          "twitter api"
-        ],
-        "produces": [
-          "authorization token"
-        ],
-        "responses": {
-          "200": {
-            "description": "Signup or login successful"
-          }
-        }
-      }
-    },
-    "/auth/facebook": {
-      "get": {
-        "tags": [
-          "authentication"
-        ],
-        "summary": "User registration or login",
-        "description": "A Social platform for the creative at heart",
-        "consumes": [
-          "facebook api"
-        ],
-        "produces": [
-          "authorization token"
-        ],
-        "responses": {
-          "200": {
-            "description": "Signup or login successful"
-          }
-        }
-      }
-    },
-  "externalDocs": {
-      "description": "Find out more about Swagger",
-      "url": "http://swagger.io"
     }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
   }
 }

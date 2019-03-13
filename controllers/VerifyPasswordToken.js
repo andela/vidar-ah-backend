@@ -1,9 +1,8 @@
 import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { User } from '../models';
 
 dotenv.config();
-const { JWT_SECRET } = process.env;
 
 /**
  * Verify password token
@@ -17,6 +16,7 @@ class VerifyPasswordToken {
    */
   static async checkPasswordToken(req, res) {
     const { params: { passwordResetToken } } = req;
+    const { password } = req.body;
     const getPasswordResetToken = await User.findOne({ where: { passwordResetToken } });
     if (!getPasswordResetToken) {
       return res.status(404).json({
@@ -30,16 +30,34 @@ class VerifyPasswordToken {
         errors: ['Your link has expired. Please try to reset password again.']
       });
     }
+    try {
+      // save new password to db
+      await User.update(
+        { password: bcrypt.hashSync(password, bcrypt.genSaltSync(10)) },
+        { where: { passwordResetToken } }
+      );
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
 
-    const token = jwt.sign(
-      { id: passwordResetToken },
-      JWT_SECRET,
-      { expiresIn: '1h' },
-    );
-    return res.status(200).json({
+    try {
+      // delete password token
+      await User.update(
+        { passwordResetToken: '' },
+        { where: { passwordResetToken } }
+      );
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+    return res.status(201).json({
       success: true,
-      message: 'You can now reset your password.',
-      token
+      message: 'Password changed successfully.'
     });
   }
 }
