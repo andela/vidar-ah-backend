@@ -1,3 +1,6 @@
+import './user.spec';
+import './socialLoginSpec';
+
 require('./user.spec');
 require('./article.spec');
 require('./profile.spec');

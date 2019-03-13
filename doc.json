@@ -57,44 +57,62 @@
         }
       }
     },
-    "/articles": {
-      "post": {
+    "/auth/google": {
+      "get": {
         "tags": [
-          "Articles"
+          "authentication"
         ],
-        "summary": "Create an article",
-        "description": "",
-        "operationId": "addArticle",
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
         "consumes": [
-          "application/json"
+          "google api"
         ],
         "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "description": "A token to verify the user",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Update user profile",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/articles"
-            }
-          }
+          "authorization token"
         ],
         "responses": {
-          "201": {
-            "description": "New article created successfully"
-          },
-          "422": {
-            "description": "Invalid title/description/body supplied"
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/twitter": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "twitter api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/facebook": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "facebook api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
           }
         }
       }
@@ -133,6 +151,48 @@
           "200": {
             "description": "",
             "headers": {}
+          }
+        }
+      }
+    },
+    "/articles": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update user profile",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New article created successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
           }
         }
       }
