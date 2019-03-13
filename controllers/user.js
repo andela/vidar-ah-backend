@@ -11,20 +11,16 @@ const generateToken = (id, expiresIn = '24h') => jwt.sign({ id }, JWT_SECRET, { 
  * @class UserController
  *  @override
  * @export
- *
  */
 export default class UserController {
   /**
-   * @description - Creates a new user
-   * @static
-   *
-   * @param {object} req - HTTP Request
-   * @param {object} res - HTTP Response
-   *
-   * @memberof UserController
-   *
-   * @returns {object} Class instance
-   */
+     * @description - Creates a new user
+     * @static
+     * @param {object} req - HTTP Request
+     * @param {object} res - HTTP Response
+     * @memberof UserController
+     * @returns {object} Class instance
+     */
   static registerUser(req, res) {
     const {
       body: {
@@ -74,33 +70,7 @@ export default class UserController {
    *
    * @returns {object} Class instance
    */
-  // static async loginUser(req, res) {
-  //   const {
-  //     body: { rememberMe, password },
-  //     user
-  //   } = req;
-  //   const passwordMatch = compareSync(password, user.password);
-  //   if (!passwordMatch) {
-  //     return res.status(401).json({
-  //       success: false,
-  //       errors: ['Password is incorrect. * Forgotten your password?']
-  //     });
-  //   }
-  //   const expiresIn = rememberMe ? '240h' : '24h';
-  //   try {
-  //     const token = generateToken(user.id, expiresIn);
-  //     return res.status(200).json({
-  //       success: true,
-  //       message: `Welcome ${user.username}`,
-  //       token
-  //     });
-  //   } catch (err) {
-  //     return res.status(500).json({
-  //       sucess: false,
-  //       errors: [err.message]
-  //     });
-  //   }
-  // }
+
 
   /**
    * @description - Verifies a user's account
@@ -157,12 +127,9 @@ export default class UserController {
   /**
      * @description - Verifies a user's account
      * @static
-     *
      * @param {object} req - HTTP Request
      * @param {object} res - HTTP Response
-     *
      * @memberof UserController
-     *
      * @returns {object} Class instance
      */
   static verifyAccount(req, res) {

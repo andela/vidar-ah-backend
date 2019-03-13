@@ -13,19 +13,23 @@ import {
   validateProfileChange,
   validateEmail,
   validatePassword,
-  returnValidationErrors
+  returnValidationErrors,
+  validateArticle
 } from '../middleware/validation';
+import addImages from '../middleware/addImage';
+import generateSlug from '../middleware/generateSlug';
+import ArticleController from '../controllers/articles';
+
 
 const apiRoutes = express.Router();
+const { createArticle } = ArticleController;
 
 apiRoutes.post('/user', validateSignup, returnValidationErrors, UserController.registerUser);
-
 apiRoutes.get('/verify/:verificationId', UserController.verifyAccount);
 
 // Profiles route
 
 apiRoutes.get('/userprofile', Auth.verifyUser, isUserVerified, ProfileController.viewProfile);
-
 apiRoutes.patch(
   '/userprofile',
   Auth.verifyUser,
@@ -73,6 +77,25 @@ apiRoutes.get(
   }
 );
 
+
+apiRoutes.route('/user')
+  .post(validateSignup, returnValidationErrors, UserController.registerUser);
+
+apiRoutes.route('/userprofile')
+  .get(Auth.verifyUser, isUserVerified, ProfileController.viewProfile)
+  .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
+    returnValidationErrors, ProfileController.editProfile);
+
+apiRoutes.route('/verify/:verificationId')
+  .get(UserController.verifyAccount);
+
+apiRoutes.route('/articles')
+  .post(Auth.verifyUser, isUserVerified,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    generateSlug,
+    createArticle);
 
 apiRoutes.post(
   '/resetpassword',
