@@ -128,13 +128,15 @@
         }
       },
       "patch": {
+    "/articles": {
+      "post": {
         "tags": [
-          "Profile"
+          "Articles"
         ],
-        "summary": "Update user's profile ",
-        "description": "Update user's profile information",
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
         "consumes": [
-          "application/x-www-form-urlencoded",
           "application/json"
         ],
         "produces": [
@@ -142,7 +144,7 @@
         ],
         "parameters": [
           {
-            "name": "x-access-token",
+            "name": "authorization",
             "in": "header",
             "description": "A token to verify the user",
             "required": true,
@@ -150,23 +152,20 @@
           },
           {
             "in": "body",
-            "name": "Request body",
+            "name": "body",
             "description": "Update user profile",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/profile"
+              "$ref": "#/definitions/articles"
             }
           }
         ],
         "responses": {
-          "205": {
-            "description": "Returns updated profile"
+          "201": {
+            "description": "New article created successfully"
           },
           "422": {
-            "description": "Required fields not present"
-          },
-          "401": {
-            "description": "Authentication error"
+            "description": "Invalid title/description/body supplied"
           }
         }
       }
@@ -325,15 +324,16 @@
       ]
     },
     "profile": {
+    "articles": {
       "type": "object",
       "properties": {
-        "firstname": {
+        "title": {
           "type": "string"
         },
-        "lastname": {
+        "description": {
           "type": "string"
         },
-        "bio": {
+        "body": {
           "type": "string"
         }
       }
@@ -398,25 +398,9 @@
         }
       }
     },
-        "resetpassword": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string"
-            }
-          }
-        },
-        "changepassword": {
-          "type": "object",
-          "properties": {
-            "password": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "externalDocs": {
-        "description": "Find out more about Swagger",
-        "url": "http://swagger.io"
-      }
+  "externalDocs": {
+      "description": "Find out more about Swagger",
+      "url": "http://swagger.io"
     }
+  }
+}

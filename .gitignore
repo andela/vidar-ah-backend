@@ -46,8 +46,6 @@ dist/
 
 # Ignore vscode files
 .vscode/
-<<<<<<< HEAD
-=======
+
 #coveralls code coverage reports
 .nyc_output/
->>>>>>> ft-create-user-article-#164139686

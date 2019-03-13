@@ -2,22 +2,27 @@ import express from 'express';
 import UserController from '../controllers/user';
 import ProfileController from '../controllers/profile';
 import Auth from '../middleware/auth';
-<<<<<<< HEAD
-import isUserVerified from '../middleware/verifyUser';
 import PasswordReset from '../controllers/PasswordReset';
 import VerifyPasswordToken from '../controllers/VerifyPasswordToken';
 import ChangePassword from '../controllers/ChangePassword';
+import addImages from '../middleware/addImage';
+import generateSlug from '../middleware/generateSlug';
+import isUserVerified from '../middleware/verifyUser';
+import ArticleController from '../controllers/articles';
+import passportGoogle from '../auth/google';
+import passportFacebook from '../auth/facebook';
+import passportTwitter from '../auth/twitter';
 import {
   validateSignup,
   validateLogin,
   validateProfileChange,
   validateEmail,
   validatePassword,
-  returnValidationErrors
+  returnValidationErrors,
+  validateArticle
 } from '../middleware/validation';
-import passportGoogle from '../auth/google';
-import passportFacebook from '../auth/facebook';
-import passportTwitter from '../auth/twitter';
+
+const { createArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -88,21 +93,6 @@ apiRoutes.get(
     res.redirect('/');
   }
 );
-=======
-import addImages from '../middleware/addImage';
-import generateSlug from '../middleware/generateSlug';
-import isUserVerified from '../middleware/verifyUser';
-import ArticleController from '../controllers/articles';
-import {
-  validateSignup,
-  validateProfileChange,
-  returnValidationErrors,
-  validateArticle,
-} from '../middleware/validation';
-
-const { createArticle } = ArticleController;
-
-const apiRoutes = express.Router();
 
 apiRoutes.route('/user')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
@@ -122,7 +112,6 @@ apiRoutes.route('/articles')
     returnValidationErrors,
     generateSlug,
     createArticle);
->>>>>>> ft-create-user-article-#164139686
 
 apiRoutes.post(
   '/resetpassword',
