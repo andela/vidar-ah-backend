@@ -11,20 +11,16 @@ const generateToken = (id, expiresIn = '24h') => jwt.sign({ id }, JWT_SECRET, { 
  * @class UserController
  *  @override
  * @export
- *
  */
 export default class UserController {
   /**
-   * @description - Creates a new user
-   * @static
-   *
-   * @param {object} req - HTTP Request
-   * @param {object} res - HTTP Response
-   *
-   * @memberof UserController
-   *
-   * @returns {object} Class instance
-   */
+     * @description - Creates a new user
+     * @static
+     * @param {object} req - HTTP Request
+     * @param {object} res - HTTP Response
+     * @memberof UserController
+     * @returns {object} Class instance
+     */
   static registerUser(req, res) {
     const {
       body: {
@@ -103,16 +99,13 @@ export default class UserController {
   }
 
   /**
-   * @description - Verifies a user's account
-   * @static
-   *
-   * @param {object} req - HTTP Request
-   * @param {object} res - HTTP Response
-   *
-   * @memberof UserController
-   *
-   * @returns {object} Class instance
-   */
+     * @description - Verifies a user's account
+     * @static
+     * @param {object} req - HTTP Request
+     * @param {object} res - HTTP Response
+     * @memberof UserController
+     * @returns {object} Class instance
+     */
   static verifyAccount(req, res) {
     const {
       params: { verificationId }
