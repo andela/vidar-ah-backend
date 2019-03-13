@@ -83,3 +83,9 @@ export const validateLogin = [
     .custom(value => !/\s/.test(value))
     .withMessage('Please provide a valid password.'),
 ];
+
+export const validateSearch = [
+  check('term')
+    .isString()
+    .withMessage('Please provide a valid search term.')
+];

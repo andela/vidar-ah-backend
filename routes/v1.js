@@ -13,6 +13,7 @@ import {
   validateProfileChange,
   returnValidationErrors,
   validateArticle,
+  validateSearch
 } from '../middleware/validation';
 
 const { createArticle } = ArticleController;
@@ -74,6 +75,18 @@ apiRoutes.post(
   returnValidationErrors,
   isUserVerified,
   UserController.loginUser
+);
+
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
 );
 
 export default apiRoutes;
