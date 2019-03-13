@@ -44,17 +44,17 @@ module.exports = (sequelize, DataTypes) => {
     taglist: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: []
-    }
-  }, {
-    classMethods: {
-      associate(models) {
-        Article.belongsTo(models.User, {
-          foreignKey: 'userId',
-          onDelete: 'CASCADE',
-        });
-      }
-    }
-  });
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+    },
+  }, {});
 
+  Article.associate = (models) => {
+    Article.belongsTo(models.User, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE',
+    });
+  };
   return Article;
 };
