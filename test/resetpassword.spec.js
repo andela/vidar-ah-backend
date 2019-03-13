@@ -1,5 +1,4 @@
 // Require the dependencies
-import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
@@ -87,50 +86,13 @@ describe('Make a request to reset password with an invalid email', () => {
   });
 });
 
-describe('Make a request to verify password reset token with a valid token', () => {
+describe('Make a request to verify password reset token with a valid token and password', () => {
   it('Returns an success message.', async () => {
     const passwordResetToken = await getPasswordResetToken(validUser2.email);
     const url = `/api/v1/verifypasswordkey/${passwordResetToken}`;
     chai
       .request(app)
-      .get(url)
-      .end((err, res) => {
-        const { status, body: { message, success } } = res;
-        expect(status).to.be.equal(200);
-        expect(success).to.be.equal(true);
-        expect(message).to.be.equal('You can now reset your password.');
-      });
-  });
-});
-
-describe('Make a request to verify password reset token with an invalid token', () => {
-  it('Returns an error message.', (done) => {
-    chai
-      .request(app)
-      .get('/api/v1/verifypasswordkey/blabla')
-      .end((err, res) => {
-        const { status, body: { errors, success } } = res;
-        expect(status).to.be.equal(404);
-        expect(success).to.be.equal(false);
-        expect(errors).to.be.an('Array');
-        expect(errors[0]).to.be.equal('Password reset token not found');
-        done(err);
-      });
-  });
-});
-
-describe('Make a request to change password with a valid token', () => {
-  it('Returns a success message.', async () => {
-    const passwordResetToken = await getPasswordResetToken(validUser2.email);
-    const token = jwt.sign(
-      { id: passwordResetToken },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' },
-    );
-    chai
-      .request(app)
-      .post('/api/v1/changepassword')
-      .set('x-access-token', token)
+      .post(url)
       .send({ password: 'abcdef' })
       .end((err, res) => {
         const { status, body: { message, success } } = res;
@@ -141,16 +103,36 @@ describe('Make a request to change password with a valid token', () => {
   });
 });
 
-describe('Make a request to change password with an invalid token', () => {
+describe('Make a request to verify password reset token with a valid token and invalid password', () => {
+  it('Returns an success message.', async () => {
+    const passwordResetToken = await getPasswordResetToken(validUser2.email);
+    const url = `/api/v1/verifypasswordkey/${passwordResetToken}`;
+    chai
+      .request(app)
+      .post(url)
+      .send({ password: 'af' })
+      .end((err, res) => {
+        const { status, body: { errors, success } } = res;
+        expect(status).to.be.equal(422);
+        expect(success).to.be.equal(false);
+        expect(errors).to.be.an('Array');
+        expect(errors[0]).to.be.equal('Password must be at least 6 characters long.');
+      });
+  });
+});
+
+describe('Make a request to verify password reset token with an invalid token and valid password', () => {
   it('Returns an error message.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/changepassword')
+      .post('/api/v1/verifypasswordkey/blabla')
       .send({ password: 'abcdef' })
       .end((err, res) => {
-        const { status, body: { success } } = res;
-        expect(status).to.be.equal(401);
+        const { status, body: { errors, success } } = res;
+        expect(status).to.be.equal(404);
         expect(success).to.be.equal(false);
+        expect(errors).to.be.an('Array');
+        expect(errors[0]).to.be.equal('Password reset token not found');
         done(err);
       });
   });

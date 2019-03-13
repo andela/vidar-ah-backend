@@ -3,7 +3,6 @@ import UserController from '../controllers/user';
 import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
 import isUserVerified from '../middleware/verifyUser';
-
 import {
   validateSignup,
   validateLogin,
@@ -12,9 +11,6 @@ import {
   returnValidationErrors,
   validatePassword
 } from '../middleware/validation';
-import PasswordReset from '../controllers/PasswordReset';
-import VerifyPasswordToken from '../controllers/VerifyPasswordToken';
-import ChangePassword from '../controllers/ChangePassword';
 import Auth from '../middleware/auth';
 
 const apiRoutes = express.Router();
@@ -79,20 +75,14 @@ apiRoutes.post(
   validateEmail,
   returnValidationErrors,
   isUserVerified,
-  PasswordReset.resetPassword,
-);
-
-apiRoutes.get(
-  '/verifypasswordkey/:passwordResetToken',
-  VerifyPasswordToken.checkPasswordToken
+  UserController.resetPassword,
 );
 
 apiRoutes.post(
-  '/changepassword',
-  Auth.verifyUser,
+  '/verifypasswordkey/:passwordResetToken',
   validatePassword,
   returnValidationErrors,
-  ChangePassword.changePassword,
+  UserController.checkPasswordToken
 );
 
 export default apiRoutes;

@@ -46,3 +46,6 @@ dist/
 
 # Ignore vscode files
 .vscode/
+
+# Nyc output
+.nyc_output
