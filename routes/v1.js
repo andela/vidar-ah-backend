@@ -7,12 +7,14 @@ import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
 import isUserVerified from '../middleware/verifyUser';
 import ArticleController from '../controllers/articles';
+import CategoryController from '../controllers/category';
 import {
   validateSignup,
   validateLogin,
   validateProfileChange,
   returnValidationErrors,
   validateArticle,
+  validateCategory,
   validateSearch
 } from '../middleware/validation';
 
@@ -20,7 +22,7 @@ const { createArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.route('/user')
+apiRoutes.route('/user/signup')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
 apiRoutes.route('/userprofile')
@@ -88,5 +90,15 @@ apiRoutes.get(
   '/articles/:slug',
   ArticleController.getArticleBySlug,
 );
+
+apiRoutes.route('/category')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCategory,
+    returnValidationErrors,
+    CategoryController.addNew
+  );
+
 
 export default apiRoutes;

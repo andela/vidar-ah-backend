@@ -1,6 +1,4 @@
-import { Op } from 'sequelize';
 import { Article, User } from '../models';
-
 /**
  * @class ArticleController
  * @override
@@ -18,13 +16,20 @@ export default class ArticleController {
   static async createArticle(req, res) {
     const images = req.images || [];
     const {
-      title, description, body, slug
+      title, description, body, slug, categoryId
     } = req.body;
     const taglist = req.body.taglist ? req.body.taglist.split(',') : [];
     const { id } = req.user;
     try {
       const result = await Article.create({
-        title, description, body, slug, images, taglist, userId: id
+        title,
+        description,
+        body,
+        slug,
+        images,
+        taglist,
+        userId: id,
+        categoryId: categoryId || 1
       });
       return res.status(201).json({
         success: true,
@@ -55,37 +60,36 @@ export default class ArticleController {
         include: [{
           model: User,
           attributes: ['username', 'email', 'name', 'bio'],
-          as: 'author'
+          as: 'author',
         }]
       });
       return res.status(200).json({
-        results: results,
+        results,
         success: true
       });
     } catch (error) {
-      return res.status(200).json({
-        results: [],
-        success: true,
-        message: 'Oops, no article with your search terms was found.'
+      return res.status(500).json({
+        success: false,
+        message: 'Oops, something went wrong.'
       });
     }
   }
 
-    /**
+  /**
    * @description - Generate queries for search and filter
    * @static
-   * @param {Object}  searchTems - the terms that the user wants to search for
+   * @param {Object}  searchTerms - the terms that the user wants to search for
    * @memberof ArticleController
    * @returns {Object} class instance
    */
   static generateSearchQuery(searchTerms) {
     const {
-      author, term, endDate, startDate, tags
+      author, term, endDate, startDate, tags, categoryId
     } = searchTerms;
 
     const filterFields = {
-      '$user.username$' : {
-        $like: author
+      '$author.username$': {
+        $like: `%${author}%`
       },
       createdAt: {
         $between: [startDate, endDate]
@@ -97,24 +101,39 @@ export default class ArticleController {
         $like: `%${term}%`,
       },
       taglist: {
-        $contains: tags ? [ ...tags.split(',') ] : []
-      }
+        $contains: tags ? [...tags.split(',')] : []
+      },
+      categoryId: Number(categoryId),
+    };
+
+    if (!author) {
+      delete filterFields['$user.username$'];
     }
-
-    !author ? delete filterFields['$user.username$'] : null;
-    !startDate || !endDate ? delete filterFields['createdAt'] : null;
-
+    if (!startDate || !endDate) {
+      delete filterFields.createdAt;
+    }
+    if (!categoryId) {
+      delete filterFields.categoryId;
+    }
     return filterFields;
   }
 
+  /**
+   * @description - Get article by slug
+   * @static
+   * @param {Object} req - the request object
+   * @param {Object} res - the response object
+   * @memberof ArticleController
+   * @returns {Object} class instance
+   */
   static async getArticleBySlug(req, res) {
     try {
-      const { 
-        params: { 
-          slug 
-        } 
+      const {
+        params: {
+          slug
+        }
       } = req;
-      const article = await Article.findOne({ 
+      const article = await Article.findOne({
         where: {
           slug
         },
@@ -127,12 +146,12 @@ export default class ArticleController {
       return res.status(200).json({
         success: true,
         article: article.dataValues
-      }); 
+      });
     } catch (error) {
       return res.status(404).json({
         success: false,
         errors: ['Article not found.'],
-      }); 
+      });
     }
   }
 }

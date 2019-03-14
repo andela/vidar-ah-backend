@@ -4,3 +4,4 @@ import './article.spec';
 import './profile.spec';
 import './updateVerifiedStatusHelper.spec';
 import './login.spec';
+import './category.spec';

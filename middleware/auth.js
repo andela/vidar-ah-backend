@@ -17,14 +17,14 @@ class Auth {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Unauthorized! You are required to be logged in to perform this operation.',
+        errors: ['Unauthorized! You are required to be logged in to perform this operation.'],
       });
     }
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
       if (err) {
         return res.status(401).json({
           success: false,
-          message: 'Your session has expired, please login again to continue',
+          errors: ['Your session has expired, please login again to continue'],
         });
       }
       req.user = decoded;

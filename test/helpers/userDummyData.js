@@ -12,6 +12,13 @@ export const user2 = {
   password: '1234567g'
 };
 
+export const user3 = {
+  username: 'leksyib',
+  email: 'leksyib14@gmail.com',
+  name: 'Olamilekan',
+  password: '1234567g'
+};
+
 export const validUser = {
   username: 'JamesBond',
   email: 'jamesbondxxc@gmail.com',
@@ -45,8 +52,19 @@ export const newUser = {
   name: 'testing testing',
   username: 'testing123559'
 };
+export const newUser2 = {
+  email: 'testing2@gmail.com',
+  password: 'testing',
+  name: 'testing testing',
+  username: 'testing223559'
+};
 
 export const validLoginUser = {
   email: 'testing123559@gmail.com',
+  password: 'testing'
+};
+
+export const unregisteredUser = {
+  email: 'notregistered@gmail.com',
   password: 'testing'
 };
