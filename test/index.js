@@ -1,7 +1,8 @@
 import './user.spec';
+import './login.spec';
 import './socialLoginSpec';
+import './category.spec';
 import './article.spec';
 import './profile.spec';
 import './updateVerifiedStatusHelper.spec';
-import './login.spec';
-import './category.spec';
+import './resetpassword.spec';
