@@ -17,8 +17,15 @@ import {
   validateArticle,
   returnValidationErrors,
   validateCategory,
-  validateSearch
+  validateSearch,
+  validateArticleExist,
+  validateCreateComment,
+  validateEditComment,
+  validateCommentUser
 } from '../middleware/validation';
+import CommentController from '../controllers/comment';
+import { validComment } from '../test/helpers/commentDummyData';
+
 
 const { createArticle } = ArticleController;
 
@@ -117,5 +124,24 @@ apiRoutes.post(
   returnValidationErrors,
   UserController.resetPassword
 );
+apiRoutes.route('/comment/:id')
+  .post(Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment)
+  .patch(Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment)
+  .delete(Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment);
+
 
 export default apiRoutes;

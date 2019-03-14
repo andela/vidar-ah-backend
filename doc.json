@@ -231,84 +231,6 @@
         }
       }
     },
-    "/requestpasswordreset": {
-      "post": {
-        "tags": [
-          "Reset password"
-        ],
-        "summary": "Send reset link to user email",
-        "description": "Send reset link to user email",
-        "consumes": [
-          "application/x-www-form-urlencoded",
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "Request body",
-            "description": "Reset user password",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/requestPasswordReset"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Save password reset key in database and send link to email"
-          },
-          "404": {
-            "description": "User not registered or verified."
-          },
-          "422": {
-            "description": "Email is invalid"
-          }
-        }
-      }
-    },
-    "/resetpassword/{key}": {
-      "post": {
-        "tags": [
-          "Reset password"
-        ],
-        "summary": "Verify user reset password key and change password",
-        "description": "Verify user reset password key and change password",
-        "consumes": [
-          "application/x-www-form-urlencoded",
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "key",
-            "description": "key sent with the link to the user email",
-            "required": true,
-            "type": "integer",
-            "format": "int64",
-            "schema": {
-              "$ref": "#/definitions/resetPassword"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "You can now reset your password."
-          },
-          "410": {
-            "description": "Your link has expired. Please try to reset password again."
-          },
-          "404": {
-            "description": "Password reset token not found."
-          }
-        }
-      }
-    },
     "/articles": {
       "post": {
         "tags": [
@@ -347,6 +269,131 @@
           },
           "422": {
             "description": "Invalid title/description/body supplied"
+          }
+        }
+      }
+    },
+    "/comment/{id}": {
+      "post": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Create a comment",
+        "description": "",
+        "operationId": "createComment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "CommentId",
+            "in": "path",
+            "description": "ID of article to relate comment to",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "Comment body",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New comment created successfully"
+          },
+          "422": {
+            "description": "Incomplete request body"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Update a comment",
+        "description": "",
+        "operationId": "updateComment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of comment to be updated",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "New comment",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New comment created successfully"
+          },
+          "422": {
+            "description": "Incomplete request body"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Delete an article",
+        "description": "",
+        "operationId": "deleteArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of comment to be deleted",
+            "required": true
+          }
+        ],
+        "responses": {
+          "205": {
+            "description": "Comment deleted successfully"
+          },
+          "500": {
+            "description": "Server error"
           }
         }
       }
@@ -473,22 +520,6 @@
         }
       }
     },
-    "requestPasswordReset": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        }
-      }
-    },
-    "resetPassword": {
-      "type": "object",
-      "properties": {
-        "password": {
-          "type": "string"
-        }
-      }
-    },
     "articles": {
       "type": "object",
       "properties": {
@@ -502,10 +533,10 @@
           "type": "string"
         }
       }
-    },
-    "externalDocs": {
-      "description": "Find out more about Swagger",
-      "url": "http://swagger.io"
     }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
   }
 }

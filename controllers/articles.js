@@ -5,14 +5,14 @@ import { Article, User, Category } from '../models';
  * @export
  */
 export default class ArticleController {
-/**
- * @description - Create a new article
- * @static
- * @param {Object} req - the request object
- * @param {Object} res - the response object
- * @memberof ArticleController
- * @returns {Object} class instance
- */
+  /**
+   * @description - Create a new article
+   * @static
+   * @param {Object} req - the request object
+   * @param {Object} res - the response object
+   * @memberof ArticleController
+   * @returns {Object} class instance
+   */
   static async createArticle(req, res) {
     const images = req.images || [];
     const {

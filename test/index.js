@@ -1,3 +1,4 @@
+import './comment.spec';
 import './user.spec';
 import './login.spec';
 import './socialLoginSpec';
