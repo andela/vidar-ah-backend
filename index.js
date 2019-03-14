@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import swaggerUI from 'swagger-ui-express';
 import routes from './routes/index';
 import doc from './doc.json';
-
+import { User } from './models';
 // read .env config
 dotenv.config();
 const isProduction = process.env.NODE_ENV === 'production';
@@ -24,6 +24,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(passport.initialize());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findByPk(id);
+  return done(null, user);
+});
 
 // configure router
 app.use('/api', routes);

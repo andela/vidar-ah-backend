@@ -21,13 +21,13 @@ import {
   validateArticleExist,
   validateCreateComment,
   validateEditComment,
-  validateCommentUser
+  validateCommentUser,
+  validateUser
 } from '../middleware/validation';
 import CommentController from '../controllers/comment';
-import { validComment } from '../test/helpers/commentDummyData';
 
 
-const { createArticle } = ArticleController;
+const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -43,12 +43,32 @@ apiRoutes.route('/verify/:verificationId')
   .get(UserController.verifyAccount);
 
 apiRoutes.route('/articles')
-  .post(Auth.verifyUser, isUserVerified,
+  .post(
+    Auth.verifyUser, isUserVerified,
     addImages,
     validateArticle,
     returnValidationErrors,
     generateSlug,
-    createArticle);
+    createArticle
+  );
+
+apiRoutes.route('/articles/:id')
+  .put(
+    Auth.verifyUser, isUserVerified,
+    validateUser,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    generateSlug,
+    updateArticle
+  );
+
+apiRoutes.route('/articles/:id')
+  .delete(
+    Auth.verifyUser, isUserVerified,
+    validateUser,
+    deleteArticle
+  );
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
