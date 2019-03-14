@@ -13,9 +13,10 @@ import {
   validateProfileChange,
   returnValidationErrors,
   validateArticle,
+  validateUser
 } from '../middleware/validation';
 
-const { createArticle } = ArticleController;
+const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -37,6 +38,20 @@ apiRoutes.route('/articles')
     returnValidationErrors,
     generateSlug,
     createArticle);
+
+apiRoutes.route('/articles/:id')
+  .put(Auth.verifyUser, isUserVerified,
+    validateUser,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    generateSlug,
+    updateArticle);
+
+apiRoutes.route('/articles/:id')
+  .delete(Auth.verifyUser, isUserVerified,
+    validateUser,
+    deleteArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(

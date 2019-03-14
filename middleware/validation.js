@@ -1,4 +1,5 @@
 import ExpressValidator from 'express-validator/check';
+import { Article } from '../models';
 
 const { check, validationResult } = ExpressValidator;
 
@@ -83,3 +84,36 @@ export const validateLogin = [
     .custom(value => !/\s/.test(value))
     .withMessage('Please provide a valid password.'),
 ];
+
+export const validateUser = async (req, res, next) => {
+  const {
+    user,
+    params: { id }
+  } = req;
+  try {
+    const article = await Article.findOne({
+      where: {
+        id
+      }
+    });
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        error: 'Article not found'
+      });
+    }
+    const checkUser = article.userId === user.id;
+    if (!checkUser) {
+      return res.status(401).json({
+        success: false,
+        error: 'You are unauthorized to perform this action'
+      });
+    }
+    return next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: 'Article does not exist'
+    });
+  }
+};
