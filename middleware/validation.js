@@ -99,21 +99,36 @@ export const validateUser = async (req, res, next) => {
     if (!article) {
       return res.status(404).json({
         success: false,
-        error: 'Article not found'
+        errors: ['Article not found']
       });
     }
     const checkUser = article.userId === user.id;
     if (!checkUser) {
       return res.status(401).json({
         success: false,
-        error: 'You are unauthorized to perform this action'
+        errors: ['You are unauthorized to perform this action']
       });
     }
     return next();
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: 'Article does not exist'
+      errors: ['Article does not exist']
     });
   }
 };
+export const validateEmail = [
+  check('email')
+    .isEmail()
+    .withMessage('Email is invalid.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('No spaces are allowed in the email.')
+];
+
+export const validatePassword = [
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('No spaces are allowed in the password.')
+];

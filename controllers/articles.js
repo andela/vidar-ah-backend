@@ -69,7 +69,7 @@ export default class ArticleController {
     } catch (error) {
       return res.status(500).json({
         success: false,
-        error: [error.message]
+        errors: [error.message]
       });
     }
   }
@@ -84,13 +84,11 @@ export default class ArticleController {
  */
   static async deleteArticle(req, res) {
     try {
-      await Article.destroy(
-        {
-          where: {
-            id: req.params.id
-          }
+      await Article.destroy({
+        where: {
+          id: req.params.id
         }
-      );
+      });
       return res.status(200).json({
         success: true,
         message: 'Article deleted successfully'
@@ -98,7 +96,7 @@ export default class ArticleController {
     } catch (error) {
       return res.status(500).json({
         success: false,
-        error: [error.message]
+        errors: [error.message]
       });
     }
   }

@@ -34,14 +34,11 @@ export const googleSocial = async (accessToken, refreshToken, profile, done) => 
   });
   return done(null, user[0].dataValues);
 };
-passport.use(new GoogleStrategy(
-  {
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${process.env.HOST_URL}/api/v1/auth/google/callback`,
-  }, googleSocial
-
-));
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: `${process.env.HOST_URL}/api/v1/auth/google/callback`,
+}, googleSocial));
 
 /**
    * callback function for facebook strategy

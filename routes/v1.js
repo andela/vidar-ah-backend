@@ -2,18 +2,20 @@ import express from 'express';
 import UserController from '../controllers/user';
 import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
+import isUserVerified from '../middleware/verifyUser';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
-import isUserVerified from '../middleware/verifyUser';
 import ArticleController from '../controllers/articles';
 import {
   validateSignup,
   validateLogin,
   validateProfileChange,
-  returnValidationErrors,
+  validateEmail,
+  validatePassword,
   validateArticle,
-  validateUser
+  validateUser,
+  returnValidationErrors
 } from '../middleware/validation';
 
 const { createArticle, updateArticle, deleteArticle } = ArticleController;
@@ -32,26 +34,32 @@ apiRoutes.route('/verify/:verificationId')
   .get(UserController.verifyAccount);
 
 apiRoutes.route('/articles')
-  .post(Auth.verifyUser, isUserVerified,
+  .post(
+    Auth.verifyUser, isUserVerified,
     addImages,
     validateArticle,
     returnValidationErrors,
     generateSlug,
-    createArticle);
+    createArticle
+  );
 
 apiRoutes.route('/articles/:id')
-  .put(Auth.verifyUser, isUserVerified,
+  .put(
+    Auth.verifyUser, isUserVerified,
     validateUser,
     addImages,
     validateArticle,
     returnValidationErrors,
     generateSlug,
-    updateArticle);
+    updateArticle
+  );
 
 apiRoutes.route('/articles/:id')
-  .delete(Auth.verifyUser, isUserVerified,
+  .delete(
+    Auth.verifyUser, isUserVerified,
     validateUser,
-    deleteArticle);
+    deleteArticle
+  );
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
@@ -89,6 +97,21 @@ apiRoutes.post(
   returnValidationErrors,
   isUserVerified,
   UserController.loginUser
+);
+
+apiRoutes.post(
+  '/requestpasswordreset',
+  validateEmail,
+  returnValidationErrors,
+  isUserVerified,
+  UserController.requestPasswordReset,
+);
+
+apiRoutes.post(
+  '/resetpassword/:passwordResetToken',
+  validatePassword,
+  returnValidationErrors,
+  UserController.resetPassword
 );
 
 export default apiRoutes;

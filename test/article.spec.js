@@ -198,7 +198,8 @@ describe('/PUT articles id', () => {
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.have.property('success').equal(false);
-        expect(res.body).to.have.property('error').equal('Article not found');
+        expect(res.body.errors).to.be.an('Array');
+        expect(res.body.errors[0]).to.be.equal('Article not found');
         done(err);
       });
   });
@@ -226,7 +227,8 @@ describe('/PUT articles id', () => {
       .end((err, res) => {
         expect(res).to.have.status(401);
         expect(res.body).to.have.property('success').equal(false);
-        expect(res.body).to.have.property('error').equal('You are unauthorized to perform this action');
+        expect(res.body.errors).to.be.an('Array');
+        expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
         done(err);
       });
   });
@@ -242,7 +244,7 @@ describe('/DELETE articles id', () => {
       .end((err, res) => {
         expect(res).to.have.status(401);
         expect(res.body).to.have.property('success').equal(false);
-        expect(res.body).to.have.property('error').equal('You are unauthorized to perform this action');
+        expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
         done(err);
       });
   });
@@ -270,7 +272,7 @@ describe('/DELETE articles id', () => {
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.have.property('success').equal(false);
-        expect(res.body).to.have.property('error').equal('Article not found');
+        expect(res.body.errors[0]).to.be.equal('Article not found');
         done(err);
       });
   });
