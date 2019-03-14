@@ -33,7 +33,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Create an article by an authenticated user but not verified', () => {
-    it('Should not create article if user is not verified.', (done) => {
+    it('should not create article if user is not verified.', (done) => {
       chai
         .request(app)
         .post('/api/v1/articles')
@@ -52,7 +52,7 @@ describe('ARTICLES', () => {
   describe('Create an article by an authenticated and verified user', () => {
     before(() => { updateVerifiedStatus(user2.email); });
 
-    it('Should create a new article.', (done) => {
+    it('should create a new article.', (done) => {
       chai
         .request(app)
         .post('/api/v1/articles')
@@ -69,7 +69,7 @@ describe('ARTICLES', () => {
         });
     });
 
-    it('Should not create if title is not set.', (done) => {
+    it('should not create if title is not set.', (done) => {
       article1.title = undefined;
       chai
         .request(app)
@@ -86,7 +86,7 @@ describe('ARTICLES', () => {
         });
     });
 
-    it('Should not create if description is not set.', (done) => {
+    it('should not create if description is not set.', (done) => {
       article1.description = undefined;
       chai
         .request(app)
@@ -105,7 +105,7 @@ describe('ARTICLES', () => {
         });
     });
 
-    it('Should not create if body is not set.', (done) => {
+    it('should not create if body is not set.', (done) => {
       article1.body = undefined;
       chai
         .request(app)
@@ -129,7 +129,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Create an article by an unauthenticated user', () => {
-    it('Should report unauthorised to access endpoint.', (done) => {
+    it('should report unauthorised to access endpoint.', (done) => {
       chai
         .request(app)
         .post('/api/v1/articles')
@@ -145,7 +145,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Create an article by an unauthenticated user with an invalid token', () => {
-    it('Should not report an invalid token.', (done) => {
+    it('should not report an invalid token.', (done) => {
       chai
         .request(app)
         .post('/api/v1/articles')

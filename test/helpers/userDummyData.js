@@ -95,3 +95,19 @@ export const validUser2 = {
 export const invalidUser = {
   email: 'email@domain.com'
 };
+
+
+export const validUser3 = {
+  name: 'validUser3',
+  email: 'validUser3@gmail.com',
+  password: 'validUser3',
+  username: 'validuser3'
+};
+
+
+export const validUser4 = {
+  name: 'validUser4',
+  email: 'validUser4@gmail.com',
+  password: 'validUser3',
+  username: 'validuser3'
+};

@@ -22,12 +22,14 @@ import {
   validateCreateComment,
   validateEditComment,
   validateCommentUser,
-  validateUser
+  validateUser,
+  validateArticleId,
+  validateArticleRating
 } from '../middleware/validation';
 import CommentController from '../controllers/comment';
 
 
-const { createArticle, updateArticle, deleteArticle } = ArticleController;
+const { createArticle, updateArticle, deleteArticle, rateArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -69,6 +71,10 @@ apiRoutes.route('/articles/:id')
     validateUser,
     deleteArticle
   );
+
+apiRoutes.route('/articles/rate/:articleId')
+  .post(Auth.verifyUser, isUserVerified, validateArticleId,
+    validateArticleRating, returnValidationErrors, rateArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(

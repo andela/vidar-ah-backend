@@ -84,7 +84,6 @@ export const validateLogin = [
     .custom(value => !/\s/.test(value))
     .withMessage('Please provide a valid password.'),
 ];
-
 export const validateUser = async (req, res, next) => {
   const {
     user,
@@ -117,6 +116,7 @@ export const validateUser = async (req, res, next) => {
     });
   }
 };
+
 export const validateEmail = [
   check('email')
     .isEmail()
@@ -227,3 +227,19 @@ export const validateArticleExist = async (req, res, next) => {
   }
   return next();
 };
+
+export const validateArticleRating = [
+  check('rating')
+    .exists()
+    .withMessage('Please provide a rating for this article.')
+    .custom(value => `${Number(value)}` !== 'NaN')
+    .withMessage('Rating should be a number.')
+    .isLength({ min: 1, max: 5 })
+    .withMessage('Ratings should have values between 1 to 5')
+];
+
+export const validateArticleId = [
+  check('articleId')
+    .isUUID()
+    .withMessage('Please provide a valid id for the article')
+];
