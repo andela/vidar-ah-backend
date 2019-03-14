@@ -6,6 +6,7 @@ import isUserVerified from '../middleware/verifyUser';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
+import checkForArticle from '../middleware/checkIfArticleExist';
 import ArticleController from '../controllers/articles';
 import CategoryController from '../controllers/category';
 import {
@@ -16,10 +17,12 @@ import {
   validatePassword,
   validateArticle,
   validateCategory,
-  returnValidationErrors
+  returnValidationErrors,
+  validateArticleId,
+  validateArticleRating
 } from '../middleware/validation';
 
-const { createArticle } = ArticleController;
+const { createArticle, rateArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -41,6 +44,11 @@ apiRoutes.route('/articles')
     returnValidationErrors,
     generateSlug,
     createArticle);
+
+apiRoutes.route('/articles/rate/:articleId')
+  .post(Auth.verifyUser, isUserVerified,
+    validateArticleId, validateArticleRating,
+    returnValidationErrors, checkForArticle, rateArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(

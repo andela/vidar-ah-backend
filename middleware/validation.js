@@ -109,3 +109,19 @@ export const validatePassword = [
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the password.')
 ];
+
+export const validateArticleRating = [
+  check('rating')
+    .exists()
+    .withMessage('Please provide a rating for this article.')
+    .custom(value => `${Number(value)}` !== 'NaN')
+    .withMessage('Rating should be a number.')
+    .custom(value => [1, 2, 3, 4, 5].indexOf(Number(value)) !== -1)
+    .withMessage('Ratings should have values ranging from 1 to 5.')
+];
+
+export const validateArticleId = [
+  check('articleId')
+    .isUUID()
+    .withMessage('Please provide a valid id for the article')
+];
