@@ -17,7 +17,7 @@ describe('ARTICLES', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(user2)
       .end((err, res) => {
         if (!err) {
@@ -129,10 +129,10 @@ describe('ARTICLES', () => {
         .post('/api/v1/articles')
         .send(article1)
         .end((err, res) => {
-          const { status, body: { message, success } } = res;
+          const { status, body: { errors, success } } = res;
           expect(status).to.be.equal(401);
           expect(success).to.be.equal(false);
-          expect(message).to.be.equal('Unauthorized! You are required to be logged in to perform this operation.');
+          expect(errors[0]).to.be.equal('Unauthorized! You are required to be logged in to perform this operation.');
           done(err);
         });
     });
@@ -146,10 +146,10 @@ describe('ARTICLES', () => {
         .set('authorization', 'asdfghjkl')
         .send(article1)
         .end((err, res) => {
-          const { status, body: { message, success } } = res;
+          const { status, body: { errors, success } } = res;
           expect(status).to.be.equal(401);
           expect(success).to.be.equal(false);
-          expect(message).to.be.equal('Your session has expired, please login again to continue');
+          expect(errors[0]).to.be.equal('Your session has expired, please login again to continue');
           done(err);
         });
     });
@@ -190,7 +190,7 @@ describe('ARTICLES', () => {
     it('Should should return an array of results', (done) => {
       chai
         .request(app)
-        .get(`/api/v1/articles/search?term=This&author=${user2.username}`)
+        .get('/api/v1/articles/search?term=This&author=flippingg')
         .end((err, res) => {
           const { status, body: { success, results } } = res;
           expect(status).to.be.equal(200);
@@ -205,7 +205,7 @@ describe('ARTICLES', () => {
     it('Should should return an array of results', (done) => {
       chai
         .request(app)
-        .get(`/api/v1/articles/search?term=This&startDate=2018-10-10&endDate=2020-10-10`)
+        .get('/api/v1/articles/search?term=This&startDate=2018-10-10&endDate=2020-10-10')
         .end((err, res) => {
           const { status, body: { success, results } } = res;
           expect(status).to.be.equal(200);
@@ -220,7 +220,7 @@ describe('ARTICLES', () => {
     it('Should should return an array of results', (done) => {
       chai
         .request(app)
-        .get(`/api/v1/articles/search?term=This&tags=art`)
+        .get('/api/v1/articles/search?term=This&tags=art')
         .end((err, res) => {
           const { status, body: { success, results } } = res;
           expect(status).to.be.equal(200);
@@ -256,7 +256,7 @@ describe('ARTICLES', () => {
     it('Should should return a 404 error', (done) => {
       chai
         .request(app)
-        .get(`/api/v1/articles/eirubefhdkjcsdc`)
+        .get('/api/v1/articles/eirubefhdkjcsdc')
         .end((err, res) => {
           const { status, body: { success, errors } } = res;
           expect(status).to.be.equal(404);

@@ -20,7 +20,7 @@
     "http"
   ],
   "paths": {
-    "/user": {
+    "/user/signup": {
       "post": {
         "tags": [
           "Authentication"
@@ -155,48 +155,6 @@
         }
       }
     },
-    "/articles": {
-      "post": {
-        "tags": [
-          "Articles"
-        ],
-        "summary": "Create an article",
-        "description": "",
-        "operationId": "addArticle",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "description": "A token to verify the user",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Update user profile",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/articles"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "New article created successfully"
-          },
-          "422": {
-            "description": "Invalid title/description/body supplied"
-          }
-        }
-      }
-    },
     "/userprofile": {
       "get": {
         "tags": [
@@ -272,23 +230,116 @@
           }
         }
       }
-    }
-  },
-  "definitions": {
-    "articles": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "body": {
-          "type": "string"
+    },
+    "/articles": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update user profile",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New article created successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
         }
       }
     },
+    "/articles/search": {
+      "get": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Search for an article",
+        "description": "",
+        "operationId": "searchArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "term",
+            "in": "query",
+            "description": "A string to search for ",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "description": "A categoryId to search from",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "author",
+            "in": "query",
+            "description": "Username or name of an author to search from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "A start date for a date range search",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "An end date for a date range search",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "Tags to search from",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results were found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
     "user": {
       "type": "object",
       "properties": {
@@ -340,6 +391,20 @@
           "type": "string"
         },
         "bio": {
+          "type": "string"
+        }
+      }
+    },
+    "articles": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "body": {
           "type": "string"
         }
       }

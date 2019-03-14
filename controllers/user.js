@@ -99,16 +99,13 @@ export default class UserController {
   }
 
   /**
-   * @description - Verifies a user's account
-   * @static
-   *
-   * @param {object} req - HTTP Request
-   * @param {object} res - HTTP Response
-   *
-   * @memberof UserController
-   *
-   * @returns {object} Class instance
-   */
+     * @description - Verifies a user's account
+     * @static
+     * @param {object} req - HTTP Request
+     * @param {object} res - HTTP Response
+     * @memberof UserController
+     * @returns {object} Class instance
+     */
   static verifyAccount(req, res) {
     const {
       params: { verificationId }
@@ -128,9 +125,9 @@ export default class UserController {
             message: [error.message]
           }));
       }
-      return res.json({
+      return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found.'
       });
     });
   }

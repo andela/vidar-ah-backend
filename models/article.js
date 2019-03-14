@@ -48,6 +48,9 @@ module.exports = (sequelize, DataTypes) => {
     userId: {
       type: DataTypes.INTEGER,
     },
+    categoryId: {
+      type: DataTypes.INTEGER,
+    }
   }, {});
 
   Article.associate = (models) => {
@@ -55,6 +58,9 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
       as: 'author'
+    });
+    Article.belongsTo(models.Category, {
+      foreignKey: 'categoryId',
     });
   };
   return Article;
