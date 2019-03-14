@@ -1,8 +1,7 @@
 import './user.spec';
 import './socialLoginSpec';
-
-require('./user.spec');
-require('./article.spec');
-require('./profile.spec');
-require('./updateVerifiedStatusHelper.spec');
-require('./login.spec');
+import './profile.spec';
+import './article.spec';
+import './updateVerifiedStatusHelper.spec';
+import './login.spec';
+import './rating.spec';

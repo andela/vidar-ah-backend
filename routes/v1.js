@@ -13,9 +13,11 @@ import {
   validateProfileChange,
   returnValidationErrors,
   validateArticle,
+  validateArticleId,
+  validateArticleRating
 } from '../middleware/validation';
 
-const { createArticle } = ArticleController;
+const { createArticle, rateArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -37,6 +39,10 @@ apiRoutes.route('/articles')
     returnValidationErrors,
     generateSlug,
     createArticle);
+
+apiRoutes.route('/articles/rate/:articleId')
+  .post(Auth.verifyUser, isUserVerified, validateArticleId,
+    validateArticleRating, returnValidationErrors, rateArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
