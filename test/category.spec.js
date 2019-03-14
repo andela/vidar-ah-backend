@@ -83,7 +83,7 @@ describe('CREATE CATEGORY', () => {
           expect(status).to.be.equal(201);
           expect(success).to.be.equal(true);
           expect(message).to.be.equal('Category successfully added.');
-          expect(categoryName).to.be.equal(validCategory.category);
+          expect(categoryName).to.be.equal(validCategory.category.toLowerCase());
           done(err);
         });
     });
@@ -125,7 +125,7 @@ describe('CREATE CATEGORY', () => {
           } = res;
           expect(status).to.be.equal(422);
           expect(success).to.be.equal(false);
-          expect(errors[0]).to.be.equal('Category must be at least 3 characters long and no more than 15.');
+          expect(errors[0]).to.be.equal('Category must be at least 3 characters long and no more than 30.');
           done(err);
         });
     });

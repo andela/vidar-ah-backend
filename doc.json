@@ -239,7 +239,20 @@
           "create category"
         ],
         "operationId": "CategoryPost",
-        "deprecated": false,
+        "deprecated": false
+      }
+    },
+    "/requestpasswordreset": {
+      "post": {
+        "tags": [
+          "Reset password"
+        ],
+        "summary": "Send reset link to user email",
+        "description": "Send reset link to user email",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -264,14 +277,67 @@
             "required": true,
             "description": "",
             "schema": {
-              "$ref": "#/definitions/createcategory"
+              "$ref": "#/definitions/createcategory",
+            "in": "body",
+            "name": "Request body",
+            "description": "Reset user password",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/requestPasswordReset"
+            }
+          }
+        }
+        ],
+        "responses": {
+          "201": {
+            "description": "Save password reset key in database and send link to email"
+          },
+          "404": {
+            "description": "User not registered or verified."
+          },
+          "422": {
+            "description": "Email is invalid"
+          }
+        }
+      }
+    },
+    "/resetpassword/{key}": {
+      "post": {
+        "tags": [
+          "Reset password"
+        ],
+        "summary": "Verify user reset password key and change password",
+        "description": "Verify user reset password key and change password",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "key",
+            "description": "key sent with the link to the user email",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "schema": {
+              "$ref": "#/definitions/resetPassword"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "",
-            "headers": {}
+            "headers": {},
+            "description": "You can now reset your password."
+          },
+          "410": {
+            "description": "Your link has expired. Please try to reset password again."
+          },
+          "404": {
+            "description": "Password reset token not found."
           }
         }
       }
@@ -375,6 +441,22 @@
         }
       }
     },
+    "requestPasswordReset": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "resetPassword": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "articles": {
       "type": "object",
       "properties": {
@@ -402,11 +484,11 @@
       },
       "required": [
         "category"
-      ]
+      ],
+      "externalDocs": {
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
+      }
     }
-  },
-  "externalDocs": {
-    "description": "Find out more about Swagger",
-    "url": "http://swagger.io"
   }
 }

@@ -52,20 +52,19 @@ export const newUser2 = {
   username: 'testing223559'
 };
 
-export const newUserVerified = {
-  email: 'testing123559@gmail.com',
-  password: 'testing',
-  name: 'testing testing',
-  username: 'testing223559',
-  verified: true
-};
-
 export const validLoginUser = {
   email: 'testing123559@gmail.com',
   password: 'testing'
 };
 
-export const unregisteredUser = {
-  email: 'notregistered@gmail.com',
-  password: 'testing'
+export const validUser2 = {
+  username: 'testuser',
+  email: 'jessam7009@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
+};
+
+export const invalidUser = {
+  email: 'email@domain.com'
 };
