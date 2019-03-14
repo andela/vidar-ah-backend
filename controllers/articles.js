@@ -52,6 +52,7 @@ export default class ArticleController {
   static async searchForArticles(req, res) {
     try {
       const searchTerms = ArticleController.generateSearchQuery(req.query);
+      console.log(searchTerms);
       const results = await Article.findAll({
         raw: true,
         where: {
@@ -107,7 +108,7 @@ export default class ArticleController {
     };
 
     if (!author) {
-      delete filterFields['$user.username$'];
+      delete filterFields['$author.username$'];
     }
     if (!startDate || !endDate) {
       delete filterFields.createdAt;
