@@ -1,17 +1,18 @@
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.addColumn(
     'Articles',
-    'userId',
+    'categoryId',
     {
       type: Sequelize.INTEGER,
-      allowNull: true
+      allowNull: true,
+      unique: false
     }
   ),
 
   down(queryInterface) {
     return queryInterface.removeColumn(
       'Articles',
-      'userId'
+      'categoryId'
     );
   },
 };
