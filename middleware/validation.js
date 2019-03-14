@@ -47,7 +47,27 @@ export const validateProfileChange = [
 
   check('bio')
     .isString()
-    .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.'),
+    .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.')
+];
+
+export const validateArticle = [
+  check('title')
+    .exists()
+    .withMessage('Article should have a title.')
+    .isLength({ min: 6 })
+    .withMessage('Title should be at least 6 characters long.'),
+
+  check('description')
+    .exists()
+    .withMessage('Article should have a description.')
+    .isLength({ min: 6 })
+    .withMessage('Description should be at least 6 characters long.'),
+
+  check('body')
+    .exists()
+    .withMessage('Article should have a body.')
+    .isLength({ min: 6 })
+    .withMessage('Article should have a body with at least 6 characters.'),
 ];
 
 export const validateLogin = [
@@ -62,4 +82,37 @@ export const validateLogin = [
     .withMessage('Please provide a valid password.')
     .custom(value => !/\s/.test(value))
     .withMessage('Please provide a valid password.'),
+];
+
+export const validateEmail = [
+  check('email')
+    .isEmail()
+    .withMessage('Email is invalid.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('No spaces are allowed in the email.')
+];
+
+export const validatePassword = [
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('No spaces are allowed in the password.')
+];
+
+export const validateCategory = [
+  check('category')
+    .exists()
+    .withMessage('No category provided. Please provide a category.')
+    .isLength({ min: 3, max: 30 })
+    .withMessage('Category must be at least 3 characters long and no more than 15.')
+    .isString()
+    .withMessage('Category must be alphanumeric characters, please remove leading and trailing whitespaces.')
+];
+
+
+export const validateSearch = [
+  check('term')
+    .isString()
+    .withMessage('Please provide a valid search term.')
 ];

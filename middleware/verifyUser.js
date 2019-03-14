@@ -1,10 +1,7 @@
 import { User } from '../models';
 
 export default (req, res, next) => {
-  const {
-    body,
-    user,
-  } = req;
+  const { body, user } = req;
   const options = {};
   if (user) {
     options.fieldName = 'id';
@@ -18,7 +15,26 @@ export default (req, res, next) => {
   User.findOne({ where: { [fieldName]: fieldValue } })
     .then((foundUser) => {
       if (foundUser) {
-        const { dataValues: { verified } } = foundUser;
+        const {
+          id,
+          email,
+          username,
+          name,
+          verified,
+          verificationId,
+          bio,
+          password
+        } = foundUser.dataValues;
+        const userObj = {
+          id,
+          email,
+          username,
+          name,
+          verified,
+          verificationId,
+          bio,
+          password
+        };
         if (!verified) {
           return res.status(403).json({
             success: false,
@@ -27,13 +43,12 @@ export default (req, res, next) => {
             ]
           });
         }
+        req.user = userObj;
         return next();
       }
       return res.status(404).json({
         success: false,
-        errors: [
-          'User not found.'
-        ]
+        errors: ['User not found.']
       });
     });
 };

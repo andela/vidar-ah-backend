@@ -1,6 +1,16 @@
 /dist/**
 /mochawesome-report/**
+<<<<<<< HEAD
 /migrations
 /node_modules/**
 /.env/**
 /coverage/**
+=======
+/node_modules/**
+/.env/**
+/coverage/**
+.eslintrc.json
+package.json
+package-lock.json
+doc.json
+>>>>>>> ft-search-filter-164139695

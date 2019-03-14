@@ -46,3 +46,8 @@ dist/
 
 # Ignore vscode files
 .vscode/
+<<<<<<< HEAD
+=======
+#coveralls code coverage reports
+.nyc_output/
+>>>>>>> ft-search-filter-164139695
