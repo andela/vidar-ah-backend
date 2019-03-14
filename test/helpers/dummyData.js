@@ -6,9 +6,9 @@ export const user1 = {
 };
 
 export const user2 = {
-  username: 'flippingg',
-  email: 'flippingg2234@gmail.com',
-  name: 'Flippingg James',
+  username: 'flippinggh',
+  email: 'flippinggh2234@gmail.com',
+  name: 'Flippinggh James',
   password: '1234567g'
 };
 
