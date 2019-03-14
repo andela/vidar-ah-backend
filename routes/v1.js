@@ -7,12 +7,14 @@ import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
 import isUserVerified from '../middleware/verifyUser';
 import ArticleController from '../controllers/articles';
+import CategoryController from '../controllers/category';
 import {
   validateSignup,
   validateLogin,
   validateProfileChange,
   returnValidationErrors,
   validateArticle,
+  validateCategory,
 } from '../middleware/validation';
 
 const { createArticle } = ArticleController;
@@ -75,5 +77,15 @@ apiRoutes.post(
   isUserVerified,
   UserController.loginUser
 );
+
+apiRoutes.route('/category')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCategory,
+    returnValidationErrors,
+    CategoryController.addNew
+  );
+
 
 export default apiRoutes;

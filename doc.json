@@ -231,6 +231,51 @@
         }
       }
     },
+    "/category": {
+      "post": {
+        "description": "endpoint to create a category",
+        "summary": "adds a new category to the category table",
+        "tags": [
+          "create category"
+        ],
+        "operationId": "CategoryPost",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/createcategory"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
     "/articles": {
       "post": {
         "tags": [
@@ -343,6 +388,21 @@
           "type": "string"
         }
       }
+    },
+    "createcategory": {
+      "title": "adds a new category to the category table",
+      "example": {
+        "category": "Sport Bulletin"
+      },
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "category"
+      ]
     }
   },
   "externalDocs": {
