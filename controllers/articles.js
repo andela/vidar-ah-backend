@@ -1,4 +1,4 @@
-import { Article, User } from '../models';
+import { Article, User, Category } from '../models';
 /**
  * @class ArticleController
  * @override
@@ -52,7 +52,6 @@ export default class ArticleController {
   static async searchForArticles(req, res) {
     try {
       const searchTerms = ArticleController.generateSearchQuery(req.query);
-      console.log(searchTerms);
       const results = await Article.findAll({
         raw: true,
         where: {
@@ -62,6 +61,8 @@ export default class ArticleController {
           model: User,
           attributes: ['username', 'email', 'name', 'bio'],
           as: 'author',
+        }, {
+          model: Category
         }]
       });
       return res.status(200).json({
@@ -142,6 +143,9 @@ export default class ArticleController {
           as: 'author',
           model: User,
           attributes: ['username', 'email', 'name', 'bio'],
+        }, {
+          as: 'author',
+          model: Category,
         }]
       });
       return res.status(200).json({
