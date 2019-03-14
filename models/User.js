@@ -46,6 +46,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    passwordResetToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    passwordResetTokenExpires: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    }
   };
 
   const User = sequelize.define('User', userSchema, {});
@@ -68,6 +76,8 @@ module.exports = (sequelize, DataTypes) => {
       name,
       email,
       link: `${HOST_URL}/api/v1/verify/${verificationId}`,
+      subject: "Welcome to Author's Haven",
+      message: 'verify your account'
     };
     sendMail(emailPayload);
   });

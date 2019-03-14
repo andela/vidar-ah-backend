@@ -2,17 +2,19 @@ import express from 'express';
 import UserController from '../controllers/user';
 import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
+import isUserVerified from '../middleware/verifyUser';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
-import isUserVerified from '../middleware/verifyUser';
 import ArticleController from '../controllers/articles';
 import {
   validateSignup,
   validateLogin,
   validateProfileChange,
-  returnValidationErrors,
+  validateEmail,
+  validatePassword,
   validateArticle,
+  returnValidationErrors
 } from '../middleware/validation';
 
 const { createArticle } = ArticleController;
@@ -74,6 +76,21 @@ apiRoutes.post(
   returnValidationErrors,
   isUserVerified,
   UserController.loginUser
+);
+
+apiRoutes.post(
+  '/requestpasswordreset',
+  validateEmail,
+  returnValidationErrors,
+  isUserVerified,
+  UserController.requestPasswordReset,
+);
+
+apiRoutes.post(
+  '/resetpassword/:passwordResetToken',
+  validatePassword,
+  returnValidationErrors,
+  UserController.resetPassword
 );
 
 export default apiRoutes;
