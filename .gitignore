@@ -46,6 +46,5 @@ dist/
 
 # Ignore vscode files
 .vscode/
-
 #coveralls code coverage reports
 .nyc_output/

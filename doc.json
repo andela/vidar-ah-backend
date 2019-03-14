@@ -231,7 +231,7 @@
         }
       }
     },
-    "/resetpassword": {
+    "/requestpasswordreset": {
       "post": {
         "tags": [
           "Reset password"
@@ -252,7 +252,7 @@
             "description": "Reset user password",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/resetpassword"
+              "$ref": "#/definitions/requestPasswordReset"
             }
           }
         ],
@@ -269,13 +269,13 @@
         }
       }
     },
-    "/verifypasswordkey/{key}": {
-      "get": {
+    "/resetpassword/{key}": {
+      "post": {
         "tags": [
           "Reset password"
         ],
-        "summary": "Verify user reset password key",
-        "description": "Verify user reset password key",
+        "summary": "Verify user reset password key and change password",
+        "description": "Verify user reset password key and change password",
         "consumes": [
           "application/x-www-form-urlencoded",
           "application/json"
@@ -285,12 +285,15 @@
         ],
         "parameters": [
           {
-            "in": "path",
+            "in": "body",
             "name": "key",
             "description": "key sent with the link to the user email",
             "required": true,
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "schema": {
+              "$ref": "#/definitions/resetPassword"
+            }
           }
         ],
         "responses": {
@@ -302,41 +305,6 @@
           },
           "404": {
             "description": "Password reset token not found."
-          }
-        }
-      }
-    },
-    "/changepassword": {
-      "post": {
-        "tags": [
-          "Reset password"
-        ],
-        "summary": "Reset user password",
-        "description": "Reset user password and delete password token",
-        "consumes": [
-          "application/x-www-form-urlencoded",
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "Request body",
-            "description": "Reset user password",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/resetpassword3"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Password changed successfully."
-          },
-          "422": {
-            "description": "Password must be at least 6 characters long."
           }
         }
       }
@@ -440,6 +408,22 @@
         }
       }
     },
+    "requestPasswordReset": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "resetPassword": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "articles": {
       "type": "object",
       "properties": {
@@ -453,10 +437,10 @@
           "type": "string"
         }
       }
+    },
+    "externalDocs": {
+      "description": "Find out more about Swagger",
+      "url": "http://swagger.io"
     }
-  },
-  "externalDocs": {
-    "description": "Find out more about Swagger",
-    "url": "http://swagger.io"
   }
 }

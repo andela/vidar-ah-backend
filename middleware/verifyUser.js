@@ -1,10 +1,7 @@
 import { User } from '../models';
 
 export default (req, res, next) => {
-  const {
-    body,
-    user,
-  } = req;
+  const { body, user } = req;
   const options = {};
   if (user) {
     options.fieldName = 'id';
@@ -25,7 +22,8 @@ export default (req, res, next) => {
           name,
           verified,
           verificationId,
-          bio
+          bio,
+          password
         } = foundUser.dataValues;
         const userObj = {
           id,
@@ -34,7 +32,8 @@ export default (req, res, next) => {
           name,
           verified,
           verificationId,
-          bio
+          bio,
+          password
         };
         if (!verified) {
           return res.status(403).json({
@@ -49,9 +48,7 @@ export default (req, res, next) => {
       }
       return res.status(404).json({
         success: false,
-        errors: [
-          'User not found.'
-        ]
+        errors: ['User not found.']
       });
     });
 };

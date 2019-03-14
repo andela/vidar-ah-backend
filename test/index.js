@@ -1,7 +1,9 @@
 import './user.spec';
 import './socialLoginSpec';
-import './article.spec';
-import './profile.spec';
-import './login.spec';
-import './updateVerifiedStatusHelper.spec';
-import './resetpassword.spec';
+
+require('./user.spec');
+require('./article.spec');
+require('./profile.spec');
+require('./updateVerifiedStatusHelper.spec');
+require('./login.spec');
+require('./resetpassword.spec');

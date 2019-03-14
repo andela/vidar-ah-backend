@@ -1,10 +1,7 @@
 /dist/**
 /mochawesome-report/**
-<<<<<<< HEAD
 /migrations
 /coverage/**
-=======
->>>>>>> ft-social-login-164139684
 /node_modules/**
 /.env/**
 /coverage/**
@@ -12,7 +9,11 @@
 package.json
 package-lock.json
 <<<<<<< HEAD
+<<<<<<< HEAD
 doc.json
 =======
 doc.json
 >>>>>>> ft-social-login-164139684
+=======
+doc.json
+>>>>>>> ft-reset-password-164139683

@@ -47,21 +47,7 @@ export const validateProfileChange = [
 
   check('bio')
     .isString()
-    .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.'),
-];
-
-export const validateLogin = [
-  check('email')
-    .isEmail()
-    .withMessage('Please provide a valid email.')
-    .custom(value => !/\s/.test(value))
-    .withMessage('Please provide a valid email.'),
-
-  check('password')
-    .isLength({ min: 6 })
-    .withMessage('Please provide a valid password.')
-    .custom(value => !/\s/.test(value))
-    .withMessage('Please provide a valid password.'),
+    .withMessage('Bio must be alphanumeric characters, please remove leading and trailing whitespaces.')
 ];
 
 export const validateArticle = [
@@ -82,6 +68,20 @@ export const validateArticle = [
     .withMessage('Article should have a body.')
     .isLength({ min: 6 })
     .withMessage('Article should have a body with at least 6 characters.'),
+];
+
+export const validateLogin = [
+  check('email')
+    .isEmail()
+    .withMessage('Please provide a valid email.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('Please provide a valid email.'),
+
+  check('password')
+    .isLength({ min: 6 })
+    .withMessage('Please provide a valid password.')
+    .custom(value => !/\s/.test(value))
+    .withMessage('Please provide a valid password.'),
 ];
 
 export const validateEmail = [
