@@ -6,6 +6,7 @@ import isUserVerified from '../middleware/verifyUser';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
+import checkForArticle from '../middleware/checkIfArticleExist';
 import ArticleController from '../controllers/articles';
 import CategoryController from '../controllers/category';
 import {
@@ -22,13 +23,17 @@ import {
   validateEditComment,
   validateCommentUser,
   validateArticleExist,
-  returnValidationErrors
+  returnValidationErrors,
+  validateArticleId,
+  validateArticleRating
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
 import CommentController from '../controllers/comment';
 
-const { createArticle, updateArticle, deleteArticle } = ArticleController;
+const {
+  createArticle, updateArticle, deleteArticle, rateArticle
+} = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -73,6 +78,11 @@ apiRoutes.route('/articles/:slug')
     validateArticleAuthor,
     deleteArticle
   );
+
+apiRoutes.route('/articles/rate/:articleId')
+  .post(Auth.verifyUser, isUserVerified,
+    validateArticleId, validateArticleRating,
+    returnValidationErrors, checkForArticle, rateArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
