@@ -189,12 +189,12 @@
       },
       "patch": {
         "tags": [
-          "Articles"
+          "Profile"
         ],
-        "summary": "Create an article",
-        "description": "",
-        "operationId": "addArticle",
+        "summary": "Update user's profile ",
+        "description": "Update user's profile information",
         "consumes": [
+          "application/x-www-form-urlencoded",
           "application/json"
         ],
         "produces": [
@@ -202,7 +202,7 @@
         ],
         "parameters": [
           {
-            "name": "authorization",
+            "name": "x-access-token",
             "in": "header",
             "description": "A token to verify the user",
             "required": true,
@@ -210,20 +210,23 @@
           },
           {
             "in": "body",
-            "name": "body",
+            "name": "Request body",
             "description": "Update user profile",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/articles"
+              "$ref": "#/definitions/profile"
             }
           }
         ],
         "responses": {
-          "201": {
-            "description": "New article created successfully"
+          "205": {
+            "description": "Returns updated profile"
           },
           "422": {
-            "description": "Invalid title/description/body supplied"
+            "description": "Required fields not present"
+          },
+          "401": {
+            "description": "Authentication error"
           }
         }
       }
@@ -275,15 +278,15 @@
             "description": "",
             "schema": {
               "$ref": "#/definitions/createcategory",
-            "in": "body",
-            "name": "Request body",
-            "description": "Reset user password",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/requestPasswordReset"
+              "in": "body",
+              "name": "Request body",
+              "description": "Reset user password",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/requestPasswordReset"
+              }
             }
           }
-        }
         ],
         "responses": {
           "201": {
@@ -463,6 +466,170 @@
 
     }
   },
+  "/articles/{slug}/comments": {
+    "post": {
+      "tags": [
+        "Comment"
+      ],
+      "summary": "Create a comment",
+      "description": "",
+      "operationId": "createComment",
+      "consumes": [
+        "application/json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "authorization",
+          "in": "header",
+          "description": "A token to verify the user",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "slug",
+          "in": "path",
+          "description": "slug of article to relate comment to",
+          "required": true
+        },
+        {
+          "in": "body",
+          "name": "comment",
+          "description": "Comment body",
+          "required": true
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "New comment created successfully"
+        },
+        "422": {
+          "description": "Incomplete request body"
+        }
+      }
+    },
+    "get": {
+      "tags": [
+        "Comment"
+      ],
+      "summary": "Get all article comments",
+      "description": "",
+      "operationId": "getComments",
+      "consumes": [
+        "application/json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "authorization",
+          "in": "header",
+          "description": "A token to verify the user",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "slug",
+          "in": "path",
+          "description": "slug of article to get comments for",
+          "required": true
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "Comments returned successfully"
+        },
+        "404": {
+          "description": "No comments found"
+        }
+      }
+    },
+    "/articles/{slug}/comments/{id}": {
+      "patch": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Update a comment",
+        "description": "",
+        "operationId": "updateComment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of comment to be updated",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "New comment",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New comment created successfully"
+          },
+          "422": {
+            "description": "Incomplete request body"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Delete a comment",
+        "description": "",
+        "operationId": "deleteComment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of comment to be deleted",
+            "required": true
+          }
+        ],
+        "responses": {
+          "205": {
+            "description": "Comment deleted successfully"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  },
   "definitions": {
     "user": {
       "type": "object",
@@ -508,13 +675,13 @@
     "profile": {
       "type": "object",
       "properties": {
-        "title": {
+        "firstname": {
           "type": "string"
         },
-        "description": {
+        "lastname": {
           "type": "string"
         },
-        "body": {
+        "bio": {
           "type": "string"
         }
       }

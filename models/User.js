@@ -63,6 +63,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id',
       onDelete: 'CASCADE'
     });
+    User.hasMany(models.Comment, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
   };
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();

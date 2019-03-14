@@ -17,8 +17,13 @@ import {
   validateArticle,
   validateArticleAuthor,
   validateCategory,
-  returnValidationErrors
+  returnValidationErrors,
+  validateCreateComment,
+  validateEditComment,
+  validateCommentUser,
+  validateArticleExist,
 } from '../middleware/validation';
+import CommentController from '../controllers/comment';
 
 const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
@@ -127,5 +132,39 @@ apiRoutes.post(
   returnValidationErrors,
   UserController.resetPassword
 );
+
+apiRoutes.route('/articles/:slug/comments')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment
+  )
+  .get(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    CommentController.getComments
+  );
+
+apiRoutes.route('/articles/:slug/comments/:id')
+  .patch(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment
+  )
+  .delete(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment
+  );
+
 
 export default apiRoutes;
