@@ -1,9 +1,9 @@
+import './comment.spec';
 import './user.spec';
+import './article.spec';
 import './socialLoginSpec';
+import './login.spec';
+import './resetpassword.spec';
+import './profile.spec';
+import './updateVerifiedStatusHelper.spec';
 
-require('./user.spec');
-require('./article.spec');
-require('./profile.spec');
-require('./updateVerifiedStatusHelper.spec');
-require('./login.spec');
-require('./resetpassword.spec');

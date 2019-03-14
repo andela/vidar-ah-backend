@@ -7,6 +7,7 @@ import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
 import ArticleController from '../controllers/articles';
+
 import {
   validateSignup,
   validateLogin,
@@ -14,8 +15,14 @@ import {
   validateEmail,
   validatePassword,
   validateArticle,
-  returnValidationErrors
+  returnValidationErrors,
+  validateCreateComment,
+  validateEditComment,
+  validateCommentUser,
+  validateArticleExist,
 } from '../middleware/validation';
+import CommentController from '../controllers/comment';
+
 
 const { createArticle } = ArticleController;
 
@@ -92,5 +99,24 @@ apiRoutes.post(
   returnValidationErrors,
   UserController.resetPassword
 );
+apiRoutes.route('/comment/:id')
+  .post(Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment)
+  .patch(Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment)
+  .delete(Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment);
+
 
 export default apiRoutes;
