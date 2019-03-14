@@ -61,8 +61,6 @@ export default class ArticleController {
           model: User,
           attributes: ['username', 'email', 'name', 'bio'],
           as: 'author',
-        }, {
-          model: Category
         }]
       });
       return res.status(200).json({
