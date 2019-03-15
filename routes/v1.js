@@ -50,7 +50,7 @@ apiRoutes.get('/auth/google',
 apiRoutes.get('/auth/google/callback',
   passport.authenticate(
     'google', { failureRedirect: '/login' }
-  ),
+  ), UserController.socialAuth,
   (req, res) => {
     res.redirect('/');
   });
@@ -65,7 +65,22 @@ apiRoutes.get('/auth/facebook',
 apiRoutes.get('/auth/facebook/callback',
   passport.authenticate(
     'facebook', { failureRedirect: '/login' }
-  ),
+  ), UserController.socialAuth,
+  (req, res) => {
+    res.redirect('/');
+  });
+
+apiRoutes.get('/auth/twitter',
+  passport.authenticate(
+    'twitter', {
+      scope: ['profile']
+    }
+  ));
+
+apiRoutes.get('/auth/twitter/callback',
+  passport.authenticate(
+    'twitter', { failureRedirect: '/login' }
+  ), UserController.socialAuth,
   (req, res) => {
     res.redirect('/');
   });
