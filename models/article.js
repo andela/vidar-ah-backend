@@ -62,6 +62,9 @@ module.exports = (sequelize, DataTypes) => {
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
     });
+    Article.belongsTo(models.Category, {
+      foreignKey: 'categoryId',
+    });
   };
   return Article;
 };

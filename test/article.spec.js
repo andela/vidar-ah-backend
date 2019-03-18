@@ -12,7 +12,7 @@ const { expect } = chai;
 
 describe('ARTICLES', () => {
   let token;
-  let slug;
+  let articleSlug;
 
   before((done) => {
     chai
@@ -54,8 +54,8 @@ describe('ARTICLES', () => {
         .set('authorization', token)
         .send(article1)
         .end((err, res) => {
-          const { status, body: { message, success, article } } = res;
-          slug = article.slug;
+          const { status, body: { message, success, article: { slug } } } = res;
+          articleSlug = slug;
           expect(status).to.be.equal(201);
           expect(success).to.be.equal(true);
           expect(message).to.be.equal('New article created successfully');
@@ -235,7 +235,7 @@ describe('ARTICLES', () => {
     it('Should should return an array of results', (done) => {
       chai
         .request(app)
-        .get(`/api/v1/articles/${slug}`)
+        .get(`/api/v1/articles/${articleSlug}`)
         .end((err, res) => {
           const { status, body: { success, article } } = res;
           expect(status).to.be.equal(200);

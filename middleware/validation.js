@@ -84,6 +84,16 @@ export const validateLogin = [
     .withMessage('Please provide a valid password.'),
 ];
 
+export const validateCategory = [
+  check('category')
+    .exists()
+    .withMessage('No category provided. Please provide a category.')
+    .isLength({ min: 3, max: 30 })
+    .withMessage('Category must be at least 3 characters long and no more than 30.')
+    .isString()
+    .withMessage('Category must be alphanumeric characters, please remove leading and trailing whitespaces.')
+];
+
 export const validateEmail = [
   check('email')
     .isEmail()
@@ -99,17 +109,6 @@ export const validatePassword = [
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the password.')
 ];
-
-export const validateCategory = [
-  check('category')
-    .exists()
-    .withMessage('No category provided. Please provide a category.')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Category must be at least 3 characters long and no more than 15.')
-    .isString()
-    .withMessage('Category must be alphanumeric characters, please remove leading and trailing whitespaces.')
-];
-
 
 export const validateSearch = [
   check('term')

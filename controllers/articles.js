@@ -107,7 +107,7 @@ export default class ArticleController {
     };
 
     if (!author) {
-      delete filterFields['$user.username$'];
+      delete filterFields['$author.username$'];
     }
     if (!startDate || !endDate) {
       delete filterFields.createdAt;

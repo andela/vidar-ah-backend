@@ -15,9 +15,9 @@ import {
   validateEmail,
   validatePassword,
   validateArticle,
-  returnValidationErrors,
   validateCategory,
-  validateSearch
+  validateSearch,
+  returnValidationErrors
 } from '../middleware/validation';
 
 const { createArticle } = ArticleController;
@@ -81,27 +81,14 @@ apiRoutes.post(
   UserController.loginUser
 );
 
-apiRoutes.get(
-  '/articles/search',
-  validateSearch,
-  returnValidationErrors,
-  ArticleController.searchForArticles,
-);
-
-apiRoutes.get(
-  '/articles/:slug',
-  ArticleController.getArticleBySlug,
-);
-
 apiRoutes.route('/category')
   .post(
     Auth.verifyUser,
     isUserVerified,
     validateCategory,
     returnValidationErrors,
-    CategoryController.addNew
+    CategoryController.createCategory
   );
-
 
 apiRoutes.post(
   '/requestpasswordreset',
@@ -116,6 +103,18 @@ apiRoutes.post(
   validatePassword,
   returnValidationErrors,
   UserController.resetPassword
+);
+
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
 );
 
 export default apiRoutes;
