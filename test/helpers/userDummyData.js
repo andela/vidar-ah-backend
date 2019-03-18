@@ -12,10 +12,31 @@ export const user2 = {
   password: '1234567g'
 };
 
+export const user3 = {
+  username: 'leksyib',
+  email: 'leksyib14@gmail.com',
+  name: 'Olamilekan',
+  password: '1234567g'
+};
+
 export const validUser = {
   username: 'JamesBond',
   email: 'jamesbondxxc@gmail.com',
   name: 'James Bond',
+  password: '1234567'
+};
+
+export const validCommentUser = {
+  username: 'MuhammaduBuhari',
+  email: 'ayinlaolajide@gmail.com',
+  name: 'Muhammadu Buhari',
+  password: '1234567'
+};
+
+export const wrongCommentUser = {
+  username: 'AishaBuhari',
+  email: 'ayinlaolajide2345@gmail.com',
+  name: 'Aisha Buhari',
   password: '1234567'
 };
 
@@ -73,4 +94,20 @@ export const validUser2 = {
 
 export const invalidUser = {
   email: 'email@domain.com'
+};
+
+
+export const validUser3 = {
+  name: 'validUser3',
+  email: 'validUser3@gmail.com',
+  password: 'validUser3',
+  username: 'validuser3'
+};
+
+
+export const validUser4 = {
+  name: 'validUser4',
+  email: 'validUser4@gmail.com',
+  password: 'validUser3',
+  username: 'validuser3'
 };

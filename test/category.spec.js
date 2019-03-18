@@ -20,7 +20,7 @@ describe('CREATE CATEGORY', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(newUser2)
       .end((err, res) => {
         if (!err) {
@@ -69,7 +69,7 @@ describe('CREATE CATEGORY', () => {
 
   describe('Make a request with valid and verified credentials', () => {
     before(() => { updateVerifiedStatus(newUser2.email); });
-    it('should return a success message with status 201', (done) => {
+    it('should return a success message with status 200', (done) => {
       chai
         .request(app)
         .post('/api/v1/category')

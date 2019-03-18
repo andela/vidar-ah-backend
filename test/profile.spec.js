@@ -16,7 +16,7 @@ describe('Make a request to signup with valid details', () => {
   it('returns successfully signed up message', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(validUser)
       .end((err, res) => {
         const {
@@ -94,7 +94,7 @@ describe('View default profile details', () => {
 
 describe('Update profile details', () => {
   before(() => updateVerifiedStatus(validUser.email));
-  it('returns successfully updated profile details', (done) => {
+  it('returns successfully profile details', (done) => {
     chai
       .request(app)
       .patch('/api/v1/userprofile')

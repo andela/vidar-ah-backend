@@ -20,16 +20,26 @@ import {
   validateArticle,
   validateArticleAuthor,
   validateCategory,
-  returnValidationErrors
+  returnValidationErrors,
+  validateSearch,
+  validateArticleExist,
+  validateCreateComment,
+  validateEditComment,
+  validateCommentUser,
+  validateUser,
+  validateArticleId,
+  validateArticleRating
 } from '../middleware/validation';
+import CommentController from '../controllers/comment';
 
-const { createArticle, updateArticle, deleteArticle } = ArticleController;
+
+const {
+  createArticle, updateArticle, deleteArticle, rateArticle
+} = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.post('/user', validateSignup, returnValidationErrors, UserController.registerUser);
-apiRoutes.get('/verify/:verificationId', UserController.verifyAccount);
-apiRoutes.route('/user')
+apiRoutes.route('/user/signup')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
 apiRoutes.route('/userprofile')
@@ -127,6 +137,18 @@ apiRoutes.post(
   UserController.loginUser
 );
 
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
+);
+
 apiRoutes.route('/category')
   .post(
     Auth.verifyUser,
@@ -150,6 +172,25 @@ apiRoutes.post(
   returnValidationErrors,
   UserController.resetPassword
 );
+apiRoutes.route('/comment/:id')
+  .post(Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment)
+  .patch(Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment)
+  .delete(Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment);
+
 
 apiRoutes.route('/user')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
