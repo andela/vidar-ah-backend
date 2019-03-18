@@ -7,6 +7,7 @@ import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
 import ArticleController from '../controllers/articles';
+import CategoryController from '../controllers/category';
 import {
   validateSignup,
   validateLogin,
@@ -14,10 +15,12 @@ import {
   validateEmail,
   validatePassword,
   validateArticle,
+  validateArticleAuthor,
+  validateCategory,
   returnValidationErrors
 } from '../middleware/validation';
 
-const { createArticle } = ArticleController;
+const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -33,12 +36,35 @@ apiRoutes.route('/verify/:verificationId')
   .get(UserController.verifyAccount);
 
 apiRoutes.route('/articles')
-  .post(Auth.verifyUser, isUserVerified,
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
     addImages,
     validateArticle,
     returnValidationErrors,
     generateSlug,
-    createArticle);
+    createArticle
+  );
+
+apiRoutes.route('/articles/:slug')
+  .put(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleAuthor,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    updateArticle,
+    generateSlug
+  );
+
+apiRoutes.route('/articles/:slug')
+  .delete(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleAuthor,
+    deleteArticle
+  );
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
@@ -92,6 +118,15 @@ apiRoutes.post(
   isUserVerified,
   UserController.loginUser
 );
+
+apiRoutes.route('/category')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCategory,
+    returnValidationErrors,
+    CategoryController.createCategory
+  );
 
 apiRoutes.post(
   '/requestpasswordreset',
