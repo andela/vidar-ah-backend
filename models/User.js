@@ -56,13 +56,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
 
-  const User = sequelize.define('User', userSchema, {
-    classMethods: {
-      associate(models) {
-        User.hasMany(models.Article);
-      }
-    }
-  });
+  const User = sequelize.define('User', userSchema, {});
+
+  User.associate = (models) => {
+    User.hasMany(models.Article, {
+      foreignKey: 'id',
+      onDelete: 'CASCADE'
+    });
+  };
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();
     if (user.password) {

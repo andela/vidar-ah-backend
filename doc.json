@@ -57,6 +57,66 @@
         }
       }
     },
+    "/auth/google": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "google api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/twitter": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "twitter api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/facebook": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "facebook api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
     "/user/login": {
       "post": {
         "description": "A user with valid email and password can log in successfully. Optionally, user can set a rememberMe property to true to stay logged in for a very long time.",
@@ -171,7 +231,18 @@
         }
       }
     },
-    "/resetpassword": {
+    "/category": {
+      "post": {
+        "description": "endpoint to create a category",
+        "summary": "adds a new category to the category table",
+        "tags": [
+          "create category"
+        ],
+        "operationId": "CategoryPost",
+        "deprecated": false
+      }
+    },
+    "/requestpasswordreset": {
       "post": {
         "tags": [
           "Reset password"
@@ -187,14 +258,35 @@
         ],
         "parameters": [
           {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/createcategory",
             "in": "body",
             "name": "Request body",
             "description": "Reset user password",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/resetpassword"
+              "$ref": "#/definitions/requestPasswordReset"
             }
           }
+        }
         ],
         "responses": {
           "201": {
@@ -209,13 +301,13 @@
         }
       }
     },
-    "/verifypasswordkey/{key}": {
-      "get": {
+    "/resetpassword/{key}": {
+      "post": {
         "tags": [
           "Reset password"
         ],
-        "summary": "Verify user reset password key",
-        "description": "Verify user reset password key",
+        "summary": "Verify user reset password key and change password",
+        "description": "Verify user reset password key and change password",
         "consumes": [
           "application/x-www-form-urlencoded",
           "application/json"
@@ -225,16 +317,20 @@
         ],
         "parameters": [
           {
-            "in": "path",
+            "in": "body",
             "name": "key",
             "description": "key sent with the link to the user email",
             "required": true,
             "type": "integer",
-            "format": "int64"
+            "format": "int64",
+            "schema": {
+              "$ref": "#/definitions/resetPassword"
+            }
           }
         ],
         "responses": {
           "200": {
+            "headers": {},
             "description": "You can now reset your password."
           },
           "410": {
@@ -246,15 +342,15 @@
         }
       }
     },
-    "/changepassword": {
+    "/articles": {
       "post": {
         "tags": [
-          "Reset password"
+          "Articles"
         ],
-        "summary": "Reset user password",
-        "description": "Reset user password and delete password token",
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
         "consumes": [
-          "application/x-www-form-urlencoded",
           "application/json"
         ],
         "produces": [
@@ -262,24 +358,112 @@
         ],
         "parameters": [
           {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
             "in": "body",
-            "name": "Request body",
-            "description": "Reset user password",
+            "name": "body",
+            "description": "Update user profile",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/resetpassword3"
+              "$ref": "#/definitions/articles"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Password changed successfully."
+            "description": "New article created successfully"
           },
           "422": {
-            "description": "Password must be at least 6 characters long."
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Update an article",
+        "description": "",
+        "operationId": "updateArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updates article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article updated successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Delete an article",
+        "description": "",
+        "operationId": "deleteArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Deletes article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article deleted successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
           }
         }
       }
+
     }
   },
   "definitions": {
@@ -338,64 +522,53 @@
         }
       }
     },
-    "/auth/google": {
-      "get": {
-        "tags": [
-          "authentication"
-        ],
-        "summary": "User registration or login",
-        "description": "A Social platform for the creative at heart",
-        "consumes": [
-          "google api"
-        ],
-        "produces": [
-          "authorization token"
-        ],
-        "responses": {
-          "200": {
-            "description": "Signup or login successful"
-          }
+    "requestPasswordReset": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
         }
       }
     },
-    "/auth/twitter": {
-      "get": {
-        "tags": [
-          "authentication"
-        ],
-        "summary": "User registration or login",
-        "description": "A Social platform for the creative at heart",
-        "consumes": [
-          "twitter api"
-        ],
-        "produces": [
-          "authorization token"
-        ],
-        "responses": {
-          "200": {
-            "description": "Signup or login successful"
-          }
+    "resetPassword": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
         }
       }
     },
-    "/auth/facebook": {
-      "get": {
-        "tags": [
-          "authentication"
-        ],
-        "summary": "User registration or login",
-        "description": "A Social platform for the creative at heart",
-        "consumes": [
-          "facebook api"
-        ],
-        "produces": [
-          "authorization token"
-        ],
-        "responses": {
-          "200": {
-            "description": "Signup or login successful"
-          }
+    "articles": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
         }
+      }
+    },
+    "createcategory": {
+      "title": "adds a new category to the category table",
+      "example": {
+        "category": "Sport Bulletin"
+      },
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "category"
+      ],
+      "externalDocs": {
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
       }
     },
         "resetpassword": {
@@ -420,3 +593,6 @@
         "url": "http://swagger.io"
       }
     }
+  }
+}
+

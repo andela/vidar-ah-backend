@@ -7,8 +7,8 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "db-migrate": "sequelize db:migrate",
     "db:undo-migration": "sequelize db:migrate:undo:all",
-    "lint": "eslint routes models config test index.js",
-    "start": "sequelize db:migrate && node dist/index.js",
+    "lint": "eslint . --ext .js",
+    "start": "sequelize db:migrate && node dist/index",
     "start:dev": "babel-watch index.js",
     "build": "rm -rf dist && babel ./ -d ./dist --copy-files --ignore ./node_modules",
     "postinstall": "npm run build",
@@ -68,6 +68,8 @@
     "faker": "^4.1.0",
     "mocha": "^6.0.2",
     "mochawesome": "^3.1.1",
-    "nyc": "^13.3.0"
+    "nyc": "^13.3.0",
+    "sinon": "^7.2.7",
+    "sinon-chai": "^3.3.0"
   }
 }

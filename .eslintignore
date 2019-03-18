@@ -1,18 +1,11 @@
 /dist/**
 /mochawesome-report/**
-<<<<<<< HEAD
-/migrations
-/coverage/**
-=======
->>>>>>> ft-social-login-164139684
 /node_modules/**
 /.env/**
 /coverage/**
 .eslintrc.json
 package.json
 package-lock.json
-<<<<<<< HEAD
 doc.json
-=======
-doc.json
->>>>>>> ft-social-login-164139684
+
+
