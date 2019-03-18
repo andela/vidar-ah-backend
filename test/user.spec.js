@@ -229,7 +229,7 @@ describe('Make a request to verify account with wrong verificationID', () => {
         const { status, body: { message, success } } = res;
         expect(status).to.be.equal(404);
         expect(success).to.be.equal(false);
-        expect(message).to.be.equal('User not found.');
+        expect(message).to.be.equal('User not found');
         done(err);
       });
   });

@@ -1,10 +1,10 @@
+import './category.spec';
+import './article.spec';
+import './profile.spec';
+import './rating.spec';
 import './comment.spec';
 import './user.spec';
 import './login.spec';
 import './socialLoginSpec';
-import './article.spec';
 import './updateVerifiedStatusHelper.spec';
-import './profile.spec';
 import './resetpassword.spec';
-import './category.spec';
-import './rating.spec';

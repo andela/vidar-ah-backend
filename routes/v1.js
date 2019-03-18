@@ -3,6 +3,9 @@ import UserController from '../controllers/user';
 import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
 import isUserVerified from '../middleware/verifyUser';
+import PasswordReset from '../controllers/PasswordReset';
+import VerifyPasswordToken from '../controllers/VerifyPasswordToken';
+import ChangePassword from '../controllers/ChangePassword';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
@@ -17,13 +20,13 @@ import {
   validatePassword,
   validateArticle,
   returnValidationErrors,
+  validateArticleAuthor,
   validateCategory,
   validateSearch,
   validateArticleExist,
   validateCreateComment,
   validateEditComment,
   validateCommentUser,
-  validateUser,
   validateArticleId,
   validateArticleRating
 } from '../middleware/validation';
@@ -47,9 +50,28 @@ apiRoutes.route('/userprofile')
 apiRoutes.route('/verify/:verificationId')
   .get(UserController.verifyAccount);
 
+apiRoutes.get('/userprofile', Auth.verifyUser, isUserVerified, ProfileController.viewProfile);
+apiRoutes.patch(
+  '/userprofile',
+  Auth.verifyUser,
+  isUserVerified,
+  validateProfileChange,
+  returnValidationErrors,
+  ProfileController.editProfile
+);
+
+apiRoutes.post(
+  '/user/login',
+  validateLogin,
+  returnValidationErrors,
+  isUserVerified,
+  UserController.loginUser,
+);
+
 apiRoutes.route('/articles')
   .post(
-    Auth.verifyUser, isUserVerified,
+    Auth.verifyUser,
+    isUserVerified,
     addImages,
     validateArticle,
     returnValidationErrors,
@@ -57,21 +79,23 @@ apiRoutes.route('/articles')
     createArticle
   );
 
-apiRoutes.route('/articles/:id')
+apiRoutes.route('/articles/:slug')
   .put(
-    Auth.verifyUser, isUserVerified,
-    validateUser,
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleAuthor,
     addImages,
     validateArticle,
     returnValidationErrors,
-    generateSlug,
-    updateArticle
+    updateArticle,
+    generateSlug
   );
 
-apiRoutes.route('/articles/:id')
+apiRoutes.route('/articles/:slug')
   .delete(
-    Auth.verifyUser, isUserVerified,
-    validateUser,
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleAuthor,
     deleteArticle
   );
 
@@ -176,5 +200,45 @@ apiRoutes.route('/comment/:id')
     returnValidationErrors,
     CommentController.deleteComment);
 
+
+apiRoutes.route('/user')
+  .post(validateSignup, returnValidationErrors, UserController.registerUser);
+
+apiRoutes.route('/userprofile')
+  .get(Auth.verifyUser, isUserVerified, ProfileController.viewProfile)
+  .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
+    returnValidationErrors, ProfileController.editProfile);
+
+apiRoutes.route('/verify/:verificationId')
+  .get(UserController.verifyAccount);
+
+apiRoutes.route('/articles')
+  .post(Auth.verifyUser, isUserVerified,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    generateSlug,
+    createArticle);
+
+apiRoutes.post(
+  '/resetpassword',
+  validateEmail,
+  returnValidationErrors,
+  isUserVerified,
+  PasswordReset.resetPassword,
+);
+
+apiRoutes.get(
+  '/verifypasswordkey/:passwordResetToken',
+  VerifyPasswordToken.checkPasswordToken
+);
+
+apiRoutes.post(
+  '/changepassword',
+  Auth.verifyUser,
+  validatePassword,
+  returnValidationErrors,
+  ChangePassword.changePassword,
+);
 
 export default apiRoutes;

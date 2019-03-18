@@ -1,35 +1,13 @@
 language: node_js
 node_js:
-<<<<<<< HEAD
-<<<<<<< HEAD
   - "10"
 services:
 - postgresql
 before_script:
   - psql -c 'create database vidarapp;' -U postgres
-
 script:
-  - npm install && npm install sequelize-cli -g
-  - npm run test
-
-
-=======
- - "10"
-=======
-  - "10"
->>>>>>> ft-search-filter-164139695
-services:
-  - postgresql
-before_script:
-  - psql -c 'create database vidarapp;' -U postgres
-script:
-<<<<<<< HEAD
- - npm install && npm install sequelize-cli -g
- - npm run test
->>>>>>> ft-social-login-164139684
-=======
   - npm install && npm install sequelize-cli -g
   - npm run test
 after_success: 
   - npm run coverage
->>>>>>> ft-search-filter-164139695
+

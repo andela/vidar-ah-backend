@@ -84,15 +84,16 @@ export const validateLogin = [
     .custom(value => !/\s/.test(value))
     .withMessage('Please provide a valid password.'),
 ];
-export const validateUser = async (req, res, next) => {
+
+export const validateArticleAuthor = async (req, res, next) => {
   const {
     user,
-    params: { id }
+    params: { slug }
   } = req;
   try {
     const article = await Article.findOne({
       where: {
-        id
+        slug
       }
     });
     if (!article) {
@@ -101,9 +102,8 @@ export const validateUser = async (req, res, next) => {
         errors: ['Article not found']
       });
     }
-    const checkUser = article.userId === user.id;
-    if (!checkUser) {
-      return res.status(401).json({
+    if (!(article.userId === user.id)) {
+      return res.status(403).json({
         success: false,
         errors: ['You are unauthorized to perform this action']
       });
@@ -116,7 +116,6 @@ export const validateUser = async (req, res, next) => {
     });
   }
 };
-
 export const validateCategory = [
   check('category')
     .exists()

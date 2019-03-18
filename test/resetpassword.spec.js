@@ -1,4 +1,3 @@
-// Require the dependencies
 import dotenv from 'dotenv';
 import chai from 'chai';
 import chaiHttp from 'chai-http';

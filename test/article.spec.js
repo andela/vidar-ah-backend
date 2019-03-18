@@ -14,11 +14,10 @@ const { expect } = chai;
 
 let userToken;
 let userToken2;
-let articleId;
+let token;
+let articleSlug;
 
 describe('ARTICLES', () => {
-  let token;
-  let slug;
   before((done) => {
     chai
       .request(app)
@@ -59,9 +58,8 @@ describe('ARTICLES', () => {
         .set('authorization', token)
         .send(article1)
         .end((err, res) => {
-          const { status, body: { message, success, article } } = res;
-          articleId = article.id;
-          slug = article.slug;
+          const { status, body: { message, success, article: { slug } } } = res;
+          articleSlug = slug;
           expect(status).to.be.equal(201);
           expect(success).to.be.equal(true);
           expect(message).to.be.equal('New article created successfully');
@@ -241,7 +239,7 @@ describe('ARTICLES', () => {
     it('Should should return an array of results', (done) => {
       chai
         .request(app)
-        .get(`/api/v1/articles/${slug}`)
+        .get(`/api/v1/articles/${articleSlug}`)
         .end((err, res) => {
           const { status, body: { success, article } } = res;
           expect(status).to.be.equal(200);
@@ -274,7 +272,8 @@ describe('ARTICLES', () => {
     });
   });
 
-  describe('/PUT articles id', () => {
+
+  describe('/PUT articles slug', () => {
     before((done) => {
       chai
         .request(app)
@@ -292,7 +291,7 @@ describe('ARTICLES', () => {
     it('should update an article', (done) => {
       chai
         .request(app)
-        .put(`/api/v1/articles/${articleId}`)
+        .put(`/api/v1/articles/${articleSlug}`)
         .set('authorization', userToken)
         .send(article2)
         .end((err, res) => {
@@ -319,11 +318,11 @@ describe('ARTICLES', () => {
     });
   });
 
-  describe('/PUT articles id', () => {
+  describe('/PUT articles slug', () => {
     before((done) => {
       chai
         .request(app)
-        .post('/api/v1/user/signup')
+        .post('/api/v1/user/')
         .send(myUser)
         .end((err, res) => {
           userToken2 = res.body.token;
@@ -335,11 +334,11 @@ describe('ARTICLES', () => {
     it('should return an error if the user is not the owner of the article', (done) => {
       chai
         .request(app)
-        .put(`/api/v1/articles/${articleId}`)
+        .put(`/api/v1/articles/${articleSlug}`)
         .set('authorization', userToken2)
         .send(article2)
         .end((err, res) => {
-          expect(res).to.have.status(401);
+          expect(res).to.have.status(403);
           expect(res.body).to.have.property('success').equal(false);
           expect(res.body.errors).to.be.an('Array');
           expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
@@ -348,15 +347,14 @@ describe('ARTICLES', () => {
     });
   });
 
-  describe('/DELETE articles id', () => {
+  describe('/DELETE articles slug', () => {
     it('should return an error if the user is not the owner of the article', (done) => {
       chai
         .request(app)
-        .delete(`/api/v1/articles/${articleId}`)
+        .delete(`/api/v1/articles/${articleSlug}`)
         .set('authorization', userToken2)
-        .send(article2)
         .end((err, res) => {
-          expect(res).to.have.status(401);
+          expect(res).to.have.status(403);
           expect(res.body).to.have.property('success').equal(false);
           expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
           done(err);
@@ -366,9 +364,8 @@ describe('ARTICLES', () => {
     it('should delete an article', (done) => {
       chai
         .request(app)
-        .delete(`/api/v1/articles/${articleId}`)
+        .delete(`/api/v1/articles/${articleSlug}`)
         .set('authorization', userToken)
-        .send(article2)
         .end((err, res) => {
           expect(res).to.have.status(200);
           expect(res.body).to.have.property('success').equal(true);
@@ -382,7 +379,6 @@ describe('ARTICLES', () => {
         .request(app)
         .delete('/api/v1/articles/eab6fbb6-aeda-4e1b-b4be-3582f51a6d30')
         .set('authorization', userToken)
-        .send(article2)
         .end((err, res) => {
           expect(res).to.have.status(404);
           expect(res.body).to.have.property('success').equal(false);
