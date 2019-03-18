@@ -6,4 +6,5 @@ require('./article.spec');
 require('./profile.spec');
 require('./updateVerifiedStatusHelper.spec');
 require('./login.spec');
+require('./category.spec');
 require('./resetpassword.spec');

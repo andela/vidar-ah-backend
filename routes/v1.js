@@ -7,6 +7,7 @@ import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
 import ArticleController from '../controllers/articles';
+import CategoryController from '../controllers/category';
 import {
   validateSignup,
   validateLogin,
@@ -14,6 +15,7 @@ import {
   validateEmail,
   validatePassword,
   validateArticle,
+  validateCategory,
   returnValidationErrors
 } from '../middleware/validation';
 
@@ -77,6 +79,15 @@ apiRoutes.post(
   isUserVerified,
   UserController.loginUser
 );
+
+apiRoutes.route('/category')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCategory,
+    returnValidationErrors,
+    CategoryController.createCategory
+  );
 
 apiRoutes.post(
   '/requestpasswordreset',

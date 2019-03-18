@@ -231,6 +231,17 @@
         }
       }
     },
+    "/category": {
+      "post": {
+        "description": "endpoint to create a category",
+        "summary": "adds a new category to the category table",
+        "tags": [
+          "create category"
+        ],
+        "operationId": "CategoryPost",
+        "deprecated": false
+      }
+    },
     "/requestpasswordreset": {
       "post": {
         "tags": [
@@ -247,6 +258,26 @@
         ],
         "parameters": [
           {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/createcategory",
             "in": "body",
             "name": "Request body",
             "description": "Reset user password",
@@ -255,6 +286,7 @@
               "$ref": "#/definitions/requestPasswordReset"
             }
           }
+        }
         ],
         "responses": {
           "201": {
@@ -298,6 +330,7 @@
         ],
         "responses": {
           "200": {
+            "headers": {},
             "description": "You can now reset your password."
           },
           "410": {
@@ -438,9 +471,24 @@
         }
       }
     },
-    "externalDocs": {
-      "description": "Find out more about Swagger",
-      "url": "http://swagger.io"
+    "createcategory": {
+      "title": "adds a new category to the category table",
+      "example": {
+        "category": "Sport Bulletin"
+      },
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "category"
+      ],
+      "externalDocs": {
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
+      }
     }
   }
 }

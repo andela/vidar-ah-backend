@@ -45,6 +45,12 @@ export const newUser = {
   name: 'testing testing',
   username: 'testing123559'
 };
+export const newUser2 = {
+  email: 'testing2@gmail.com',
+  password: 'testing',
+  name: 'testing testing',
+  username: 'testing223559'
+};
 
 export const validLoginUser = {
   email: 'testing123559@gmail.com',
