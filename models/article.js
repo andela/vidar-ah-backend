@@ -57,9 +57,11 @@ module.exports = (sequelize, DataTypes) => {
     Article.belongsTo(models.User, {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
+      as: 'author'
     });
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
+      as: 'category'
     });
   };
   return Article;

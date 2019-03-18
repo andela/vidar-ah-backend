@@ -19,7 +19,7 @@ import {
   returnValidationErrors
 } from '../middleware/validation';
 
-const { createArticle } = ArticleController;
+const { createArticle, getAllArticles, getArticlesByHighestField } = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -40,7 +40,11 @@ apiRoutes.route('/articles')
     validateArticle,
     returnValidationErrors,
     generateSlug,
-    createArticle);
+    createArticle)
+  .get(getAllArticles);
+
+
+apiRoutes.get('/articles/order', getArticlesByHighestField);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
