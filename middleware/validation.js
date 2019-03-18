@@ -116,6 +116,16 @@ export const validateArticleAuthor = async (req, res, next) => {
     });
   }
 };
+export const validateCategory = [
+  check('category')
+    .exists()
+    .withMessage('No category provided. Please provide a category.')
+    .isLength({ min: 3, max: 30 })
+    .withMessage('Category must be at least 3 characters long and no more than 30.')
+    .isString()
+    .withMessage('Category must be alphanumeric characters, please remove leading and trailing whitespaces.')
+];
+
 export const validateEmail = [
   check('email')
     .isEmail()

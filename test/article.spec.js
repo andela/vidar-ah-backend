@@ -133,10 +133,10 @@ describe('ARTICLES', () => {
         .post('/api/v1/articles')
         .send(article1)
         .end((err, res) => {
-          const { status, body: { message, success } } = res;
+          const { status, body: { errors, success } } = res;
           expect(status).to.be.equal(401);
           expect(success).to.be.equal(false);
-          expect(message).to.be.equal('Unauthorized! You are required to be logged in to perform this operation.');
+          expect(errors[0]).to.be.equal('Unauthorized! You are required to be logged in to perform this operation.');
           done(err);
         });
     });
@@ -150,10 +150,10 @@ describe('ARTICLES', () => {
         .set('authorization', 'asdfghjkl')
         .send(article1)
         .end((err, res) => {
-          const { status, body: { message, success } } = res;
+          const { status, body: { errors, success } } = res;
           expect(status).to.be.equal(401);
           expect(success).to.be.equal(false);
-          expect(message).to.be.equal('Your session has expired, please login again to continue');
+          expect(errors[0]).to.be.equal('Your session has expired, please login again to continue');
           done(err);
         });
     });
