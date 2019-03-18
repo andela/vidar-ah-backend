@@ -57,6 +57,12 @@ export const validLoginUser = {
   password: 'testing'
 };
 
+export const myUser = {
+  username: 'Alex20',
+  email: 'jacynnadi20@gmail.com',
+  name: 'Jacy20',
+  password: 'password'
+};
 export const validUser2 = {
   username: 'testuser',
   email: 'jessam7009@gmail.com',
