@@ -20,7 +20,7 @@ describe('CREATE CATEGORY', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(newUser2)
       .end((err, res) => {
         if (!err) {

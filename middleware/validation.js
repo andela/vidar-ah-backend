@@ -109,3 +109,9 @@ export const validatePassword = [
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the password.')
 ];
+
+export const validateSearch = [
+  check('term')
+    .isString()
+    .withMessage('Please provide a valid search term.')
+];

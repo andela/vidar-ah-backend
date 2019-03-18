@@ -16,6 +16,7 @@ import {
   validatePassword,
   validateArticle,
   validateCategory,
+  validateSearch,
   returnValidationErrors
 } from '../middleware/validation';
 
@@ -23,7 +24,7 @@ const { createArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.route('/user')
+apiRoutes.route('/user/signup')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
 apiRoutes.route('/userprofile')
@@ -102,6 +103,18 @@ apiRoutes.post(
   validatePassword,
   returnValidationErrors,
   UserController.resetPassword
+);
+
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
 );
 
 export default apiRoutes;

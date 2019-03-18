@@ -130,9 +130,9 @@ export default class UserController {
             message: [error.message]
           }));
       }
-      return res.json({
+      return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found.'
       });
     });
   }
