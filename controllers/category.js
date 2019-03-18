@@ -17,14 +17,14 @@ export default class CategoryController {
      * @memberof CategoryController
      * @returns {object} Class instance
      */
-  static async addNew(req, res) {
+  static async createCategory(req, res) {
     const {
       body: {
         category
       }
     } = req;
     try {
-      const returnValue = await Category.create({ categoryName: category });
+      const returnValue = await Category.create({ categoryName: category.toLowerCase() });
       const { dataValues: { categoryName } } = returnValue;
       return res.status(201).json({
         success: true,

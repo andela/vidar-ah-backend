@@ -6,6 +6,7 @@ import isUserVerified from '../middleware/verifyUser';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
+import checkForArticle from '../middleware/checkIfArticleExist';
 import ArticleController from '../controllers/articles';
 import CategoryController from '../controllers/category';
 import {
@@ -29,7 +30,9 @@ import {
 import CommentController from '../controllers/comment';
 
 
-const { createArticle, updateArticle, deleteArticle, rateArticle } = ArticleController;
+const {
+  createArticle, updateArticle, deleteArticle, rateArticle
+} = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -75,6 +78,11 @@ apiRoutes.route('/articles/:id')
 apiRoutes.route('/articles/rate/:articleId')
   .post(Auth.verifyUser, isUserVerified, validateArticleId,
     validateArticleRating, returnValidationErrors, rateArticle);
+
+apiRoutes.route('/articles/rate/:articleId')
+  .post(Auth.verifyUser, isUserVerified,
+    validateArticleId, validateArticleRating,
+    returnValidationErrors, checkForArticle, rateArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
@@ -132,9 +140,8 @@ apiRoutes.route('/category')
     isUserVerified,
     validateCategory,
     returnValidationErrors,
-    CategoryController.addNew
+    CategoryController.createCategory
   );
-
 
 apiRoutes.post(
   '/requestpasswordreset',

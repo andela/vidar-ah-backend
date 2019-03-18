@@ -289,6 +289,10 @@
         ],
         "parameters": [
           {
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "authorization",
             "in": "header",
             "description": "A token to verify the user",
@@ -394,6 +398,9 @@
           },
           "500": {
             "description": "Server error"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
           }
         }
       }
@@ -469,6 +476,14 @@
         "summary": "Update an article",
         "description": "",
         "operationId": "updateArticle",
+    "/articles/rate/:articleId": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Rate an article",
+        "description": "Give ratings on an article",
+        "operationId": "rateArticle",
         "consumes": [
           "application/json"
         ],
@@ -489,7 +504,7 @@
             "description": "Updates article",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/articles"
+              "$ref": "#/definitions/rating"
             }
           }
         ],
@@ -538,7 +553,13 @@
             "description": "Article deleted successfully"
           },
           "422": {
-            "description": "Invalid title/description/body supplied"
+            "description": "Please provide a valid rating for this article"
+          },
+          "404": {
+            "description": "This article does not exist"
+          },
+          "403": {
+          "description": "Permission denied, user cannot rate their own article"
           }
         }
       }
@@ -611,6 +632,20 @@
         },
         "body": {
           "type": "string"
+        }
+      }
+    },
+    "rating": {
+      "type": "object",
+      "properties": {
+        "rating": {
+          "type": "integer"
+        },
+        "articleId": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "number"
         }
       }
     }

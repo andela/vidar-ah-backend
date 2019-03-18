@@ -117,6 +117,16 @@ export const validateUser = async (req, res, next) => {
   }
 };
 
+export const validateCategory = [
+  check('category')
+    .exists()
+    .withMessage('No category provided. Please provide a category.')
+    .isLength({ min: 3, max: 30 })
+    .withMessage('Category must be at least 3 characters long and no more than 30.')
+    .isString()
+    .withMessage('Category must be alphanumeric characters, please remove leading and trailing whitespaces.')
+];
+
 export const validateEmail = [
   check('email')
     .isEmail()
@@ -131,17 +141,6 @@ export const validatePassword = [
     .withMessage('Password must be at least 6 characters long.')
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the password.')
-];
-
-
-export const validateCategory = [
-  check('category')
-    .exists()
-    .withMessage('No category provided. Please provide a category.')
-    .isLength({ min: 3, max: 30 })
-    .withMessage('Category must be at least 3 characters long and no more than 15.')
-    .isString()
-    .withMessage('Category must be alphanumeric characters, please remove leading and trailing whitespaces.')
 ];
 
 export const validateSearch = [
@@ -234,8 +233,8 @@ export const validateArticleRating = [
     .withMessage('Please provide a rating for this article.')
     .custom(value => `${Number(value)}` !== 'NaN')
     .withMessage('Rating should be a number.')
-    .isLength({ min: 1, max: 5 })
-    .withMessage('Ratings should have values between 1 to 5')
+    .custom(value => [1, 2, 3, 4, 5].indexOf(Number(value)) !== -1)
+    .withMessage('Ratings should have values ranging from 1 to 5.')
 ];
 
 export const validateArticleId = [

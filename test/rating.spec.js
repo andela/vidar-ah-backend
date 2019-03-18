@@ -5,7 +5,7 @@ import chaiHttp from 'chai-http';
 import app from '../index';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import { validUser4, validUser3 } from './helpers/userDummyData';
-import article1 from './helpers/articleDummyData';
+import { article1, fakeArticleId } from './helpers/articleDummyData';
 import ratings from './helpers/ratingDummyData';
 
 chai.use(chaiHttp);
@@ -18,8 +18,8 @@ describe('RATING', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/api/v1/user/signup')
-      .send(validUser3)
+      .post('/api/v1/user')
+      .send(validUser4)
       .end((err, res) => {
         const {
           status,
@@ -72,10 +72,10 @@ describe('RATING', () => {
         .set('authorization', 'some fake token')
         .send({ rating: ratings[1] })
         .end((err, res) => {
-          const { status, body: { success, message } } = res;
+          const { status, body: { success, errors } } = res;
           expect(status).to.be.equal(401);
           expect(success).to.be.equal(false);
-          expect(message).to.be.equal('Your session has expired, please login again to continue');
+          expect(errors[0]).to.be.equal('Your session has expired, please login again to continue');
           done();
         });
     });
@@ -86,10 +86,10 @@ describe('RATING', () => {
         .post('/api/v1/articles/rate/articleId')
         .send({ rating: ratings[1] })
         .end((err, res) => {
-          const { status, body: { message, success } } = res;
+          const { status, body: { errors, success } } = res;
           expect(status).to.be.equal(401);
           expect(success).to.be.equal(false);
-          expect(message).to.be.equal('Unauthorized! You are required to be logged in to perform this operation.');
+          expect(errors[0]).to.be.equal('Unauthorized! You are required to be logged in to perform this operation.');
           done(err);
         });
     });
@@ -145,6 +145,21 @@ describe('RATING', () => {
         });
     });
 
+    it('should not rate article if it does not exist.', (done) => {
+      chai
+        .request(app)
+        .post(`/api/v1/articles/rate/${fakeArticleId}`)
+        .set('authorization', userToken2)
+        .send({ rating: ratings[0] })
+        .end((err, res) => {
+          const { status, body: { errors, success } } = res;
+          expect(status).to.be.equal(404);
+          expect(success).to.be.equal(false);
+          expect(errors[0]).to.be.equal('This article does not exist');
+          done(err);
+        });
+    });
+
     it('should update article rating if already rated.', (done) => {
       chai
         .request(app)
@@ -194,12 +209,27 @@ describe('RATING', () => {
         .request(app)
         .post(`/api/v1/articles/rate/${newArticle.id}`)
         .set('authorization', userToken2)
-        .send({ rating: ratings[5] })
+        .send({ rating: ratings[6] })
         .end((err, res) => {
           const { status, body: { errors, success } } = res;
           expect(status).to.be.equal(422);
           expect(success).to.be.equal(false);
           expect(errors[0]).to.be.equal('Rating should be a number.');
+          done(err);
+        });
+    });
+
+    it('should not rate article if rating is not in the range 1 - 5.', (done) => {
+      chai
+        .request(app)
+        .post(`/api/v1/articles/rate/${newArticle.id}`)
+        .set('authorization', userToken2)
+        .send({ rating: ratings[5] })
+        .end((err, res) => {
+          const { status, body: { errors, success } } = res;
+          expect(status).to.be.equal(422);
+          expect(success).to.be.equal(false);
+          expect(errors[0]).to.be.equal('Ratings should have values ranging from 1 to 5.');
           done(err);
         });
     });

@@ -10,4 +10,5 @@ export const article2 = {
   description: 'An article can be updated',
   body: 'Update an article if you are the owner of the article.'
 };
-export default article1;
+
+export const fakeArticleId = '621c4502-17d7-4069-9ed0-6c8dc5c0e5d7';

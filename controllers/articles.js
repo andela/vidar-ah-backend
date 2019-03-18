@@ -55,39 +55,26 @@ export default class ArticleController {
     const rating = Number(req.body.rating);
     const { articleId } = req.params;
     try {
-      const articleExist = await Article.findOne({ where: { id: articleId } });
-      try {
-        if (articleExist) {
-          if (articleExist.dataValues.userId === id) {
-            return res.status(403).json({
-              success: false,
-              errors: ['Permission denied, user cannot rate their own article']
-            });
-          }
-          const previousRating = await Ratings.findOne({ where: { userId: id, articleId } });
-          if (previousRating) {
-            const updatedRating = await previousRating.update({ rating });
-            return res.status(201).json({
-              success: true,
-              message: `Article rating has been updated as ${rating}`,
-              rating: updatedRating
-            });
-          }
-          return res.status(200).json({
-            success: true,
-            message: `Article has been rated as ${rating}`,
-            articleRating: (await Ratings.create({
-              userId: id,
-              articleId,
-              rating
-            }))
-          });
-        }
-      } catch (error) {
-        return res.status(400).json({ success: false, errors: ['Error rating this article'] });
+      const previousRating = await Ratings.findOne({ where: { userId: id, articleId } });
+      if (previousRating) {
+        const updatedRating = await previousRating.update({ rating });
+        return res.status(201).json({
+          success: true,
+          message: `Article rating has been updated as ${rating}`,
+          rating: updatedRating
+        });
       }
+      return res.status(200).json({
+        success: true,
+        message: `Article has been rated as ${rating}`,
+        articleRating: (await Ratings.create({
+          userId: id,
+          articleId,
+          rating
+        }))
+      });
     } catch (error) {
-      return res.status(404).json({ success: false, errors: ['This article does not exist'] });
+      return res.status(400).json({ success: false, errors: ['Error rating this article'] });
     }
   }
 
