@@ -19,6 +19,8 @@ import {
   validateCategory,
   returnValidationErrors
 } from '../middleware/validation';
+import FollowController from '../controllers/follow';
+import followVerification from '../middleware/follow';
 
 const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
@@ -126,6 +128,20 @@ apiRoutes.post(
   validatePassword,
   returnValidationErrors,
   UserController.resetPassword
+);
+
+apiRoutes.get(
+  '/followuser/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.followUser
+);
+
+apiRoutes.get(
+  '/unfollowuser/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.unfollowUser
 );
 
 export default apiRoutes;
