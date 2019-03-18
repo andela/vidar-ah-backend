@@ -39,9 +39,9 @@
     "mongoose": "^5.4.16",
     "mongoose-unique-validator": "^2.0.1",
     "morgan": "^1.9.0",
-    "nock": "^10.0.6",
     "multer": "^1.4.1",
     "multer-storage-cloudinary": "^2.2.1",
+    "nock": "^10.0.6",
     "nodemailer": "^5.1.1",
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",
@@ -68,6 +68,8 @@
     "faker": "^4.1.0",
     "mocha": "^6.0.2",
     "mochawesome": "^3.1.1",
-    "nyc": "^13.3.0"
+    "nyc": "^13.3.0",
+    "sinon": "^7.2.7",
+    "sinon-chai": "^3.3.0"
   }
 }
