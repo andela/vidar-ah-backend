@@ -23,7 +23,8 @@ export default (req, res, next) => {
           verified,
           verificationId,
           bio,
-          password
+          password,
+          role
         } = foundUser.dataValues;
         const userObj = {
           id,
@@ -33,7 +34,8 @@ export default (req, res, next) => {
           verified,
           verificationId,
           bio,
-          password
+          password,
+          role
         };
         if (!verified) {
           return res.status(403).json({
