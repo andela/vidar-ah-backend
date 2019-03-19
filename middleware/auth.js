@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 
 const { JWT_SECRET } = process.env;
+
+const response401 = (res, errMsg) => res.status(401).json({ success: false, errors: [errMsg] });
 /**
 * Authentication class
 */
@@ -30,6 +32,36 @@ class Auth {
       req.user = decoded;
       return next();
     });
+  }
+
+  /**
+  * @description Middleware function to verify super admin
+  * @param {object} req http request object
+  * @param {object} res http response object
+  * @param {Function} next next middleware function
+  * @returns {Function} next middleware function
+*/
+  // static authorizeSuperAdmin(req, res, next) {
+  //   const { user: { role } } = req;
+  //   if (role !== 'superadmin') {
+  //     return response401(res, 'Unauthorized! This operation is reserved for super admin only.');
+  //   }
+  //   return next();
+  // }
+
+  /**
+  * @description Middleware function to verify admin
+  * @param {object} req http request object
+  * @param {object} res http response object
+  * @param {Function} next next middleware function
+  * @returns {Function} next middleware function
+*/
+  static authorizeAdmin(req, res, next) {
+    const { user: { role } } = req;
+    if (role !== 'admin' && role !== 'superadmin') {
+      return response401(res, 'Unauthorized! This operation is reserved for Admin or higher.');
+    }
+    return next();
   }
 }
 
