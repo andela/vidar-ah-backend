@@ -20,6 +20,8 @@ import {
   validateSearch,
   returnValidationErrors
 } from '../middleware/validation';
+import FollowController from '../controllers/follow';
+import followVerification from '../middleware/follow';
 
 const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
@@ -141,4 +143,17 @@ apiRoutes.get(
   ArticleController.getArticleBySlug,
 );
 
+apiRoutes.get(
+  '/follow/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.followUser
+);
+
+apiRoutes.get(
+  '/unfollow/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.unfollowUser
+);
 export default apiRoutes;
