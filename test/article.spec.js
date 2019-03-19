@@ -49,22 +49,19 @@ describe('ARTICLES', () => {
   });
 
   describe('Create an article by an authenticated and verified user', () => {
-    before(() => { updateVerifiedStatus(user2.email); });
+    before(async () => { await updateVerifiedStatus(user2.email); });
 
-    it('Should create a new article.', (done) => {
-      chai
+    it('Should create a new article.', async () => {
+      const res = await chai
         .request(app)
         .post('/api/v1/articles')
         .set('authorization', token)
-        .send(article1)
-        .end((err, res) => {
-          const { status, body: { message, success, article: { slug } } } = res;
-          articleSlug = slug;
-          expect(status).to.be.equal(201);
-          expect(success).to.be.equal(true);
-          expect(message).to.be.equal('New article created successfully');
-          done(err);
-        });
+        .send(article1);
+      const { status, body: { message, success, article: { slug } } } = res;
+      articleSlug = slug;
+      expect(status).to.be.equal(201);
+      expect(success).to.be.equal(true);
+      expect(message).to.be.equal('New article created successfully');
     });
 
     it('Should not create if title is not set.', (done) => {
@@ -330,20 +327,17 @@ describe('/PUT articles slug', () => {
       });
   });
 
-  before(() => { updateVerifiedStatus(myUser.email); });
-  it('should return an error if the user is not the owner of the article', (done) => {
-    chai
+  before(async () => { await updateVerifiedStatus(myUser.email); });
+  it('should return an error if the user is not the owner of the article', async () => {
+    const res = await chai
       .request(app)
       .put(`/api/v1/articles/${articleSlug}`)
       .set('authorization', userToken2)
-      .send(article2)
-      .end((err, res) => {
-        expect(res).to.have.status(403);
-        expect(res.body).to.have.property('success').equal(false);
-        expect(res.body.errors).to.be.an('Array');
-        expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
-        done(err);
-      });
+      .send(article2);
+    expect(res).to.have.status(403);
+    expect(res.body).to.have.property('success').equal(false);
+    expect(res.body.errors).to.be.an('Array');
+    expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
   });
 });
 

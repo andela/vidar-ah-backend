@@ -41,13 +41,6 @@ class Auth {
   * @param {Function} next next middleware function
   * @returns {Function} next middleware function
 */
-  // static authorizeSuperAdmin(req, res, next) {
-  //   const { user: { role } } = req;
-  //   if (role !== 'superadmin') {
-  //     return response401(res, 'Unauthorized! This operation is reserved for super admin only.');
-  //   }
-  //   return next();
-  // }
 
   /**
   * @description Middleware function to verify admin
