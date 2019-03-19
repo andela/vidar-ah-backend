@@ -21,7 +21,7 @@ describe('ARTICLES', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(user2)
       .end((err, res) => {
         if (!err) {
@@ -158,6 +158,119 @@ describe('ARTICLES', () => {
         });
     });
   });
+
+  describe('Search for articles without term keyword in the request query', () => {
+    it('Should should return an error', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles/search')
+        .end((err, res) => {
+          const { status, body: { success, errors } } = res;
+          expect(status).to.be.equal(422);
+          expect(success).to.be.equal(false);
+          expect(errors).to.be.an('Array');
+          expect(errors[0]).to.be.equals('Please provide a valid search term.');
+          done(err);
+        });
+    });
+  });
+
+  describe('Search for articles with just a term keyword in the request query', () => {
+    it('Should should return an array of results.', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles/search?term=This')
+        .end((err, res) => {
+          const { status, body: { success, results } } = res;
+          expect(status).to.be.equal(200);
+          expect(success).to.be.equal(true);
+          expect(results.rows).to.be.an('Array');
+          done(err);
+        });
+    });
+  });
+
+  describe('Search for articles with a term keyword and an author filter', () => {
+    it('Should should return an array of results', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles/search?term=This&author=flippingg')
+        .end((err, res) => {
+          const { status, body: { success, results } } = res;
+          expect(status).to.be.equal(200);
+          expect(success).to.be.equal(true);
+          expect(results.rows).to.be.an('Array');
+          done(err);
+        });
+    });
+  });
+
+  describe('Search for articles with a term keyword and a date range filter', () => {
+    it('Should should return an array of results', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles/search?term=This&startDate=2018-10-10&endDate=2020-10-10')
+        .end((err, res) => {
+          const { status, body: { success, results } } = res;
+          expect(status).to.be.equal(200);
+          expect(success).to.be.equal(true);
+          expect(results.rows).to.be.an('Array');
+          done(err);
+        });
+    });
+  });
+
+  describe('Search for articles with a term keyword and a tags filter', () => {
+    it('Should should return an array of results', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles/search?term=This&tags=art')
+        .end((err, res) => {
+          const { status, body: { success, results } } = res;
+          expect(status).to.be.equal(200);
+          expect(success).to.be.equal(true);
+          expect(results.rows).to.be.an('Array');
+          done(err);
+        });
+    });
+  });
+
+  describe('Get an article by its slug', () => {
+    it('Should should return an array of results', (done) => {
+      chai
+        .request(app)
+        .get(`/api/v1/articles/${articleSlug}`)
+        .end((err, res) => {
+          const { status, body: { success, article } } = res;
+          expect(status).to.be.equal(200);
+          expect(success).to.be.equal(true);
+          expect(article).to.be.an('object');
+          expect(article).to.haveOwnProperty('id');
+          expect(article).to.haveOwnProperty('slug');
+          expect(article).to.haveOwnProperty('title');
+          expect(article).to.haveOwnProperty('body');
+          expect(article).to.haveOwnProperty('description');
+          expect(article).to.haveOwnProperty('author');
+          done(err);
+        });
+    });
+  });
+
+  describe('Get an article by a wrong slug', () => {
+    it('Should should return a 404 error', (done) => {
+      chai
+        .request(app)
+        .get('/api/v1/articles/eirubefhdkjcsdc')
+        .end((err, res) => {
+          const { status, body: { success, errors } } = res;
+          expect(status).to.be.equal(404);
+          expect(success).to.be.equal(false);
+          expect(errors).to.be.an('Array');
+          expect(errors[0]).to.equal('Article not found.');
+          done(err);
+        });
+    });
+  });
 });
 
 describe('/PUT articles slug', () => {
@@ -209,7 +322,7 @@ describe('/PUT articles slug', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/api/v1/user/')
+      .post('/api/v1/user/signup')
       .send(myUser)
       .end((err, res) => {
         userToken2 = res.body.token;

@@ -3,7 +3,8 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import faker from 'faker';
 import app from '../index';
-import { validUser1 } from './helpers/userDummyData';
+import { validUser1, user3 } from './helpers/userDummyData';
+import getVerificationId from './helpers/getVerificationId';
 
 // Configure chai
 chai.use(chaiHttp);
@@ -27,8 +28,24 @@ describe('Make a request to signup with valid details', () => {
   it('returns sucessfully signed up.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(validUser1)
+      .end((err, res) => {
+        const { status, body: { message, success } } = res;
+        expect(status).to.be.equal(201);
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal('You have signed up successfully.');
+        done(err);
+      });
+  });
+});
+
+describe('Make a request to signup with valid details', () => {
+  it('returns sucessfully signed up.', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/user/signup')
+      .send(user3)
       .end((err, res) => {
         const { status, body: { message, success } } = res;
         expect(status).to.be.equal(201);
@@ -43,7 +60,7 @@ describe('Make a request to signup with empty signup fields', () => {
   it('returns an invalid error.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(422);
@@ -63,7 +80,7 @@ describe('Make a request to signup with an empty username', () => {
   it('returns an invalid error.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send({
         email: faker.internet.email(),
         name: faker.name.findName(),
@@ -85,7 +102,7 @@ describe('Make a request to signup with an empty email', () => {
   it('returns an invalid error.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send({
         username: faker.internet.userName(),
         name: faker.name.findName(),
@@ -106,7 +123,7 @@ describe('Make a request to signup with an empty name', () => {
   it('returns an invalid error.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send({
         username: faker.internet.userName(),
         email: faker.internet.email(),
@@ -127,7 +144,7 @@ describe('Make a request to signup with an empty password', () => {
   it('returns an invalid error.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send({
         username: faker.internet.userName(),
         email: faker.internet.email(),
@@ -148,7 +165,7 @@ describe('Make a request to signup with existing email', () => {
   it('returns an invalid error.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(validUser1)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -166,7 +183,7 @@ describe('Make a request to signup with existing username', () => {
     const { username } = validUser1;
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send({
         email: faker.internet.email(),
         password: faker.internet.password(),
@@ -179,6 +196,40 @@ describe('Make a request to signup with existing username', () => {
         expect(success).to.be.equal(false);
         expect(errors).to.be.an('Array');
         expect(errors[0]).to.be.equal('Username already exists');
+        done(err);
+      });
+  });
+});
+
+describe('Make a request to verify account', () => {
+  let verificationId;
+  before(async () => {
+    verificationId = await getVerificationId(user3.email);
+  });
+  it('should successfully verify the users account.', (done) => {
+    chai
+      .request(app)
+      .get(`/api/v1/verify/${verificationId}`)
+      .end((err, res) => {
+        const { status, body: { message, success } } = res;
+        expect(status).to.be.equal(200);
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal('Account verified successfully.');
+        done(err);
+      });
+  });
+});
+
+describe('Make a request to verify account with wrong verificationID', () => {
+  it('should successfully verify the users account.', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/verify/3RDKNCEvjcd')
+      .end((err, res) => {
+        const { status, body: { errors, success } } = res;
+        expect(status).to.be.equal(404);
+        expect(success).to.be.equal(false);
+        expect(errors[0]).to.be.equal('User not found.');
         done(err);
       });
   });

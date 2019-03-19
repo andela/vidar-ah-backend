@@ -12,6 +12,13 @@ export const user2 = {
   password: '1234567g'
 };
 
+export const user3 = {
+  name: 'Olamilekan',
+  username: 'leksyib',
+  email: 'leksyib1t4@gmail.com',
+  password: '1234567g'
+};
+
 export const validUser = {
   username: 'JamesBond',
   email: 'jamesbondxxc@gmail.com',
