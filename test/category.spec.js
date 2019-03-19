@@ -106,6 +106,7 @@ describe('Testing the category feature', () => {
         expect(categoryName).to.be.equal(validCategoryBySuperAdmin.category.toLowerCase());
       });
     });
+
     describe('Make a request with admin credentials', () => {
       before(async () => {
         await updateVerifiedStatus(user.email);
@@ -201,7 +202,6 @@ describe('Testing the category feature', () => {
       });
     });
   });
-
   describe('Edit category', () => {
     describe('Make a request with valid admin credentials', () => {
       before(async () => {

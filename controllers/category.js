@@ -104,4 +104,28 @@ export default class CategoryController {
       return res.status(500).json({ success: false, errors: [err.message] });
     }
   }
+
+  /**
+ * @description - Update a category
+ * @static
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @memberof CategoryController
+ * @returns {Object} class instance
+ */
+  static async updateCategory(req, res) {
+    const { body: { category } } = req;
+    const { id } = req;
+    try {
+      const result = await Category.update({ categoryName: category }, { where: { id } });
+      if (result[0]) {
+        return res.status(200).json({
+          success: true,
+          message: 'Category successfully updated'
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({ success: false, error: [error.message] });
+    }
+  }
 }
