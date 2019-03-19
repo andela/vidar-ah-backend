@@ -222,4 +222,30 @@ export default class UserController {
       message: 'Password changed successfully.'
     });
   }
+
+  /**
+   * Returns a token when a user logs in via social account
+   * @static
+   * @param {req} req - Request object
+   * @param {res} res - Response object
+   * @returns {object} - User object
+   */
+  static async socialAuth(req, res) {
+    const {
+      user
+    } = req;
+    try {
+      const token = generateToken(user.id);
+      return res.status(200).json({
+        success: true,
+        message: `Welcome ${user.username}`,
+        token
+      });
+    } catch (err) {
+      return res.status(500).json({
+        sucess: false,
+        errors: [err.message]
+      });
+    }
+  }
 }
