@@ -74,3 +74,19 @@ export const validUser2 = {
 export const invalidUser = {
   email: 'email@domain.com'
 };
+
+export const validFollowUser = {
+  username: 'validfollowuser',
+  email: 'jessam70010@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
+};
+
+export const validFollowUser2 = {
+  username: 'followuser2',
+  email: 'jessam70011@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
+};
