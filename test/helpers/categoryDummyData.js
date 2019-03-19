@@ -2,6 +2,10 @@ export const validCategory = {
   category: 'Science and Technology'
 };
 
+export const validCategoryBySuperAdmin = {
+  category: 'Sci fi'
+};
+
 export const validCategory2 = {
   category: 'Accountancy'
 };

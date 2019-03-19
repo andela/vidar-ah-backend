@@ -1,3 +1,19 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const {
+  SUPER_ADMIN_EMAIL,
+  SUPER_ADMIN_PASSWORD,
+  SUPER_ADMIN_USERNAME
+} = process.env;
+
+export const superAdmin = {
+  email: SUPER_ADMIN_EMAIL,
+  password: SUPER_ADMIN_PASSWORD,
+  username: SUPER_ADMIN_USERNAME
+};
+
 export default {
   username: 'flippin',
   email: 'flipping2234@gmail.com',

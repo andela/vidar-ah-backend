@@ -33,58 +33,49 @@ describe('Make a request to signup with valid details', () => {
 
 describe('Create an article by an authenticated and verified user', () => {
   before(async () => { await updateVerifiedStatus(validStatUser.email); });
-  it('should create a new article.', (done) => {
-    chai
+  it('should create a new article.', async () => {
+    const res = await chai
       .request(app)
       .post('/api/v1/articles')
       .set('authorization', userToken)
-      .send(statArticle)
-      .end((err, res) => {
-        const { status, body: { message, success, article: { slug } } } = res;
-        articleSlug = slug;
-        expect(status).to.be.equal(201);
-        expect(success).to.be.equal(true);
-        expect(message).to.be.equal('New article created successfully');
-        done(err);
-      });
+      .send(statArticle);
+    const { status, body: { message, success, article: { slug } } } = res;
+    articleSlug = slug;
+    expect(status).to.be.equal(201);
+    expect(success).to.be.equal(true);
+    expect(message).to.be.equal('New article created successfully');
   });
 });
 
 describe('View an article', () => {
-  it('Should should return an array of results', (done) => {
-    chai
+  it('should return an array of results', async () => {
+    const res = await chai
       .request(app)
       .get(`/api/v1/articles/${articleSlug}`)
-      .set('x-access-token', userToken)
-      .end((err, res) => {
-        const { status, body: { success, article } } = res;
-        expect(status).to.be.equal(200);
-        expect(success).to.be.equal(true);
-        expect(article).to.be.an('object');
-        expect(article).to.haveOwnProperty('id');
-        expect(article).to.haveOwnProperty('slug');
-        expect(article).to.haveOwnProperty('title');
-        expect(article).to.haveOwnProperty('body');
-        expect(article).to.haveOwnProperty('description');
-        expect(article).to.haveOwnProperty('author');
-        done(err);
-      });
+      .set('x-access-token', userToken);
+    const { status, body: { success, article } } = res;
+    expect(status).to.be.equal(200);
+    expect(success).to.be.equal(true);
+    expect(article).to.be.an('object');
+    expect(article).to.haveOwnProperty('id');
+    expect(article).to.haveOwnProperty('slug');
+    expect(article).to.haveOwnProperty('title');
+    expect(article).to.haveOwnProperty('body');
+    expect(article).to.haveOwnProperty('description');
+    expect(article).to.haveOwnProperty('author');
   });
 });
 
 describe('View an article', () => {
-  it('Should should a number', (done) => {
-    chai
+  it('should a number', async () => {
+    const res = await chai
       .request(app)
       .get('/api/v1/user/readingstats')
-      .set('x-access-token', userToken)
-      .end((err, res) => {
-        const { status, body: { success, numberOfArticlesRead } } = res;
-        expect(status).to.be.equal(200);
-        expect(success).to.be.equal(true);
-        expect(numberOfArticlesRead).to.be.a('number');
-        expect(numberOfArticlesRead).to.be.equal(1);
-        done(err);
-      });
+      .set('x-access-token', userToken);
+    const { status, body: { success, numberOfArticlesRead } } = res;
+    expect(status).to.be.equal(200);
+    expect(success).to.be.equal(true);
+    expect(numberOfArticlesRead).to.be.a('number');
+    expect(numberOfArticlesRead).to.be.equal(1);
   });
 });

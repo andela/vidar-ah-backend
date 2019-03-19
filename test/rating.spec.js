@@ -15,36 +15,31 @@ describe('RATING', () => {
   let userToken1;
   let userToken2;
 
-  before((done) => {
-    chai
+  before(async () => {
+    const res = await chai
       .request(app)
       .post('/api/v1/user/signup')
-      .send(validUser4)
-      .end((err, res) => {
-        const {
-          status,
-          body: { message, success, token }
-        } = res;
-        expect(status).to.be.equal(201);
-        expect(success).to.be.equal(true);
-        expect(message).to.be.equal('You have signed up successfully.');
-        userToken1 = token;
-      });
-    chai
+      .send(validUser4);
+    const {
+      status,
+      body: { message, success, token }
+    } = res;
+    expect(status).to.be.equal(201);
+    expect(success).to.be.equal(true);
+    expect(message).to.be.equal('You have signed up successfully.');
+    userToken1 = token;
+    const res2 = await chai
       .request(app)
       .post('/api/v1/user/signup')
-      .send(validUser3)
-      .end((err, res) => {
-        const {
-          status,
-          body: { message, success, token }
-        } = res;
-        expect(status).to.be.equal(201);
-        expect(success).to.be.equal(true);
-        expect(message).to.be.equal('You have signed up successfully.');
-        userToken2 = token;
-        done(err);
-      });
+      .send(validUser3);
+    const {
+      status: status2,
+      body: { message: message2, success: success2, token: token2 }
+    } = res2;
+    expect(status2).to.be.equal(201);
+    expect(success2).to.be.equal(true);
+    expect(message2).to.be.equal('You have signed up successfully.');
+    userToken2 = token2;
   });
 
   describe('Verification', () => {
@@ -100,14 +95,16 @@ describe('RATING', () => {
     before(async () => {
       await updateVerifiedStatus(validUser4.email);
       await updateVerifiedStatus(validUser3.email);
-      await chai
+      const res = await chai
         .request(app)
         .post('/api/v1/articles')
         .set('authorization', userToken1)
-        .send(article1)
-        .then((res) => {
-          newArticle = res.body.article;
-        });
+        .send(article1);
+      const { status, body: { message, success, article } } = res;
+      expect(status).to.be.equal(201);
+      expect(success).to.be.equal(true);
+      expect(message).to.be.equal('New article created successfully');
+      newArticle = article;
     });
 
     it('should not rate article if it belong to same user.', (done) => {

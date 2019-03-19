@@ -8,6 +8,9 @@ import dotenv from 'dotenv';
 import swaggerUI from 'swagger-ui-express';
 import routes from './routes/index';
 import doc from './doc.json';
+import CreateSuperAdmin from './seeders/createSuperAdmin';
+
+const { registerSuperAdmin } = CreateSuperAdmin;
 
 // read .env config
 dotenv.config();
@@ -69,6 +72,8 @@ app.use((err, res) => {
     },
   });
 });
+
+registerSuperAdmin();
 
 // finally, let's start our server...
 app.listen(process.env.PORT, () => {
