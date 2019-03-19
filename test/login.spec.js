@@ -4,7 +4,6 @@ import chaiHttp from 'chai-http';
 import faker from 'faker';
 import app from '../index';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
-
 import { newUser, validLoginUser } from './helpers/userDummyData';
 
 // Configure chai

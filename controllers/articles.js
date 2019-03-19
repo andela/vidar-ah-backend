@@ -1,11 +1,13 @@
 import { Article, User } from '../models';
+import Paginate from '../helpers/paginate';
+
 /**
  * @class ArticleController
  * @override
  * @export
  */
 export default class ArticleController {
-/**
+  /**
  * @description - Create a new article
  * @static
  * @param {Object} req - the request object
@@ -42,6 +44,74 @@ export default class ArticleController {
   }
 
   /**
+ * @description - Update an article
+ * @static
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @memberof ArticleController
+ * @returns {Object} class instance
+ */
+  static async updateArticle(req, res) {
+    const images = req.images || [];
+    const {
+      title, description, body
+    } = req.body;
+
+    const {
+      params: { slug }
+    } = req;
+    try {
+      const result = await Article.update({
+        title,
+        description,
+        body,
+        images
+      }, {
+        where: {
+          slug
+        }
+      });
+      return res.status(200).json({
+        success: true,
+        message: 'Article updated successfully',
+        article: result
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+ * @description - Deletes an article
+ * @static
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @memberof ArticleController
+ * @returns {Object} class instance
+ */
+  static async deleteArticle(req, res) {
+    try {
+      await Article.destroy({
+        where: {
+          slug: req.params.slug
+        }
+      });
+      return res.status(200).json({
+        success: true,
+        message: 'Article deleted successfully'
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
    * @description - Search for articles
    * @static
    * @param {Object} req - the request object
@@ -51,8 +121,11 @@ export default class ArticleController {
    */
   static async searchForArticles(req, res) {
     try {
+      let { offset, limit } = req.query;
+      offset = Number(offset) || 0;
+      limit = Number(limit) || 10;
       const searchTerms = ArticleController.generateSearchQuery(req.query);
-      const results = await Article.findAll({
+      const results = await Article.findAndCountAll({
         where: {
           ...searchTerms,
         },
@@ -60,16 +133,21 @@ export default class ArticleController {
           model: User,
           attributes: ['username', 'email', 'name', 'bio'],
           as: 'author',
-        }]
+        }],
+        offset,
+        limit,
       });
+      const { count } = results;
+      const meta = Paginate({ count, limit, offset });
       return res.status(200).json({
         results,
+        ...meta,
         success: true
       });
     } catch (error) {
       return res.status(500).json({
         success: false,
-        message: 'Oops, something went wrong.'
+        errors: ['Oops, something went wrong.']
       });
     }
   }

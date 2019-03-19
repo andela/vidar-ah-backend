@@ -60,7 +60,7 @@
     "/auth/google": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -80,7 +80,7 @@
     "/auth/twitter": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -100,7 +100,7 @@
     "/auth/facebook": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -382,7 +382,88 @@
             "description": "Invalid title/description/body supplied"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Update an article",
+        "description": "",
+        "operationId": "updateArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updates article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article updated successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Delete an article",
+        "description": "",
+        "operationId": "deleteArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Deletes article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article deleted successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
       }
+
     }
   },
   "definitions": {

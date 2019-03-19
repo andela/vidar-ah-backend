@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-expressions */
 import chai from 'chai';
 import nock from 'nock';
 import index from '../index';
+
 
 const { expect } = chai;
 
