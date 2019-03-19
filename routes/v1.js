@@ -23,9 +23,10 @@ import {
   validateEditComment,
   validateCommentUser,
   validateArticleExist,
-  returnValidationErrors,
   validateArticleId,
-  validateArticleRating
+  validateArticleRating,
+  validateCommentExist,
+  returnValidationErrors,
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -204,5 +205,12 @@ apiRoutes.route('/articles/:slug/comments/:id')
     CommentController.deleteComment
   );
 
+apiRoutes.route('/comments/:id/like')
+  .put(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentExist,
+    CommentController.likeComment
+  );
 
 export default apiRoutes;
