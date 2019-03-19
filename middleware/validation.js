@@ -240,3 +240,10 @@ export const validateArticleId = [
     .isUUID()
     .withMessage('Please provide a valid id for the article')
 ];
+
+export const validateImages = [
+  check('images')
+    .exists()
+    .withMessage('An image file should be uploaded to complete this request')
+
+];

@@ -14,13 +14,13 @@ const storage = cloudinaryStorage({
   allowedFormats: ['jpg', 'jpeg', 'png', 'gif'],
 });
 
-const imageParser = multer({ storage }).array('images', 5);
+const imageParser = multer({ storage }).array('image', 5);
 
 export default async (req, res, next) => {
   await imageParser(req, res, (error) => {
     if (error) return res.json({ success: false, error });
     if (req.files) {
-      req.images = req.files.map(image => image.url);
+      req.body.images = req.files.map(image => image.url);
       return next();
     }
     return next();

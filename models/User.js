@@ -53,6 +53,11 @@ module.exports = (sequelize, DataTypes) => {
     passwordResetTokenExpires: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'https://img.icons8.com/ios-glyphs/30/000000/user-male.png'
     }
   };
 
