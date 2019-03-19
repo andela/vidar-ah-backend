@@ -15,7 +15,7 @@ export default class CategoryController {
      * @param {object} req - HTTP Request
      * @param {object} res - HTTP Response
      * @memberof CategoryController
-     * @returns {object} Class instance
+     * @returns {object} response object
      */
   static async createCategory(req, res) {
     const {
@@ -39,10 +39,7 @@ export default class CategoryController {
           errors: [error.errors[0].message]
         });
       }
-      return res.status(500).json({
-        success: false,
-        errors: ['Internal server error']
-      });
+      return res.status(500).json({ success: false, error: [error.message] });
     }
   }
 
@@ -52,21 +49,58 @@ export default class CategoryController {
  * @param {Object} req - the request object
  * @param {Object} res - the response object
  * @memberof CategoryController
- * @returns {Object} class instance
+ * @returns {Object} response object
  */
   static async updateCategory(req, res) {
     const { body: { category } } = req;
     const { id } = req;
     try {
-      const result = await Category.update({ categoryName: category }, { where: { id } });
+      const result = await Category.update({
+        categoryName: category
+      },
+      { where: { id }, returning: true });
+      const { dataValues: { id: returnedId, categoryName } } = result[1][0];
       if (result[0]) {
         return res.status(200).json({
           success: true,
-          message: 'Category successfully updated'
+          message: 'Category successfully updated',
+          categoryName,
+          id: returnedId
         });
       }
     } catch (error) {
       return res.status(500).json({ success: false, error: [error.message] });
+    }
+  }
+
+  /**
+* @description - Delete a category
+* @static
+* @param {object} req - the request object
+* @param {object} res - the response object
+* @returns {object} - response object
+*/
+  static async deleteCategory(req, res) {
+    const { params: { id } } = req;
+    try {
+      const deletedCategory = await Category.findOne({
+        where: { id }, returning: true
+      });
+      await Category.destroy({
+        where: {
+          id
+        },
+        returning: true
+      });
+      const { dataValues: { id: returnedId, categoryName } } = deletedCategory;
+      return res.status(200).json({
+        success: true,
+        message: 'Category deleted.',
+        categoryName,
+        id: returnedId
+      });
+    } catch (err) {
+      return res.status(500).json({ success: false, errors: [err.message] });
     }
   }
 }

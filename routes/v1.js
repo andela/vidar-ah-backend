@@ -9,7 +9,7 @@ import generateSlug from '../middleware/generateSlug';
 import checkForArticle from '../middleware/checkIfArticleExist';
 import ArticleController from '../controllers/articles';
 import CategoryController from '../controllers/category';
-import verifyCategory from '../middleware/verifyCategory';
+import verifyCategoryId from '../middleware/verifyCategoryId';
 import {
   validateSignup,
   validateLogin,
@@ -140,8 +140,17 @@ apiRoutes.patch(
   Auth.authorizeAdmin,
   validateCategory,
   returnValidationErrors,
-  verifyCategory,
+  verifyCategoryId,
   CategoryController.updateCategory
+);
+
+apiRoutes.delete(
+  '/category/:id',
+  Auth.verifyUser,
+  isUserVerified,
+  Auth.authorizeAdmin,
+  verifyCategoryId,
+  CategoryController.deleteCategory
 );
 
 apiRoutes.post(

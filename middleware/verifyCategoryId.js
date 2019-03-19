@@ -8,7 +8,7 @@ export default async (req, res, next) => {
 || Number(id) < 0) {
     return res.status(400).json({
       success: false,
-      errors: ['Invalid category id. Category id must be a positive integer.']
+      errors: ['Invalid category id.']
     });
   }
 

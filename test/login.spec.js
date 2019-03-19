@@ -11,14 +11,11 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('User login authentication: ', () => {
-  before((done) => {
-    chai
+  before(async () => {
+    await chai
       .request(app)
       .post('/api/v1/user/signup')
-      .send(newUser)
-      .end((err) => {
-        done(err);
-      });
+      .send(newUser);
   });
 
   describe('Make a request with unverified email', () => {
@@ -41,24 +38,21 @@ describe('User login authentication: ', () => {
   });
 
   describe('Make a request with valid credentials', () => {
-    before(() => {
-      updateVerifiedStatus(validLoginUser.email);
+    before(async () => {
+      await updateVerifiedStatus(validLoginUser.email);
     });
-    it('should return a success message with status 200', (done) => {
-      chai
+    it('should return a success message with status 200', async () => {
+      const res = await chai
         .request(app)
         .post('/api/v1/user/login')
-        .send(validLoginUser)
-        .end((err, res) => {
-          const {
-            status,
-            body: { success, message }
-          } = res;
-          expect(status).to.be.equal(200);
-          expect(success).to.be.equal(true);
-          expect(message).to.be.equal('Welcome testing123559');
-          done(err);
-        });
+        .send(validLoginUser);
+      const {
+        status,
+        body: { success, message }
+      } = res;
+      expect(status).to.be.equal(200);
+      expect(success).to.be.equal(true);
+      expect(message).to.be.equal('Welcome testing123559');
     });
   });
 
