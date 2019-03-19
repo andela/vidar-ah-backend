@@ -100,7 +100,7 @@ describe('TESTIN THE CATEGORY FEATURE', () => {
 
     describe('Make a request with admin credentials', () => {
       before((done) => {
-        // updateVerifiedStatus(user.email);
+        updateVerifiedStatus(user.email);
         assignRole(user.email, 'admin');
         done();
       });
@@ -273,6 +273,32 @@ describe('TESTIN THE CATEGORY FEATURE', () => {
             expect(status).to.be.equal(404);
             expect(success).to.be.equal(false);
             expect(errors[0]).to.be.equal('No category matches the specified id. Please confirm the category Id and try again.');
+            done(err);
+          });
+      });
+    });
+  });
+
+  describe('DELETE CATEGORY', () => {
+    describe('Make a request with valid admin credentials', () => {
+      before((done) => {
+        updateVerifiedStatus(user.email);
+        assignRole(user.email, 'admin');
+        done();
+      });
+      it('it should return a 200 success message', (done) => {
+        chai
+          .request(app)
+          .delete('/api/v1/category/'.concat(categoryId))
+          .set('authorization', userToken)
+          .end((err, res) => {
+            const {
+              status,
+              body: { success, message }
+            } = res;
+            expect(status).to.be.equal(200);
+            expect(success).to.be.equal(true);
+            expect(message).to.be.equal('Category deleted.');
             done(err);
           });
       });

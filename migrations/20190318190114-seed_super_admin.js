@@ -1,25 +1,17 @@
-// import dotenv from 'dotenv';
+require('dotenv').config();
 
-// dotenv.config();
-// import bcrypt from 'bcrypt';
-
-// console.log('>>>>>>>>>>>>> here >>>>>>>>>>>>>');
-
-// const pwd = bcrypt.hashSync('superpassword', bcrypt.genSaltSync(10));
-// console.log(pwd);
+const bcrypt = require('bcrypt');
 
 module.exports = {
   up: async (queryInterface) => {
-    // const pwd = await bcrypt.hashSync('superpassword', bcrypt.genSaltSync(10));
     queryInterface.bulkInsert(
       'Users',
       [
         {
-          email: 'ekundayo@gmail.com',
-          // password: pwd,
-          password: '$2b$10$M7FL44WKAVPZs5fsoRWk4eloOaTRbveA.btL8KyEAA6Yt4sfLfsa2', // superpassword
-          name: 'ekundayo Abiono',
-          username: 'ekundayo',
+          email: process.env.SUPER_ADMIN_EMAIL,
+          password: bcrypt.hashSync(process.env.SUPER_ADMIN_PASSWORD, bcrypt.genSaltSync(10)),
+          name: process.env.SUPER_ADMIN_NAME,
+          username: process.env.SUPER_ADMIN_USERNAME,
           role: 'superadmin',
           verified: true,
           verificationId: 'superadmin',
@@ -40,8 +32,3 @@ module.exports = {
     );
   },
 };
-
-// email: process.env.SUPER_ADMIN_EMAIL,
-// password: process.env.SUPER_ADMIN_PASSWORD,
-// name: process.env.SUPER_ADMIN_NAME,
-// username: process.env.SUPER_ADMIN_USERNAME,
