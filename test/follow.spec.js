@@ -52,7 +52,7 @@ describe('Make a request to follow a non existing user', () => {
   it('Returns an error message.', (done) => {
     chai
       .request(app)
-      .get('/api/v1/follow/1111')
+      .post('/api/v1/follow/1111')
       .set('x-access-token', userToken)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -71,7 +71,7 @@ describe('Make a request to follow a non verified user', () => {
     const url = `/api/v1/follow/${userId2}`;
     chai
       .request(app)
-      .get(url)
+      .post(url)
       .set('x-access-token', userToken)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -89,7 +89,7 @@ describe('Make a request to follow self', () => {
     const url = `/api/v1/follow/${userId}`;
     chai
       .request(app)
-      .get(url)
+      .post(url)
       .set('x-access-token', userToken)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -107,7 +107,7 @@ describe('Make a request to unfollow another user not currently being followed',
     const url = `/api/v1/unfollow/${userId2}`;
     chai
       .request(app)
-      .get(url)
+      .post(url)
       .set('x-access-token', userToken)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -125,11 +125,11 @@ describe('Make a valid request to follow another user', () => {
     const url = `/api/v1/follow/${userId2}`;
     chai
       .request(app)
-      .get(url)
+      .post(url)
       .set('x-access-token', userToken)
       .end((err, res) => {
         const { status, body: { message, success } } = res;
-        expect(status).to.be.equal(200);
+        expect(status).to.be.equal(201);
         expect(success).to.be.equal(true);
         expect(message).to.be.equal('User followed successfully.');
         done(err);
@@ -142,7 +142,7 @@ describe('Make a request to follow another user again', () => {
     const url = `/api/v1/follow/${userId2}`;
     chai
       .request(app)
-      .get(url)
+      .post(url)
       .set('x-access-token', userToken)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -160,7 +160,7 @@ describe('Make a valid request to unfollow another user', () => {
     const url = `/api/v1/unfollow/${userId2}`;
     chai
       .request(app)
-      .get(url)
+      .post(url)
       .set('x-access-token', userToken)
       .end((err, res) => {
         const { status, body: { message, success } } = res;
