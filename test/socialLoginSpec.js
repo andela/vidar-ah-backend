@@ -13,6 +13,12 @@ nock('https://www.google.com/')
   .reply(200, 'Welcome to Author Haven', {
   });
 
+nock('https://www.twitter.com/')
+  .filteringPath(() => '/api/v1/auth/twitter')
+  .get('/api/v1/auth/twitter')
+  .reply(200, 'Welcome to Author Haven', {
+  });
+
 nock('https://www.facebook.com/')
   .filteringPath(() => '/api/v1/auth/facebook')
   .get('/api/v1/auth/facebook')
