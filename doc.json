@@ -523,7 +523,45 @@
           }
         }
       }
-
+    },
+    "/comments{id}/like": {
+      "put": {
+        "tags": [
+          "CommentLike"
+        ],
+        "summary": "Like a comment article",
+        "description": "",
+        "operationId": "Like comment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "id",
+            "description": "Id of comment to like",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article liked/unliked successfully"
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        }
+      }
     }
   },
   "/articles/{slug}/comments": {
