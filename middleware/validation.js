@@ -300,3 +300,10 @@ export const validateGetOrder = [
     .custom(value => ['latest', 'ratings', 'comments'].indexOf(value) !== -1)
     .withMessage('Order type should either be latest, ratings or comments')
 ];
+
+export const validateImages = [
+  check('images')
+    .exists()
+    .withMessage('An image file should be uploaded to complete this request')
+
+];

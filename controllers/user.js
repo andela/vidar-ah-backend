@@ -52,10 +52,10 @@ export default class UserController {
       })
       .catch((error) => {
         const errors = [];
-        if (error.errors[0].path === 'username') {
+        if (error.errors && error.errors[0].path === 'username') {
           errors.push(error.errors[0].message);
         }
-        if (error.errors[0].path === 'email') {
+        if (error.errors && error.errors[0].path === 'email') {
           errors.push(error.errors[0].message);
         }
         return res.status(409).json({

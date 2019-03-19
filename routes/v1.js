@@ -30,6 +30,7 @@ import {
   validateArticleRating,
   validateGetOrder,
   validateCommentExist,
+  validateImages,
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -45,6 +46,7 @@ const {
   getAllArticles,
   getArticlesByHighestField
 } = ArticleController;
+const { viewProfile, editProfile, updateProfileImage } = ProfileController;
 
 const apiRoutes = express.Router();
 
@@ -52,9 +54,12 @@ apiRoutes.route('/user/signup')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
 apiRoutes.route('/userprofile')
-  .get(Auth.verifyUser, isUserVerified, ProfileController.viewProfile)
-  .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
-    returnValidationErrors, ProfileController.editProfile);
+  .get(Auth.verifyUser, isUserVerified, viewProfile)
+  .patch(Auth.verifyUser, isUserVerified, addImages, validateProfileChange,
+    returnValidationErrors, editProfile);
+
+apiRoutes.route('/userprofile/image')
+  .patch(Auth.verifyUser, isUserVerified, addImages, validateImages, updateProfileImage);
 
 apiRoutes.route('/verify/:verification_id')
   .get(UserController.verifyAccount);
