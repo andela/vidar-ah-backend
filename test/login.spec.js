@@ -16,9 +16,6 @@ describe('User login authentication: ', () => {
       .request(app)
       .post('/api/v1/user/signup')
       .send(newUser);
-    // .end((err) => {
-    //   done(err);
-    // });
   });
 
   describe('Make a request with unverified email', () => {
