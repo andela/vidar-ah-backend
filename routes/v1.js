@@ -8,6 +8,7 @@ import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
 import ArticleController from '../controllers/articles';
 import CategoryController from '../controllers/category';
+import verifyCategory from '../middleware/verifyCategory';
 import {
   validateSignup,
   validateLogin,
@@ -107,14 +108,26 @@ apiRoutes.post(
   UserController.loginUser
 );
 
-apiRoutes.route('/category')
-  .post(
-    Auth.verifyUser,
-    isUserVerified,
-    validateCategory,
-    returnValidationErrors,
-    CategoryController.createCategory
-  );
+apiRoutes.post(
+  '/category',
+  Auth.verifyUser,
+  isUserVerified,
+  Auth.authorizeAdmin,
+  validateCategory,
+  returnValidationErrors,
+  CategoryController.createCategory
+);
+
+apiRoutes.patch(
+  '/category/:id',
+  Auth.verifyUser,
+  isUserVerified,
+  Auth.authorizeAdmin,
+  validateCategory,
+  returnValidationErrors,
+  verifyCategory,
+  CategoryController.updateCategory
+);
 
 apiRoutes.post(
   '/requestpasswordreset',

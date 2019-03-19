@@ -25,10 +25,11 @@ export default class CategoryController {
     } = req;
     try {
       const returnValue = await Category.create({ categoryName: category.toLowerCase() });
-      const { dataValues: { categoryName } } = returnValue;
+      const { dataValues: { id, categoryName } } = returnValue;
       return res.status(201).json({
         success: true,
         message: 'Category successfully added.',
+        id,
         categoryName
       });
     } catch (error) {
@@ -42,6 +43,30 @@ export default class CategoryController {
         success: false,
         errors: ['Internal server error']
       });
+    }
+  }
+
+  /**
+ * @description - Update a category
+ * @static
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @memberof CategoryController
+ * @returns {Object} class instance
+ */
+  static async updateCategory(req, res) {
+    const { body: { category } } = req;
+    const { id } = req;
+    try {
+      const result = await Category.update({ categoryName: category }, { where: { id } });
+      if (result[0]) {
+        return res.status(200).json({
+          success: true,
+          message: 'Category successfully updated'
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({ success: false, error: [error.message] });
     }
   }
 }
