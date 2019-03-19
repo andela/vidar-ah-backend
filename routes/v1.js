@@ -17,10 +17,15 @@ import {
   validateArticle,
   validateArticleAuthor,
   validateCategory,
-  returnValidationErrors
+  returnValidationErrors,
+  validateCreateComment,
+  validateEditComment,
+  validateCommentUser,
+  validateArticleExist,
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
+import CommentController from '../controllers/comment';
 
 const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
@@ -170,5 +175,38 @@ apiRoutes.get(
   followVerification,
   FollowController.unfollowUser
 );
+apiRoutes.route('/articles/:slug/comments')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment
+  )
+  .get(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    CommentController.getComments
+  );
+
+apiRoutes.route('/articles/:slug/comments/:id')
+  .patch(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment
+  )
+  .delete(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment
+  );
+
 
 export default apiRoutes;
