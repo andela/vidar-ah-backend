@@ -1,75 +1,147 @@
 import express from 'express';
 import UserController from '../controllers/user';
+import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
-import Auth from '../middleware/auth';
 import isUserVerified from '../middleware/verifyUser';
-import {
-  validateSignup, validateLogin,
-  validateProfileChange, returnValidationErrors
-} from '../middleware/validation';
-import passportGoogle from '../auth/google';
-import passportFacebook from '../auth/facebook';
+import Auth from '../middleware/auth';
+import addImages from '../middleware/addImage';
+import generateSlug from '../middleware/generateSlug';
+import ArticleController from '../controllers/articles';
+import CategoryController from '../controllers/category';
 import passportTwitter from '../auth/twitter';
+import verifyCategoryId from '../middleware/verifyCategoryId';
+import {
+  validateSignup,
+  validateLogin,
+  validateProfileChange,
+  validateEmail,
+  validatePassword,
+  validateArticle,
+  validateArticleAuthor,
+  validateCategory,
+  returnValidationErrors
+} from '../middleware/validation';
+
+const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.post('/user', validateSignup, returnValidationErrors, UserController.registerUser);
+apiRoutes.route('/user')
+  .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
-apiRoutes.get('/verify/:verificationId', UserController.verifyAccount);
+apiRoutes.route('/userprofile')
+  .get(Auth.verifyUser, isUserVerified, ProfileController.viewProfile)
+  .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
+    returnValidationErrors, ProfileController.editProfile);
 
-// Profiles route
+apiRoutes.route('/verify/:verificationId')
+  .get(UserController.verifyAccount);
 
-apiRoutes.get('/userprofile', Auth.verifyUser, isUserVerified, ProfileController.viewProfile);
+apiRoutes.route('/articles')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    generateSlug,
+    createArticle
+  );
 
-apiRoutes.patch(
-  '/userprofile',
-  Auth.verifyUser,
-  isUserVerified,
-  validateProfileChange,
-  returnValidationErrors,
-  ProfileController.editProfile
-);
+apiRoutes.route('/articles/:slug')
+  .put(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleAuthor,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    updateArticle,
+    generateSlug
+  );
+
+apiRoutes.route('/articles/:slug')
+  .delete(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleAuthor,
+    deleteArticle
+  );
+
+apiRoutes.get('/auth/google',
+  passport.authenticate(
+    'google', {
+      scope: ['email', 'profile']
+    }
+  ));
+
+apiRoutes.get('/auth/google/callback',
+  passport.authenticate(
+    'google', { failureRedirect: '/login' }
+  ),
+  (req, res) => {
+    res.redirect('/');
+  });
+
+apiRoutes.get('/auth/facebook',
+  passport.authenticate(
+    'facebook', {
+      scope: ['email']
+    }
+  ));
+
+apiRoutes.get('/auth/facebook/callback',
+  passport.authenticate(
+    'facebook', { failureRedirect: '/login' }
+  ),
+  (req, res) => {
+    res.redirect('/');
+  });
 
 apiRoutes.post(
   '/user/login',
   validateLogin,
   returnValidationErrors,
-  UserController.loginUser,
+  isUserVerified,
+  UserController.loginUser
 );
 
-apiRoutes.get(
-  '/auth/google',
-  passportGoogle.authenticate('google', {
-    scope: ['email', 'profile']
-  })
+apiRoutes.post(
+  '/category',
+  Auth.verifyUser,
+  isUserVerified,
+  Auth.authorizeAdmin,
+  validateCategory,
+  returnValidationErrors,
+  CategoryController.createCategory
 );
 
-apiRoutes.get(
-  '/auth/google/callback',
-  passportGoogle.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/');
-  }
+apiRoutes.patch(
+  '/category/:id',
+  Auth.verifyUser,
+  isUserVerified,
+  Auth.authorizeAdmin,
+  validateCategory,
+  returnValidationErrors,
+  verifyCategoryId,
+  CategoryController.updateCategory
 );
 
-apiRoutes.get(
-  '/auth/facebook',
-  passportFacebook.authenticate('facebook', {
-    scope: ['email']
-  })
+apiRoutes.delete(
+  '/category/:id',
+  Auth.verifyUser,
+  isUserVerified,
+  Auth.authorizeAdmin,
+  verifyCategoryId,
+  CategoryController.deleteCategory
 );
 
-apiRoutes.get(
-  '/auth/facebook/callback',
-  passportFacebook.authenticate('facebook', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/');
-  }
-);
-
-apiRoutes.get(
-  '/auth/twitter',
-  passportTwitter.authenticate('twitter', { scope: ['email'] })
+apiRoutes.post(
+  '/requestpasswordreset',
+  validateEmail,
+  returnValidationErrors,
+  isUserVerified,
+  UserController.requestPasswordReset,
 );
 
 apiRoutes.get(
@@ -78,6 +150,13 @@ apiRoutes.get(
   (req, res) => {
     res.redirect('/');
   }
+);
+
+apiRoutes.post(
+  '/resetpassword/:passwordResetToken',
+  validatePassword,
+  returnValidationErrors,
+  UserController.resetPassword
 );
 
 export default apiRoutes;

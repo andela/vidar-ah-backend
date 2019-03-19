@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import swaggerUI from 'swagger-ui-express';
 import routes from './routes/index';
 import doc from './doc.json';
+// import { User } from './models';
 
 // read .env config
 dotenv.config();
@@ -35,7 +36,6 @@ app.use(session({
   }
 }));
 app.use(passport.initialize());
-app.use(passport.session());
 
 // configure router
 app.use('/api', routes);

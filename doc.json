@@ -173,7 +173,7 @@
     "/auth/google": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -193,7 +193,7 @@
     "/auth/twitter": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -213,7 +213,7 @@
     "/auth/facebook": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -229,10 +229,460 @@
           }
         }
       }
+    },
+    "/user/login": {
+      "post": {
+        "description": "A user with valid email and password can log in successfully. Optionally, user can set a rememberMe property to true to stay logged in for a very long time.",
+        "summary": "successful login",
+        "tags": [
+          "login with email"
+        ],
+        "operationId": "UserLoginPost",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/successfulloginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/userprofile": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "View user profile",
+        "description": "Get user's profile information",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return's user's profile details"
+          },
+          "401": {
+            "description": "Authentication error"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Update user's profile ",
+        "description": "Update user's profile information",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Update user profile",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profile"
+            }
+          }
+        ],
+        "responses": {
+          "205": {
+            "description": "Returns updated profile"
+          },
+          "422": {
+            "description": "Required fields not present"
+          },
+          "401": {
+            "description": "Authentication error"
+          }
+        }
+      }
+    },
+    "/category": {
+      "post": {
+        "description": "endpoint to create a category",
+        "summary": "adds a new category to the category table",
+        "tags": [
+          "create category"
+        ],
+        "operationId": "CategoryPost",
+        "deprecated": false
+      }
+    },
+    "/requestpasswordreset": {
+      "post": {
+        "tags": [
+          "Reset password"
+        ],
+        "summary": "Send reset link to user email",
+        "description": "Send reset link to user email",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/createcategory",
+            "in": "body",
+            "name": "Request body",
+            "description": "Reset user password",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/requestPasswordReset"
+            }
+          }
+        }
+        ],
+        "responses": {
+          "201": {
+            "description": "Save password reset key in database and send link to email"
+          },
+          "404": {
+            "description": "User not registered or verified."
+          },
+          "422": {
+            "description": "Email is invalid"
+          }
+        }
+      }
+    },
+    "/resetpassword/{key}": {
+      "post": {
+        "tags": [
+          "Reset password"
+        ],
+        "summary": "Verify user reset password key and change password",
+        "description": "Verify user reset password key and change password",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "key",
+            "description": "key sent with the link to the user email",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "schema": {
+              "$ref": "#/definitions/resetPassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "headers": {},
+            "description": "You can now reset your password."
+          },
+          "410": {
+            "description": "Your link has expired. Please try to reset password again."
+          },
+          "404": {
+            "description": "Password reset token not found."
+          }
+        }
+      }
+    },
+    "/articles": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update user profile",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New article created successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Update an article",
+        "description": "",
+        "operationId": "updateArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updates article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article updated successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Delete an article",
+        "description": "",
+        "operationId": "deleteArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Deletes article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article deleted successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      }
+
     }
   },
-  "externalDocs": {
-    "description": "Find out more about Swagger",
-    "url": "http://swagger.io"
+  "definitions": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string",
+          "format": "int64"
+        },
+        "password": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "successfulloginRequest": {
+      "title": "successfulloginRequest",
+      "example": {
+        "email": "testing123559@gmail.com",
+        "password": "testing"
+      },
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        }
+      }
+    },
+    "requestPasswordReset": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "resetPassword": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "articles": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
+    "createcategory": {
+      "title": "adds a new category to the category table",
+      "example": {
+        "category": "Sport Bulletin"
+      },
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "category"
+      ],
+      "externalDocs": {
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
+      }
+    }
   }
 }

@@ -46,8 +46,31 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    passwordResetToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    passwordResetTokenExpires: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    role: {
+      type: DataTypes.ENUM,
+      values: ['superadmin', 'admin', 'user'],
+      allowNull: false,
+      defaultValue: 'user',
+      unique: false
+    }
   };
-  const User = sequelize.define('User', userSchema);
+
+  const User = sequelize.define('User', userSchema, {});
+
+  User.associate = (models) => {
+    User.hasMany(models.Article, {
+      foreignKey: 'id',
+      onDelete: 'CASCADE'
+    });
+  };
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();
     if (user.password) {
@@ -60,6 +83,8 @@ module.exports = (sequelize, DataTypes) => {
       name,
       email,
       link: `${HOST_URL}/api/v1/verify/${verificationId}`,
+      subject: "Welcome to Author's Haven",
+      message: 'verify your account'
     };
     sendMail(emailPayload);
   });
