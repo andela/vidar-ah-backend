@@ -23,7 +23,7 @@ module.exports = {
         msg: 'Article should have a unique slug'
       }
     },
-    like: {
+    likes: {
       type: Sequelize.BOOLEAN
     },
     createdAt: {
