@@ -44,7 +44,7 @@ export default class ProfileController {
         updatedAt
       };
 
-      const splitNamesObject = splitName(foundUser);
+      const splitNamesObject = splitName(foundUser.name);
 
       return res.status(200).json({
         success: true,

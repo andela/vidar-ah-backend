@@ -245,5 +245,4 @@ export const validateImages = [
   check('images')
     .exists()
     .withMessage('An image file should be uploaded to complete this request')
-
 ];
