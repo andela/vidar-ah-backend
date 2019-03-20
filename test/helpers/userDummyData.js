@@ -111,3 +111,11 @@ export const validFollowUser2 = {
   password: 'abcdef',
   verified: true
 };
+
+export const validStatUser = {
+  username: 'validstatuser',
+  email: 'jessamstat@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
+};

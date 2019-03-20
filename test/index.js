@@ -8,3 +8,4 @@ import './updateVerifiedStatusHelper.spec';
 import './resetpassword.spec';
 import './category.spec';
 import './follow.spec';
+import './stats.spec';

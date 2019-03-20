@@ -222,4 +222,27 @@ export default class UserController {
       message: 'Password changed successfully.'
     });
   }
+
+  /**
+ * @description Get user reading stats
+ * @param {object} req http request object
+ * @param {object} res http response object
+ * @returns {object} response
+ */
+  static async getReadingStats(req, res) {
+    const { id } = req.user;
+    const user = await User.findOne({ where: { id } });
+    try {
+      const viewCount = await user.getView();
+      return res.status(200).json({
+        success: true,
+        message: viewCount.length
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
 }
