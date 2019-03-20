@@ -4,7 +4,6 @@ module.exports = {
     id: {
       unique: true,
       allowNull: false,
-      primaryKey: true,
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4
     },
@@ -18,6 +17,7 @@ module.exports = {
     slug: {
       type: Sequelize.STRING,
       allowNull: false,
+      primaryKey: true,
       unique: {
         args: true,
         msg: 'Article should have a unique slug'

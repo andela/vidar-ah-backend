@@ -273,6 +273,84 @@ describe('ARTICLES', () => {
   });
 });
 
+describe('/GET articles', () => {
+  it('should should return pagination metadata', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles?offset=0&limit=10')
+      .end((err, res) => {
+        const {
+          body: {
+            results: {
+              rows,
+              count
+            },
+            totalPages,
+            currentPage
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(rows).to.be.an('array');
+        expect(totalPages).to.be.a('number');
+        expect(currentPage).to.be.a('number');
+        expect(count).to.be.a('number');
+        done(err);
+      });
+  });
+
+  it('should should return articles based on passed query params', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=latest')
+      .end((err, res) => {
+        const {
+          body: {
+            articles
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(articles).to.be.an('array');
+        done(err);
+      });
+  });
+
+  it('should should return articles based on passed query params', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=comments')
+      .end((err, res) => {
+        const {
+          body: {
+            articles
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(articles).to.be.an('array');
+        done(err);
+      });
+  });
+
+  // it('should should return articles based on passed query params', (done) => {
+  //   chai
+  //     .request(app)
+  //     .get('/api/v1/articles/order?type=ratings')
+  //     .end((err, res) => {
+  //       const {
+  //         body: {
+  //           articles
+  //         },
+  //       } = res;
+  //       expect(res).to.have.status(200);
+  //       expect(res.body).to.have.property('success').equal(true);
+  //       expect(articles).to.be.an('array');
+  //       done(err);
+  //     });
+  // });
+});
+
 describe('/PUT articles slug', () => {
   before((done) => {
     chai
@@ -330,7 +408,7 @@ describe('/PUT articles slug', () => {
       });
   });
 
-  before(() => { updateVerifiedStatus(myUser.email); });
+  before(async () => { await updateVerifiedStatus(myUser.email); });
   it('should return an error if the user is not the owner of the article', (done) => {
     chai
       .request(app)

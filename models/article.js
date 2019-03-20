@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     id: {
       unique: true,
       allowNull: false,
-      primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4
     },
@@ -18,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     slug: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey: true,
       unique: {
         args: true,
         msg: 'Article should have a unique slug'
@@ -62,6 +62,10 @@ module.exports = (sequelize, DataTypes) => {
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
       as: 'category'
+    });
+    Article.hasMany(models.Comment, {
+      foreignKey: 'articleSlug',
+      onDelete: 'CASCADE'
     });
   };
   return Article;

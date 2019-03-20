@@ -1,4 +1,9 @@
-import { Article, User, Category } from '../models';
+import {
+  Article,
+  User,
+  Category,
+  Comment
+} from '../models';
 import Paginate from '../helpers/paginate';
 
 /**
@@ -296,15 +301,45 @@ export default class ArticleController {
           amount, type
         }
       } = req;
-      let order;
+      let articles;
       if (type === 'latest') {
-        order = [['updatedAt', 'ASC']];
+        articles = await Article.findAll({
+          where: {},
+          limit: Number(amount) || 5,
+          order: [['createdAt', 'ASC']],
+          include: [
+            {
+              model: User,
+              as: 'author',
+              attributes: ['username', 'bio', 'name']
+            },
+          ]
+        });
+      } else if (type === 'comments' || type === 'ratings') {
+        const results = await Article.findAll({
+          where: {},
+          limit: Number(amount) || 5,
+          include: [
+            {
+              model: User,
+              as: 'author',
+              attributes: ['username', 'bio', 'name']
+            },
+            {
+              model: Comment
+            },
+          ]
+        });
+        if (type === 'comments') {
+          articles = results
+            .sort((a, b) => b.Comments.length - a.Comments.length)
+            .slice(0, 5);
+        } else {
+          articles = results
+            .sort((a, b) => b.Ratings.length - a.Ratings.length)
+            .slice(0, 5);
+        }
       }
-      const articles = await Article.findAll({
-        where: {},
-        limit: Number(amount) || 5,
-        order
-      });
       return res.status(200).json({
         success: true,
         articles
