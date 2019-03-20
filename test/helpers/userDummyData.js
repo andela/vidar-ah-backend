@@ -107,5 +107,21 @@ export const validUser4 = {
   name: 'validUser4',
   email: 'validUser4@gmail.com',
   password: 'validUser4',
-  username: 'validuser4'
+  username: 'validuser4',
+};
+
+export const validFollowUser = {
+  username: 'validfollowuser',
+  email: 'jessam70010@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
+};
+
+export const validFollowUser2 = {
+  username: 'followuser2',
+  email: 'jessam70011@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
 };

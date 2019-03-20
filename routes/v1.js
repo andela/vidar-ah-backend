@@ -3,9 +3,6 @@ import UserController from '../controllers/user';
 import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
 import isUserVerified from '../middleware/verifyUser';
-import PasswordReset from '../controllers/PasswordReset';
-import VerifyPasswordToken from '../controllers/VerifyPasswordToken';
-import ChangePassword from '../controllers/ChangePassword';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
@@ -28,10 +25,13 @@ import {
   validateEditComment,
   validateCommentUser,
   validateArticleId,
-  validateArticleRating
+  validateArticleRating,
 } from '../middleware/validation';
+
 import CommentController from '../controllers/comment';
 
+import FollowController from '../controllers/follow';
+import followVerification from '../middleware/follow';
 
 const {
   createArticle, updateArticle, deleteArticle, rateArticle
@@ -41,6 +41,7 @@ const apiRoutes = express.Router();
 
 apiRoutes.route('/user/signup')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
+apiRoutes.get('/verify/:verificationId', UserController.verifyAccount);
 
 apiRoutes.route('/userprofile')
   .get(Auth.verifyUser, isUserVerified, ProfileController.viewProfile)
@@ -68,6 +69,12 @@ apiRoutes.post(
   UserController.loginUser,
 );
 
+apiRoutes.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['email', 'profile']
+  })
+);
 apiRoutes.route('/articles')
   .post(
     Auth.verifyUser,
@@ -118,7 +125,7 @@ apiRoutes.get('/auth/google',
 apiRoutes.get('/auth/google/callback',
   passport.authenticate(
     'google', { failureRedirect: '/login' }
-  ),
+  ), UserController.socialAuth,
   (req, res) => {
     res.redirect('/');
   });
@@ -133,7 +140,22 @@ apiRoutes.get('/auth/facebook',
 apiRoutes.get('/auth/facebook/callback',
   passport.authenticate(
     'facebook', { failureRedirect: '/login' }
-  ),
+  ), UserController.socialAuth,
+  (req, res) => {
+    res.redirect('/');
+  });
+
+apiRoutes.get('/auth/twitter',
+  passport.authenticate(
+    'twitter', {
+      scope: ['profile']
+    }
+  ));
+
+apiRoutes.get('/auth/twitter/callback',
+  passport.authenticate(
+    'twitter', { failureRedirect: '/login' }
+  ), UserController.socialAuth,
   (req, res) => {
     res.redirect('/');
   });
@@ -201,44 +223,51 @@ apiRoutes.route('/comment/:id')
     CommentController.deleteComment);
 
 
-apiRoutes.route('/user')
-  .post(validateSignup, returnValidationErrors, UserController.registerUser);
-
-apiRoutes.route('/userprofile')
-  .get(Auth.verifyUser, isUserVerified, ProfileController.viewProfile)
-  .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
-    returnValidationErrors, ProfileController.editProfile);
-
-apiRoutes.route('/verify/:verificationId')
-  .get(UserController.verifyAccount);
-
-apiRoutes.route('/articles')
-  .post(Auth.verifyUser, isUserVerified,
-    addImages,
-    validateArticle,
-    returnValidationErrors,
-    generateSlug,
-    createArticle);
-
-apiRoutes.post(
-  '/resetpassword',
-  validateEmail,
-  returnValidationErrors,
-  isUserVerified,
-  PasswordReset.resetPassword,
+apiRoutes.get(
+  '/followuser/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.followUser
 );
 
 apiRoutes.get(
-  '/verifypasswordkey/:passwordResetToken',
-  VerifyPasswordToken.checkPasswordToken
-);
-
-apiRoutes.post(
-  '/changepassword',
+  '/unfollowuser/:id',
   Auth.verifyUser,
-  validatePassword,
-  returnValidationErrors,
-  ChangePassword.changePassword,
+  followVerification,
+  FollowController.unfollowUser
 );
+apiRoutes.route('/articles/:slug/comments')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment
+  )
+  .get(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    CommentController.getComments
+  );
+
+apiRoutes.route('/articles/:slug/comments/:id')
+  .patch(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment
+  )
+  .delete(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment
+  );
+
 
 export default apiRoutes;

@@ -48,4 +48,3 @@ dist/
 .vscode/
 #coveralls code coverage reports
 .nyc_output/
-

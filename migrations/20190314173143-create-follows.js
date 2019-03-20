@@ -1,20 +1,15 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Comments', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('follows', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    comment: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      unique: true
+    followerId: {
+      type: Sequelize.INTEGER
     },
-    articleSlug: {
-      type: Sequelize.STRING
-    },
-    userId: {
+    followingId: {
       type: Sequelize.INTEGER
     },
     createdAt: {
@@ -26,5 +21,7 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  down: queryInterface => queryInterface.dropTable('Comments'),
+  down(queryInterface) {
+    return queryInterface.dropTable('follows');
+  }
 };

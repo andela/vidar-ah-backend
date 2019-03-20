@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
+import session from 'express-session';
 import cors from 'cors';
 import passport from 'passport';
 import errorhandler from 'errorhandler';
@@ -22,8 +23,27 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+app.use(session({
+  secret: process.env.SECRET,
+  key: 'vidar',
+  resave: true,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 60000,
+    expires: false
+  }
+}));
 app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findByPk(id);
+  return done(null, user);
+});
 
 passport.serializeUser((user, done) => {
   done(null, user.id);

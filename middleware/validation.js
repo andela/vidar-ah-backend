@@ -209,10 +209,11 @@ export const validateCommentUser = async (req, res, next) => {
   }
 };
 
+
 export const validateArticleExist = async (req, res, next) => {
-  const { id } = req.params;
+  const { slug } = req.params;
   try {
-    const article = await Article.findOne({ where: { id } });
+    const article = await Article.findOne({ where: { slug } });
 
     if (!article) {
       return res.status(404).json({

@@ -14,14 +14,14 @@ const { expect } = chai;
 // Keep Token
 let userToken = [];
 let userToken2 = [];
-let articleId = [];
+let articleSlug = [];
 let commentId = [];
 
 describe('Make a request to signup with valid details', () => {
   it('returns successfully signed up message', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user/signup')
+      .post('/api/v1/user')
       .send(validCommentUser)
       .end((err, res) => {
         const {
@@ -59,7 +59,7 @@ describe('Post a comment', () => {
   it('returns unauthorised access, user not verified', (done) => {
     chai
       .request(app)
-      .post('/api/v1/comment/:id')
+      .post('/api/v1/articles/:slug/comments')
       .set('x-access-token', userToken)
       .send(validComment)
       .end((err, res) => {
@@ -86,7 +86,7 @@ describe('Create an article by an authenticated and verified user', () => {
         expect(status).to.be.equal(201);
         expect(success).to.be.equal(true);
         expect(message).to.be.equal('New article created successfully');
-        articleId = article.id;
+        articleSlug = article.slug;
         done(err);
       });
   });
@@ -96,7 +96,7 @@ describe('Post a comment', () => {
   it('returns article not found', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/comment/${5}`)
+      .post(`/api/v1/articles/${5}/comments`)
       .set('x-access-token', userToken)
       .send({ comment: 'I am a boy' })
       .end((err, res) => {
@@ -104,7 +104,7 @@ describe('Post a comment', () => {
           status,
           body: { success }
         } = res;
-        expect(status).to.be.equal(500);
+        expect(status).to.be.equal(404);
         expect(success).to.be.equal(false);
         done(err);
       });
@@ -116,7 +116,7 @@ describe('Post a comment', () => {
   it('returns invalid comment body', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/comment/${articleId}`)
+      .post(`/api/v1/articles/${articleSlug}/comments`)
       .set('x-access-token', userToken)
       .send({ comment: '' })
       .end((err, res) => {
@@ -135,7 +135,7 @@ describe('Post a comment', () => {
   it('returns successfully post comment', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/comment/${articleId}`)
+      .post(`/api/v1/articles/${articleSlug}/comments`)
       .set('x-access-token', userToken)
       .send({ comment: 'I am a boy' })
       .end((err, res) => {
@@ -150,12 +150,31 @@ describe('Post a comment', () => {
       });
   });
 });
+describe('Get comments', () => {
+  before(() => updateVerifiedStatus(validCommentUser.email));
+  it('returns all comments associated with an article', (done) => {
+    chai
+      .request(app)
+      .get(`/api/v1/articles/${articleSlug}/comments`)
+      .set('x-access-token', userToken)
+      .end((err, res) => {
+        const {
+          status,
+          body: { success, comments }
+        } = res;
+        expect(status).to.be.equal(205);
+        expect(success).to.be.equal(true);
+        expect(comments).to.be.instanceOf(Array);
+        done(err);
+      });
+  });
+});
 describe('Edit a comment', () => {
   before(() => updateVerifiedStatus(wrongCommentUser.email));
   it('returns unauthorized access', (done) => {
     chai
       .request(app)
-      .patch(`/api/v1/comment/${commentId}`)
+      .patch(`/api/v1/articles/:slug/comments/${commentId}`)
       .set('x-access-token', userToken2)
       .send({ comment: 'I am a girl now' })
       .end((err, res) => {
@@ -174,7 +193,7 @@ describe('Edit a comment', () => {
   it('returns successfully edit comment', (done) => {
     chai
       .request(app)
-      .patch(`/api/v1/comment/${commentId}`)
+      .patch(`/api/v1/articles/:slug/comments/${commentId}`)
       .set('x-access-token', userToken)
       .send({ comment: 'I am a girl now' })
       .end((err, res) => {
@@ -193,7 +212,7 @@ describe('Delete a comment', () => {
   it('returns unauthorized access', (done) => {
     chai
       .request(app)
-      .delete(`/api/v1/comment/${commentId}`)
+      .delete(`/api/v1/articles/:slug/comments/${commentId}`)
       .set('x-access-token', userToken2)
       .end((err, res) => {
         const {
@@ -211,7 +230,7 @@ describe('Delete a comment', () => {
   it('returns comment successfully deleted', (done) => {
     chai
       .request(app)
-      .delete(`/api/v1/comment/${commentId}`)
+      .delete(`/api/v1/articles/:slug/comments/${commentId}`)
       .set('x-access-token', userToken)
       .end((err, res) => {
         const {

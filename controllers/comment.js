@@ -1,4 +1,4 @@
-import { Comment } from '../models';
+import { Comment, User } from '../models';
 
 /**
  * @class CommentController
@@ -20,16 +20,55 @@ export default class CommentController {
    */
   static async createComment(req, res) {
     const { id } = req.user;
-    const { id: articleId } = req.params;
+    const { slug: articleSlug } = req.params;
     const { comment } = req.body;
     try {
       const newComment = await Comment.create({
-        userId: id, articleId, comment
+        userId: id, articleSlug, comment
       });
       return res.status(205).json({
         success: true,
         message: 'New article comment created successfully',
         comment: newComment,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+   * @description - Gets an article's comments
+   * @static
+   *
+   * @param {object} req - HTTP Request
+   * @param {object} res - HTTP Response
+   *
+   * @memberof CommentController
+   *
+   * @returns {object} Article comment
+   */
+  static async getComments(req, res) {
+    const { slug: articleSlug } = req.params;
+    try {
+      const findComment = await Comment.findAll({
+        raw: true,
+        where: {
+          articleSlug
+        },
+        include: [
+          {
+            model: User,
+            attributes: ['username', 'bio', 'email']
+          }
+        ]
+      });
+      return res.status(205).json({
+        success: true,
+        message: 'Comments returned successfully',
+        comments: findComment,
       });
     } catch (error) {
       return res.status(500).json({
@@ -54,20 +93,23 @@ export default class CommentController {
     const { id } = req.params;
     const { comment } = req.body;
     try {
-      const updatedComment = await Comment.update({
-        comment
-      }, {
-        returning: true,
-        raw: true,
-        where: {
-          id
+      const updatedComment = await Comment.update(
+        {
+          comment
+        },
+        {
+          returning: true,
+          raw: true,
+          where: {
+            id
+          }
         }
-      });
+      );
       const newComment = updatedComment[1][0];
 
       return res.status(205).json({
         success: true,
-        message: 'Article updated successfully',
+        message: 'Comment updated successfully',
         body: newComment
       });
     } catch (error) {
@@ -100,7 +142,7 @@ export default class CommentController {
       if (rowsDeleted === 1) {
         return res.status(205).json({
           success: true,
-          message: 'Article deleted successfully',
+          message: 'Comment deleted successfully',
         });
       }
     } catch (error) {
