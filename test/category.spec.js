@@ -22,17 +22,9 @@ describe('TESTIN THE CATEGORY FEATURE', () => {
   before(async () => {
     const res = await chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(user);
-      // .end((err, res) => {
-      //   if (!err) {
-    const { body } = res;
-    userToken = body.token;
-    // }
-    // updateVerifiedStatus(user.email);
-    // assignRole(user.email, 'user');
-    // done();
-    // });
+    userToken = res.body.token;
   });
   after(async () => {
     await User.truncate({ cascade: false });
@@ -215,7 +207,7 @@ describe('TESTIN THE CATEGORY FEATURE', () => {
         } = res;
         expect(status).to.be.equal(400);
         expect(success).to.be.equal(false);
-        expect(errors[0]).to.be.equal('Invalid category id. Category id must be a positive integer.');
+        expect(errors[0]).to.be.equal('Invalid category id.');
       });
     });
 

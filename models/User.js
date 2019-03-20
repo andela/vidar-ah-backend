@@ -70,7 +70,19 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id',
       onDelete: 'CASCADE'
     });
+    User.belongsToMany(models.User, {
+      foreignKey: 'followingId',
+      as: 'followers',
+      through: models.follows
+    });
+    User.belongsToMany(models.User, {
+      foreignKey: 'followerId',
+      as: 'following',
+      through: models.follows
+    });
   };
+
+
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();
     if (user.password) {

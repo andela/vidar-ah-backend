@@ -18,14 +18,17 @@ import {
   validateArticle,
   validateArticleAuthor,
   validateCategory,
+  validateSearch,
   returnValidationErrors
 } from '../middleware/validation';
+import FollowController from '../controllers/follow';
+import followVerification from '../middleware/follow';
 
 const { createArticle, updateArticle, deleteArticle } = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.route('/user')
+apiRoutes.route('/user/signup')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
 apiRoutes.route('/userprofile')
@@ -150,4 +153,29 @@ apiRoutes.post(
   UserController.resetPassword
 );
 
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
+);
+
+apiRoutes.get(
+  '/follow/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.followUser
+);
+
+apiRoutes.get(
+  '/unfollow/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.unfollowUser
+);
 export default apiRoutes;
