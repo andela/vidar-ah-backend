@@ -1,4 +1,4 @@
-import { Article } from '../models';
+import { Article, Reaction } from '../models';
 
 /**
  * @class ArticleController
@@ -95,6 +95,121 @@ export default class ArticleController {
         success: true,
         message: 'Article deleted successfully'
       });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+   * @desc check if a user likes an article
+   * @param {Object} req - the request object
+   * @param {Object} res - the response object
+   * @memberof ArticleController
+   * @return {Object} returns an object
+   */
+  static async likeArticle(req, res) {
+    const { id: userId } = req.user;
+    const { slug: articleSlug } = req.params;
+
+    try {
+      // const likes = await Reaction.findAndCountAll({
+      //   where: {
+      //     like: true
+      //   },
+      //   include: [{
+      //     model: User,
+      //     as: 'user',
+      //     attributes: ['username', 'bio', 'name']
+      //   }, {
+      //     model: Article,
+      //     as: 'article',
+      //     attributes: ['articleSlug']
+      //   }]
+      // });
+      const likeArticle = await Reaction.findOne({
+        where: {
+          articleSlug,
+          userId
+        }
+      });
+      if (!likeArticle) {
+        await Reaction.create({
+          articleSlug,
+          userId,
+          like: true,
+        });
+        return res.status(201).json({
+          success: true,
+          message: 'Article liked successfully',
+          // like: likes.count
+        });
+      } if (
+        (likeArticle)
+        && (likeArticle.like === true)) {
+        await Reaction.destroy({
+          where: {
+            articleSlug,
+            userId,
+          }
+        });
+        return res.status(200).json({
+          success: true,
+          message: 'You have unliked this article'
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+   * @desc check if a user dislikes an article
+   * @param {Object} req - the request object
+   * @param {Object} res - the response object
+   * @memberof ArticleController
+   * @return {Object} returns an object
+   */
+  static async dislikeArticle(req, res) {
+    const { id: userId } = req.user;
+    const { slug: articleSlug } = req.params;
+
+    try {
+      const likeArticle = await Reaction.findOne({
+        where: {
+          articleSlug,
+          userId
+        }
+      });
+      if (!likeArticle) {
+        await Reaction.create({
+          articleSlug,
+          userId,
+          like: false
+        });
+        return res.status(201).json({
+          success: true,
+          message: 'Article disliked successfully'
+        });
+      } if (
+        (likeArticle)
+        && (likeArticle.like === false)) {
+        await Reaction.destroy({
+          where: {
+            articleSlug,
+            userId,
+          }
+        });
+        return res.status(200).json({
+          success: true,
+          message: 'You have removed the dislike on this article'
+        });
+      }
     } catch (error) {
       return res.status(500).json({
         success: false,

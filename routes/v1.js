@@ -17,10 +17,17 @@ import {
   validateArticle,
   validateArticleAuthor,
   validateCategory,
-  returnValidationErrors
+  returnValidationErrors,
+  checkIfArticleExists
 } from '../middleware/validation';
 
-const { createArticle, updateArticle, deleteArticle } = ArticleController;
+const {
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  likeArticle,
+  dislikeArticle
+} = ArticleController;
 
 const apiRoutes = express.Router();
 
@@ -126,6 +133,24 @@ apiRoutes.post(
   validatePassword,
   returnValidationErrors,
   UserController.resetPassword
+);
+
+apiRoutes.post(
+  '/likeArticle/:slug',
+  Auth.verifyUser,
+  isUserVerified,
+  checkIfArticleExists,
+  returnValidationErrors,
+  likeArticle
+);
+
+apiRoutes.post(
+  '/dislikeArticle/:slug',
+  Auth.verifyUser,
+  isUserVerified,
+  checkIfArticleExists,
+  returnValidationErrors,
+  dislikeArticle
 );
 
 export default apiRoutes;

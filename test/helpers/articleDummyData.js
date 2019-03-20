@@ -10,4 +10,13 @@ export const article2 = {
   description: 'An article can be updated',
   body: 'Update an article if you are the owner of the article.'
 };
+
+export const articleReaction = {
+  like: true
+};
+
+export const articleReaction2 = {
+  like: false
+};
+
 export default article1;

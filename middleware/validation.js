@@ -116,6 +116,7 @@ export const validateArticleAuthor = async (req, res, next) => {
     });
   }
 };
+
 export const validateCategory = [
   check('category')
     .exists()
@@ -141,3 +142,28 @@ export const validatePassword = [
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the password.')
 ];
+
+export const checkIfArticleExists = async (req, res, next) => {
+  const {
+    params: { slug }
+  } = req;
+  try {
+    const article = await Article.findOne({
+      where: {
+        slug
+      }
+    });
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        errors: ['Article not found']
+      });
+    }
+    return next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      errors: ['Article does not exist']
+    });
+  }
+};

@@ -6,7 +6,7 @@ import chaiHttp from 'chai-http';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import app from '../index';
 import { article1, user2 } from './helpers/dummyData';
-import { article2 } from './helpers/articleDummyData';
+import { article2, articleReaction } from './helpers/articleDummyData';
 import { myUser } from './helpers/userDummyData';
 
 chai.use(chaiHttp);
@@ -16,6 +16,9 @@ let userToken;
 let userToken2;
 let token;
 let articleSlug;
+let articleSlug2;
+let articleSlug3;
+let reaction;
 
 describe('ARTICLES', () => {
   before((done) => {
@@ -99,6 +102,7 @@ describe('ARTICLES', () => {
           expect(errors[0]).to.be.equal('Article should have a title.');
           expect(errors[1]).to.be.equal('Title should be at least 6 characters long.');
           expect(errors[2]).to.be.equal('Article should have a description.');
+          expect(errors[3]).to.be.equal('Description should be at least 6 characters long.');
           done(err);
         });
     });
@@ -270,6 +274,94 @@ describe('/DELETE articles slug', () => {
         expect(res).to.have.status(404);
         expect(res.body).to.have.property('success').equal(false);
         expect(res.body.errors[0]).to.be.equal('Article not found');
+        done(err);
+      });
+  });
+});
+
+
+describe('/POST articles like', () => {
+  it('should create an article', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/articles')
+      .set('authorization', userToken)
+      .send(article2)
+      .end((err, res) => {
+        articleSlug2 = res.body.article.slug;
+        expect(res).to.have.status(201);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(res.body).to.have.property('message').equal('New article created successfully');
+        done(err);
+      });
+  });
+
+  it('should return an error if the article is not found', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/likeArticle/article-writing-b4ngikh')
+      .set('authorization', userToken2)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.have.property('success').equal(false);
+        expect(res.body.errors[0]).to.be.equal('Article not found');
+        done(err);
+      });
+  });
+
+  it('should create an article like reaction', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/likeArticle/${articleSlug2}`)
+      .set('authorization', userToken2)
+      .end((err, res) => {
+        reaction = res.body.reaction;
+        expect(res).to.have.status(201);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(res.body).to.have.property('message').equal('Article liked successfully');
+        done(err);
+      });
+  });
+
+  it('should unlike an article reaction if the article has been liked', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/likeArticle/${articleSlug2}`)
+      .set('authorization', userToken2)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(res.body).to.have.property('message').equal('You have unliked this article');
+        done(err);
+      });
+  });
+});
+
+
+describe('/POST articles dislike', () => {
+  it('should create an article dislike reaction', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/dislikeArticle/${articleSlug2}`)
+      .set('authorization', userToken2)
+      .end((err, res) => {
+        reaction = res.body.reaction;
+        expect(res).to.have.status(201);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(res.body).to.have.property('message').equal('Article disliked successfully');
+        done(err);
+      });
+  });
+
+  it('should remove an article reaction if the article has been disliked', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/dislikeArticle/${articleSlug2}`)
+      .set('authorization', userToken2)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(res.body).to.have.property('message').equal('You have removed the dislike on this article');
         done(err);
       });
   });
