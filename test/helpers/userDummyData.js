@@ -26,6 +26,20 @@ export const validUser = {
   password: '1234567'
 };
 
+export const validCommentUser = {
+  username: 'MuhammaduBuhari',
+  email: 'ayinlaolajide@gmail.com',
+  name: 'Muhammadu Buhari',
+  password: '1234567'
+};
+
+export const wrongCommentUser = {
+  username: 'AishaBuhari',
+  email: 'ayinlaolajide2345@gmail.com',
+  name: 'Aisha Buhari',
+  password: '1234567'
+};
+
 export const validUser1 = {
   username: 'flippin',
   email: 'flipping2234@gmail.com',

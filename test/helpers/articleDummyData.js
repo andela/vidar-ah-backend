@@ -1,4 +1,4 @@
-const article1 = {
+export const article1 = {
   title: 'This is the title a test article',
   description: 'This is the description of the test article',
   body:
@@ -10,4 +10,3 @@ export const article2 = {
   description: 'An article can be updated',
   body: 'Update an article if you are the owner of the article.'
 };
-export default article1;
