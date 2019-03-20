@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         msg: 'Article should have a unique slug'
       }
     },
-    like: {
+    likes: {
       type: DataTypes.BOOLEAN
     }
   }, {});

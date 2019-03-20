@@ -57,12 +57,21 @@ module.exports = (sequelize, DataTypes) => {
     Article.belongsTo(models.User, {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
+      as: 'author'
     });
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
     });
     Article.hasMany(models.Reaction, {
       foreignKey: 'articleSlug',
+      as: 'likes'
+    });
+    Article.hasMany(models.Comment, {
+      foreignKey: 'articleSlug',
+    });
+    Article.hasMany(models.Ratings, {
+      foreignKey: 'articleId',
+      onDelete: 'CASCADE'
     });
   };
   return Article;

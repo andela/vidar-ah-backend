@@ -1,5 +1,5 @@
 import ExpressValidator from 'express-validator/check';
-import { Article } from '../models';
+import { Article, Comment } from '../models';
 
 const { check, validationResult } = ExpressValidator;
 
@@ -167,3 +167,104 @@ export const checkIfArticleExists = async (req, res, next) => {
     });
   }
 };
+
+export const validateSearch = [
+  check('term')
+    .isString()
+    .withMessage('Please provide a valid search term.')
+];
+
+export const validateCreateComment = [
+  check('comment')
+    .exists()
+    .withMessage('Please include a comment in the body of request.')
+    .isString()
+    .trim()
+    .withMessage('Comment must be alphanumeric characters, please remove leading and trailing whitespaces.')
+    .isLength({ min: 2 })
+    .withMessage('Comments should be at least 2 characters long.'),
+];
+
+export const validateEditComment = [
+  check('id')
+    .exists()
+    .withMessage('Please supply ID of comment to be edited')
+    .isNumeric()
+    .withMessage('Comment ID must be an integer.'),
+
+  check('comment')
+    .exists()
+    .withMessage('Please include new comment in the body of request.')
+    .isString()
+    .trim()
+    .withMessage('Comment must be alphanumeric characters, please remove leading and trailing whitespaces.')
+    .isLength({ min: 2 })
+    .withMessage('Comments should be at least 2 characters long.'),
+];
+
+export const validateCommentUser = async (req, res, next) => {
+  const {
+    user,
+    params: { id }
+  } = req;
+  try {
+    const comment = await Comment.findOne({
+      where: {
+        id
+      }
+    });
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        errors: ['Comment not found.']
+      });
+    }
+    const checkUser = comment.userId === user.id;
+    if (!checkUser) {
+      return res.status(401).json({
+        success: false,
+        errors: ['You are unauthorized to perform this action']
+      });
+    }
+    return next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      errors: ['Article does not exist']
+    });
+  }
+};
+
+
+export const validateArticleExist = async (req, res, next) => {
+  const { slug } = req.params;
+  try {
+    const article = await Article.findOne({ where: { slug } });
+
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        errors: ['Article not found']
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, error: ['Article does not exist/Invalid UUID'] });
+  }
+  return next();
+};
+
+export const validateArticleRating = [
+  check('rating')
+    .exists()
+    .withMessage('Please provide a rating for this article.')
+    .custom(value => `${Number(value)}` !== 'NaN')
+    .withMessage('Rating should be a number.')
+    .custom(value => [1, 2, 3, 4, 5].indexOf(Number(value)) !== -1)
+    .withMessage('Ratings should have values ranging from 1 to 5.')
+];
+
+export const validateArticleId = [
+  check('articleId')
+    .isUUID()
+    .withMessage('Please provide a valid id for the article')
+];
