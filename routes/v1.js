@@ -2,10 +2,11 @@ import express from 'express';
 import UserController from '../controllers/user';
 import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
+import isUserVerified from '../middleware/verifyUser';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
-import isUserVerified from '../middleware/verifyUser';
+import checkForArticle from '../middleware/checkIfArticleExist';
 import ArticleController from '../controllers/articles';
 import CategoryController from '../controllers/category';
 import passportTwitter from '../auth/twitter';
@@ -17,23 +18,29 @@ import {
   validateEmail,
   validatePassword,
   validateArticle,
+  returnValidationErrors,
   validateArticleAuthor,
   validateCategory,
-  returnValidationErrors,
+  validateSearch,
   validateCreateComment,
   validateEditComment,
   validateCommentUser,
   validateArticleExist,
+  validateArticleId,
+  validateArticleRating
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
 import CommentController from '../controllers/comment';
 
-const { createArticle, updateArticle, deleteArticle } = ArticleController;
+const {
+  createArticle, updateArticle, deleteArticle, rateArticle
+} = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.post('/user/signup', validateSignup, returnValidationErrors, UserController.registerUser);
+apiRoutes.route('/user/signup')
+  .post(validateSignup, returnValidationErrors, UserController.registerUser);
 apiRoutes.get('/verify/:verificationId', UserController.verifyAccount);
 
 apiRoutes.route('/userprofile')
@@ -41,6 +48,18 @@ apiRoutes.route('/userprofile')
   .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
     returnValidationErrors, ProfileController.editProfile);
 
+apiRoutes.route('/verify/:verificationId')
+  .get(UserController.verifyAccount);
+
+apiRoutes.get('/userprofile', Auth.verifyUser, isUserVerified, ProfileController.viewProfile);
+apiRoutes.patch(
+  '/userprofile',
+  Auth.verifyUser,
+  isUserVerified,
+  validateProfileChange,
+  returnValidationErrors,
+  ProfileController.editProfile
+);
 
 apiRoutes.post(
   '/user/login',
@@ -86,6 +105,11 @@ apiRoutes.route('/articles/:slug')
     validateArticleAuthor,
     deleteArticle
   );
+
+apiRoutes.route('/articles/rate/:articleId')
+  .post(Auth.verifyUser, isUserVerified,
+    validateArticleId, validateArticleRating,
+    returnValidationErrors, checkForArticle, rateArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
@@ -169,6 +193,26 @@ apiRoutes.delete(
   verifyCategoryId,
   CategoryController.deleteCategory
 );
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
+);
+
+apiRoutes.route('/category')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCategory,
+    returnValidationErrors,
+    CategoryController.createCategory
+  );
 
 apiRoutes.post(
   '/requestpasswordreset',
@@ -192,6 +236,25 @@ apiRoutes.post(
   returnValidationErrors,
   UserController.resetPassword
 );
+apiRoutes.route('/comment/:id')
+  .post(Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment)
+  .patch(Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment)
+  .delete(Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment);
+
 
 apiRoutes.get(
   '/followuser/:id',
@@ -202,6 +265,65 @@ apiRoutes.get(
 
 apiRoutes.get(
   '/unfollowuser/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.unfollowUser
+);
+apiRoutes.route('/articles/:slug/comments')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment
+  )
+  .get(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    CommentController.getComments
+  );
+
+apiRoutes.route('/articles/:slug/comments/:id')
+  .patch(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment
+  )
+  .delete(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment
+  );
+
+
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
+);
+
+apiRoutes.post(
+  '/follow/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.followUser
+);
+
+apiRoutes.post(
+  '/unfollow/:id',
   Auth.verifyUser,
   followVerification,
   FollowController.unfollowUser

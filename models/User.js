@@ -86,7 +86,6 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();
     if (user.password) {

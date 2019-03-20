@@ -50,6 +50,15 @@ passport.deserializeUser(async (id, done) => {
   return done(null, user);
 });
 
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findByPk(id);
+  return done(null, user);
+});
+
 // configure router
 app.use('/api', routes);
 

@@ -40,7 +40,6 @@ passport.use(new GoogleStrategy({
   callbackURL: `${process.env.HOST_URL}/api/v1/auth/google/callback`,
 }, googleSocial));
 
-
 /**
    * callback function for facebook strategy
    * @param {object} accessToken authorization token
@@ -54,11 +53,11 @@ export const facebookSocial = async (accessToken, refreshToken, profile, done) =
   const splitName = profile.displayName.split(' ');
   const username = splitName[0];
   /**
-     * @description - finds an existing user or create a new user
-     * @param {object} user a user
-     * @param {function} done end of function
-     * @returns {object} createOrFindUser
-     */
+   * @description - finds an existing user or create a new user
+   * @param {object} user a user
+   * @param {function} done end of function
+   * @returns {object} createOrFindUser
+   */
   const { displayName } = profile;
   const user = await User.findOrCreate({
     where: { email },
@@ -79,7 +78,6 @@ passport.use(new FacebookStrategy(
     profileFields: ['id', 'displayName', 'email']
   }, facebookSocial
 ));
-
 
 /**
      * callback function for twitter strategy

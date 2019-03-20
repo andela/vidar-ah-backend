@@ -123,3 +123,52 @@ describe('twitter social login', () => {
     });
   });
 });
+
+describe('google social login', () => {
+  describe('authenticate callback', () => {
+    const callBack = {
+      accessToken: '2b$10$ASa5foN/msFInktnwH2slOZYL',
+      refreshToken: '5O582QlPXS',
+      profile: {
+        id: 7,
+        emails: [{ value: 'flippingg2234@gmail.com' }]
+      },
+    };
+    it('should authenticate social login', async () => {
+      const googleUserInfo = googleSocial(
+        callBack.accessToken,
+        callBack.refreshToken,
+        callBack.profile
+      );
+      expect(googleUserInfo).to.be.empty;
+      expect(typeof (googleUserInfo)).to.equal('object');
+      expect(callBack.accessToken).to.be.a('string');
+      expect(callBack.profile).to.an('object');
+    });
+  });
+});
+
+
+describe('facebook social login', () => {
+  describe('authenticate callback', () => {
+    const callBack = {
+      accessToken: '2b$10$ASa5foN/msFInktnwH2slOZYL',
+      refreshToken: '5O582QlPXS',
+      profile: {
+        id: 9,
+        emails: [{ value: 'flippingg2234@gmail.com' }]
+      },
+    };
+    it('should authenticate social login', async () => {
+      const facebookUserInfo = facebookSocial(
+        callBack.accessToken,
+        callBack.refreshToken,
+        callBack.profile
+      );
+      expect(facebookUserInfo).to.be.empty;
+      expect(typeof (facebookUserInfo)).to.equal('object');
+      expect(callBack.accessToken).to.be.a('string');
+      expect(callBack.profile).to.an('object');
+    });
+  });
+});

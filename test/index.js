@@ -9,3 +9,4 @@ import './updateVerifiedStatusHelper.spec';
 import './resetpassword.spec';
 import './follow.spec';
 import './category.spec';
+import './rating.spec';

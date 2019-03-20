@@ -1,6 +1,8 @@
 /dist/**
 /mochawesome-report/**
 /migrations
+/node_modules/**
+/.env/**
 /coverage/**
 /node_modules/**
 /.env/**
@@ -8,6 +10,4 @@
 .eslintrc.json
 package.json
 package-lock.json
-doc.json
-doc.json
 doc.json

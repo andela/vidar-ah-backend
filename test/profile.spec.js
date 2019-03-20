@@ -94,7 +94,7 @@ describe('View default profile details', () => {
 
 describe('Update profile details', () => {
   before(() => updateVerifiedStatus(validUser.email));
-  it('returns successfully updated profile details', (done) => {
+  it('returns successfully profile details', (done) => {
     chai
       .request(app)
       .patch('/api/v1/userprofile')
