@@ -1,8 +1,9 @@
-import {
+import db, {
   Article,
   User,
-  Category,
-  Comment
+  Ratings,
+  Comment,
+  Category
 } from '../models';
 import Paginate from '../helpers/paginate';
 
@@ -44,7 +45,43 @@ export default class ArticleController {
         article: result,
       });
     } catch (error) {
-      return res.status(500).json({ success: false, error: [error.message] });
+      return res.status(500).json({ success: false, errors: [error.message] });
+    }
+  }
+
+  /**
+ * @description - Rate an article
+ * @static
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @memberof ArticleController
+ * @returns {Object} class instance
+ */
+  static async rateArticle(req, res) {
+    const { id } = req.user;
+    const rating = Number(req.body.rating);
+    const { articleId } = req.params;
+    try {
+      const previousRating = await Ratings.findOne({ where: { userId: id, articleId } });
+      if (previousRating) {
+        const updatedRating = await previousRating.update({ rating });
+        return res.status(201).json({
+          success: true,
+          message: `Article rating has been updated as ${rating}`,
+          rating: updatedRating
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        message: `Article has been rated as ${rating}`,
+        articleRating: (await Ratings.create({
+          userId: id,
+          articleId,
+          rating
+        }))
+      });
+    } catch (error) {
+      return res.status(400).json({ success: false, errors: ['Error rating this article'] });
     }
   }
 
@@ -219,11 +256,19 @@ export default class ArticleController {
         where: {
           slug
         },
-        include: [{
-          as: 'author',
-          model: User,
-          attributes: ['username', 'email', 'name', 'bio'],
-        }]
+        include: [
+          {
+            as: 'author',
+            model: User,
+            attributes: ['username', 'email', 'name', 'bio'],
+          },
+          {
+            model: Ratings,
+          },
+          {
+            model: Comment,
+          }
+        ]
       });
       return res.status(200).json({
         success: true,
@@ -268,6 +313,9 @@ export default class ArticleController {
             model: Category,
             as: 'category',
             attributes: ['categoryName']
+          },
+          {
+            model: Ratings,
           }
         ]
       });
@@ -287,6 +335,45 @@ export default class ArticleController {
   }
 
   /**
+  * @description - Generate query for request to get articles with order
+  * @static
+  * @param {Object} type - type of order
+  * @param {Object} amount - amount of articles to get
+  * @memberof ArticleController
+  * @returns {Object} order for findAll
+  */
+  static getQuery(type, amount) {
+    const orders = {
+      ratings:
+      `
+        SELECT "Articles".*, ROUND(AVG("Ratings".rating), 1) AS avg_rating
+        FROM "Ratings"
+        JOIN "Articles" ON "Ratings"."articleId" = "Articles".id
+        GROUP BY "Articles".id, "Articles".slug
+        ORDER BY avg_rating DESC
+        LIMIT ${Number(amount) || 5}
+      `,
+      latest:
+      `
+        SELECT *
+        FROM "Articles"
+        ORDER BY "Articles"."createdAt" DESC
+        LIMIT ${Number(amount) || 5}
+      `,
+      comments:
+      `
+        SELECT "Articles".*, COUNT("Comments".comment) AS comment_count
+        FROM "Comments"
+        JOIN "Articles" ON "Comments"."articleSlug" = "Articles".slug
+        GROUP BY "Articles".id, "Articles".slug
+        ORDER BY comment_count DESC
+        LIMIT ${Number(amount) || 5}
+      `
+    };
+    return orders[type];
+  }
+
+  /**
   * @description - Get a specific number of articles with criteria
   * @static
   * @param {Object} req - the request object
@@ -295,60 +382,20 @@ export default class ArticleController {
   * @returns {Object} class instance
   */
   static async getArticlesByHighestField(req, res) {
-    try {
-      const {
-        query: {
-          amount, type
-        }
-      } = req;
-      let articles;
-      if (type === 'latest') {
-        articles = await Article.findAll({
-          where: {},
-          limit: Number(amount) || 5,
-          order: [['createdAt', 'ASC']],
-          include: [
-            {
-              model: User,
-              as: 'author',
-              attributes: ['username', 'bio', 'name']
-            },
-          ]
-        });
-      } else if (type === 'comments' || type === 'ratings') {
-        const results = await Article.findAll({
-          where: {},
-          limit: Number(amount) || 5,
-          include: [
-            {
-              model: User,
-              as: 'author',
-              attributes: ['username', 'bio', 'name']
-            },
-            {
-              model: Comment
-            },
-          ]
-        });
-        if (type === 'comments') {
-          articles = results
-            .sort((a, b) => b.Comments.length - a.Comments.length)
-            .slice(0, 5);
-        } else {
-          articles = results
-            .sort((a, b) => b.Ratings.length - a.Ratings.length)
-            .slice(0, 5);
-        }
+    const {
+      query: {
+        amount, type
       }
-      return res.status(200).json({
-        success: true,
-        articles
-      });
-    } catch (error) {
-      return res.status(500).json({
-        succes: false,
-        errors: ['Oops, something wrong occured.']
-      });
-    }
+    } = req;
+    const query = ArticleController.getQuery(type, amount);
+    const [, articles] = await db.sequelize.query(
+      query,
+      { raw: false }
+    );
+    return res.status(200).json({
+      success: true,
+      message: 'Articles returned successfully.',
+      articles: articles.rows
+    });
   }
 }

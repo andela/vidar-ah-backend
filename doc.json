@@ -231,26 +231,15 @@
         }
       }
     },
-    "/category": {
-      "post": {
-        "description": "endpoint to create a category",
-        "summary": "adds a new category to the category table",
-        "tags": [
-          "create category"
-        ],
-        "operationId": "CategoryPost",
-        "deprecated": false
-      }
-    },
-    "/requestpasswordreset": {
+    "/articles": {
       "post": {
         "tags": [
-          "Reset password"
+          "Articles"
         ],
-        "summary": "Send reset link to user email",
-        "description": "Send reset link to user email",
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
         "consumes": [
-          "application/x-www-form-urlencoded",
           "application/json"
         ],
         "produces": [
@@ -258,42 +247,25 @@
         ],
         "parameters": [
           {
-            "name": "Content-Type",
+            "name": "authorization",
             "in": "header",
+            "description": "A token to verify the user",
             "required": true,
-            "type": "string",
-            "description": ""
+            "type": "string"
           },
           {
-            "name": "x-access-token",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": ""
-          },
-          {
-            "name": "Body",
             "in": "body",
+            "name": "body",
+            "description": "Create user article",
             "required": true,
-            "description": "",
             "schema": {
-              "$ref": "#/definitions/createcategory",
-              "in": "body",
-              "name": "Request body",
-              "description": "Reset user password",
-              "required": true,
-              "schema": {
-                "$ref": "#/definitions/requestPasswordReset"
-              }
+              "$ref": "#/definitions/articles"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Save password reset key in database and send link to email"
-          },
-          "404": {
-            "description": "User not registered or verified."
+            "description": "New article created successfully"
           },
           "422": {
             "description": "Email is invalid"
@@ -424,14 +396,14 @@
         }
       }
     },
-    "/articles": {
+    "/articles/rate/:articleId": {
       "post": {
         "tags": [
           "Articles"
         ],
-        "summary": "Create an article",
-        "description": "",
-        "operationId": "addArticle",
+        "summary": "Rate an article",
+        "description": "Give ratings on an article",
+        "operationId": "rateArticle",
         "consumes": [
           "application/json"
         ],
@@ -448,20 +420,26 @@
           },
           {
             "in": "body",
-            "name": "body",
-            "description": "Update user profile",
+            "name": "rating",
+            "description": "Rate an article",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/articles"
+              "$ref": "#/definitions/rating"
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "New article created successfully"
+            "description": "Article has been rated as (rating)"
           },
           "422": {
-            "description": "Invalid title/description/body supplied"
+            "description": "Please provide a valid rating for this article"
+          },
+          "404": {
+            "description": "This article does not exist"
+          },
+          "403": {
+          "description": "Permission denied, user cannot rate their own article"
           }
         }
       },
@@ -768,22 +746,6 @@
         }
       }
     },
-    "requestPasswordReset": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        }
-      }
-    },
-    "resetPassword": {
-      "type": "object",
-      "properties": {
-        "password": {
-          "type": "string"
-        }
-      }
-    },
     "articles": {
       "type": "object",
       "properties": {
@@ -798,24 +760,23 @@
         }
       }
     },
-    "createcategory": {
-      "title": "adds a new category to the category table",
-      "example": {
-        "category": "Sport Bulletin"
-      },
+    "rating": {
       "type": "object",
       "properties": {
-        "category": {
+        "rating": {
+          "type": "integer"
+        },
+        "articleId": {
           "type": "string"
+        },
+        "userId": {
+          "type": "number"
         }
-      },
-      "required": [
-        "category"
-      ],
-      "externalDocs": {
-        "description": "Find out more about Swagger",
-        "url": "http://swagger.io"
       }
     }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
   }
 }
