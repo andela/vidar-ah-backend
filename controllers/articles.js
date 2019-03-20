@@ -256,6 +256,12 @@ export default class ArticleController {
           attributes: ['username', 'email', 'name', 'bio'],
         }]
       });
+
+      if (req.user) {
+        const { id } = req.user;
+        const viewer = await User.findOne({ where: { id } });
+        await viewer.addView(article);
+      }
       return res.status(200).json({
         success: true,
         article: article.dataValues

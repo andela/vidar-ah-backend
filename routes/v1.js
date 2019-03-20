@@ -155,6 +155,7 @@ apiRoutes.get(
 
 apiRoutes.get(
   '/articles/:slug',
+  Auth.isLoggedIn,
   ArticleController.getArticleBySlug,
 );
 
@@ -204,5 +205,10 @@ apiRoutes.route('/articles/:slug/comments/:id')
     CommentController.deleteComment
   );
 
+apiRoutes.get(
+  '/user/readingstats',
+  Auth.verifyUser,
+  UserController.getReadingStats
+);
 
 export default apiRoutes;

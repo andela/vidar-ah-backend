@@ -41,8 +41,8 @@ describe('User login authentication: ', () => {
   });
 
   describe('Make a request with valid credentials', () => {
-    before(() => {
-      updateVerifiedStatus(validLoginUser.email);
+    before(async () => {
+      await updateVerifiedStatus(validLoginUser.email);
     });
     it('should return a success message with status 200', (done) => {
       chai
