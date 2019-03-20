@@ -80,6 +80,10 @@ module.exports = (sequelize, DataTypes) => {
       as: 'following',
       through: models.follows
     });
+    User.hasMany(models.Comment, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
   };
 
 

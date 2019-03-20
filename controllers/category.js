@@ -26,6 +26,7 @@ export default class CategoryController {
     try {
       const returnValue = await Category.create({ categoryName: category.toLowerCase() });
       const { dataValues: { id, categoryName } } = returnValue;
+      console.log('\n\n\ncategoryId', returnValue.dataValues, '\n\n\n');
       return res.status(201).json({
         success: true,
         message: 'Category successfully added.',

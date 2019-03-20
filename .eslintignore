@@ -1,9 +1,13 @@
 /dist/**
 /mochawesome-report/**
+/migrations
+/coverage/**
 /node_modules/**
 /.env/**
 /coverage/**
 .eslintrc.json
 package.json
 package-lock.json
+doc.json
+doc.json
 doc.json

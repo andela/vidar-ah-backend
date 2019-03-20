@@ -1,5 +1,5 @@
 import ExpressValidator from 'express-validator/check';
-import { Article } from '../models';
+import { Article, Comment } from '../models';
 
 const { check, validationResult } = ExpressValidator;
 
@@ -141,9 +141,80 @@ export const validatePassword = [
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the password.')
 ];
-
-export const validateSearch = [
-  check('term')
+export const validateCreateComment = [
+  check('comment')
+    .exists()
+    .withMessage('Please include a comment in the body of request.')
     .isString()
-    .withMessage('Please provide a valid search term.')
+    .trim()
+    .withMessage('Comment must be alphanumeric characters, please remove leading and trailing whitespaces.')
+    .isLength({ min: 2 })
+    .withMessage('Comments should be at least 2 characters long.'),
 ];
+
+export const validateEditComment = [
+  check('id')
+    .exists()
+    .withMessage('Please supply ID of comment to be edited')
+    .isNumeric()
+    .withMessage('Comment ID must be an integer.'),
+
+  check('comment')
+    .exists()
+    .withMessage('Please include new comment in the body of request.')
+    .isString()
+    .trim()
+    .withMessage('Comment must be alphanumeric characters, please remove leading and trailing whitespaces.')
+    .isLength({ min: 2 })
+    .withMessage('Comments should be at least 2 characters long.'),
+];
+export const validateCommentUser = async (req, res, next) => {
+  const {
+    user,
+    params: { id }
+  } = req;
+  try {
+    const comment = await Comment.findOne({
+      where: {
+        id
+      }
+    });
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        errors: ['Comment not found.']
+      });
+    }
+    const checkUser = comment.userId === user.id;
+    if (!checkUser) {
+      return res.status(401).json({
+        success: false,
+        errors: ['You are unauthorized to perform this action']
+      });
+    }
+    return next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: [error.message]
+    });
+  }
+};
+
+
+export const validateArticleExist = async (req, res, next) => {
+  const { slug } = req.params;
+  try {
+    const article = await Article.findOne({ where: { slug } });
+
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        errors: ['Article not found']
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, error: ['Article does not exist/Invalid UUID'] });
+  }
+  return next();
+};

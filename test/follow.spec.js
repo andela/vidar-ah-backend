@@ -52,7 +52,7 @@ describe('Make a request to follow a non existing user', () => {
   it('Returns an error message.', (done) => {
     chai
       .request(app)
-      .get('/api/v1/follow/1111')
+      .get('/api/v1/followuser/1111')
       .set('x-access-token', userToken)
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
@@ -68,7 +68,7 @@ describe('Make a request to follow a non existing user', () => {
 describe('Make a request to follow a non verified user', () => {
   it('Returns an error message.', async () => {
     userId2 = await getId(validFollowUser2.email);
-    const url = `/api/v1/follow/${userId2}`;
+    const url = `/api/v1/followuser/${userId2}`;
     chai
       .request(app)
       .get(url)
@@ -86,7 +86,7 @@ describe('Make a request to follow a non verified user', () => {
 describe('Make a request to follow self', () => {
   it('Returns an error message.', async () => {
     const userId = await getId(validFollowUser.email);
-    const url = `/api/v1/follow/${userId}`;
+    const url = `/api/v1/followuser/${userId}`;
     chai
       .request(app)
       .get(url)
@@ -104,7 +104,7 @@ describe('Make a request to follow self', () => {
 describe('Make a request to unfollow another user not currently being followed', () => {
   before(() => updateVerifiedStatus(validFollowUser2.email));
   it('Returns an error message.', (done) => {
-    const url = `/api/v1/unfollow/${userId2}`;
+    const url = `/api/v1/unfollowuser/${userId2}`;
     chai
       .request(app)
       .get(url)
@@ -122,7 +122,7 @@ describe('Make a request to unfollow another user not currently being followed',
 
 describe('Make a valid request to follow another user', () => {
   it('Returns a success message.', (done) => {
-    const url = `/api/v1/follow/${userId2}`;
+    const url = `/api/v1/followuser/${userId2}`;
     chai
       .request(app)
       .get(url)
@@ -139,7 +139,7 @@ describe('Make a valid request to follow another user', () => {
 
 describe('Make a request to follow another user again', () => {
   it('Returns an error message.', (done) => {
-    const url = `/api/v1/follow/${userId2}`;
+    const url = `/api/v1/followuser/${userId2}`;
     chai
       .request(app)
       .get(url)
@@ -157,7 +157,7 @@ describe('Make a request to follow another user again', () => {
 
 describe('Make a valid request to unfollow another user', () => {
   it('Returns a success message.', (done) => {
-    const url = `/api/v1/unfollow/${userId2}`;
+    const url = `/api/v1/unfollowuser/${userId2}`;
     chai
       .request(app)
       .get(url)
