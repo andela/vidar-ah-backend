@@ -15,15 +15,25 @@ import {
   validateEmail,
   validatePassword,
   validateArticle,
+  validateArticleAuthor,
   validateCategory,
+  validateSearch,
   returnValidationErrors
 } from '../middleware/validation';
+import FollowController from '../controllers/follow';
+import followVerification from '../middleware/follow';
 
-const { createArticle, getAllArticles, getArticlesByHighestField } = ArticleController;
+const {
+  createArticle,
+  getAllArticles,
+  getArticlesByHighestField,
+  updateArticle,
+  deleteArticle
+} = ArticleController;
 
 const apiRoutes = express.Router();
 
-apiRoutes.route('/user')
+apiRoutes.route('/user/signup')
   .post(validateSignup, returnValidationErrors, UserController.registerUser);
 
 apiRoutes.route('/userprofile')
@@ -35,16 +45,38 @@ apiRoutes.route('/verify/:verificationId')
   .get(UserController.verifyAccount);
 
 apiRoutes.route('/articles')
-  .post(Auth.verifyUser, isUserVerified,
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
     addImages,
     validateArticle,
     returnValidationErrors,
     generateSlug,
-    createArticle)
+    createArticle
+  )
   .get(getAllArticles);
 
-
 apiRoutes.get('/articles/order', getArticlesByHighestField);
+
+apiRoutes.route('/articles/:slug')
+  .put(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleAuthor,
+    addImages,
+    validateArticle,
+    returnValidationErrors,
+    updateArticle,
+    generateSlug
+  );
+
+apiRoutes.route('/articles/:slug')
+  .delete(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleAuthor,
+    deleteArticle
+  );
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
@@ -108,4 +140,29 @@ apiRoutes.post(
   UserController.resetPassword
 );
 
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
+);
+
+apiRoutes.get(
+  '/follow/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.followUser
+);
+
+apiRoutes.get(
+  '/unfollow/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.unfollowUser
+);
 export default apiRoutes;

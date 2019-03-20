@@ -1,4 +1,5 @@
 import ExpressValidator from 'express-validator/check';
+import { Article } from '../models';
 
 const { check, validationResult } = ExpressValidator;
 
@@ -84,6 +85,37 @@ export const validateLogin = [
     .withMessage('Please provide a valid password.'),
 ];
 
+export const validateArticleAuthor = async (req, res, next) => {
+  const {
+    user,
+    params: { slug }
+  } = req;
+  try {
+    const article = await Article.findOne({
+      where: {
+        slug
+      }
+    });
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        errors: ['Article not found']
+      });
+    }
+    if (!(article.userId === user.id)) {
+      return res.status(403).json({
+        success: false,
+        errors: ['You are unauthorized to perform this action']
+      });
+    }
+    return next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      errors: ['Article does not exist']
+    });
+  }
+};
 export const validateCategory = [
   check('category')
     .exists()
@@ -108,4 +140,10 @@ export const validatePassword = [
     .withMessage('Password must be at least 6 characters long.')
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the password.')
+];
+
+export const validateSearch = [
+  check('term')
+    .isString()
+    .withMessage('Please provide a valid search term.')
 ];

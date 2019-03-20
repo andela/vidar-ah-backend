@@ -60,7 +60,7 @@
     "/auth/google": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -80,7 +80,7 @@
     "/auth/twitter": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -100,7 +100,7 @@
     "/auth/facebook": {
       "get": {
         "tags": [
-          "authentication"
+          "Authentication"
         ],
         "summary": "User registration or login",
         "description": "A Social platform for the creative at heart",
@@ -317,7 +317,7 @@
         ],
         "parameters": [
           {
-            "in": "body",
+            "in": "path",
             "name": "key",
             "description": "key sent with the link to the user email",
             "required": true,
@@ -338,6 +338,88 @@
           },
           "404": {
             "description": "Password reset token not found."
+          }
+        }
+      }
+    },
+    "/follow/{id}": {
+      "get": {
+        "tags": [
+          "Follow"
+        ],
+        "summary": "Follow user",
+        "description": "Follow a user",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to follow",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User followed successfully."
+          },
+          "403": {
+            "description": "You cannot follow a user twice."
+          }
+        }
+      }
+    },
+    "/unfollow/{id}": {
+      "get": {
+        "tags": [
+          "Follow"
+        ],
+        "summary": "Unfollow user",
+        "description": "Unfollow a user",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to unfollow",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User unfollowed successfully."
+          },
+          "403": {
+            "description": "You cannot unfollow a user you are not following."
           }
         }
       }
@@ -382,7 +464,88 @@
             "description": "Invalid title/description/body supplied"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Update an article",
+        "description": "",
+        "operationId": "updateArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updates article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article updated successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Delete an article",
+        "description": "",
+        "operationId": "deleteArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Deletes article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article deleted successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
       }
+
     }
   },
   "definitions": {

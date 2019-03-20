@@ -4,7 +4,6 @@ import chaiHttp from 'chai-http';
 import faker from 'faker';
 import app from '../index';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
-
 import { newUser, validLoginUser } from './helpers/userDummyData';
 
 // Configure chai
@@ -15,7 +14,7 @@ describe('User login authentication: ', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(newUser)
       .end((err) => {
         done(err);
