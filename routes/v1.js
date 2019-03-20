@@ -59,7 +59,8 @@ apiRoutes.route('/userprofile')
     returnValidationErrors, editProfile);
 
 apiRoutes.route('/userprofile/image')
-  .patch(Auth.verifyUser, isUserVerified, addImages, validateImages, updateProfileImage);
+  .patch(Auth.verifyUser, isUserVerified, addImages,
+    validateImages, returnValidationErrors, updateProfileImage);
 
 apiRoutes.route('/verify/:verification_id')
   .get(UserController.verifyAccount);

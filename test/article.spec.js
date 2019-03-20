@@ -3,6 +3,7 @@
 /* eslint-disable prefer-destructuring */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import path from 'path';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import app from '../index';
 import { article1, user2 } from './helpers/dummyData';
@@ -62,6 +63,22 @@ describe('ARTICLES', () => {
         .send(article1);
       const { status, body: { message, success, article: { slug } } } = res;
       articleSlug = slug;
+      expect(status).to.be.equal(201);
+      expect(success).to.be.equal(true);
+      expect(message).to.be.equal('New article created successfully');
+    });
+
+    it('Should create a new article with image.', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/v1/articles')
+        .set('authorization', token)
+        .attach('image', path.join(__dirname, 'assets', 'testImage.jpg'))
+        .type('form')
+        .field(article1);
+      const { status, body: { message, success, article } } = res;
+      expect(article.images).to.be.an('Array');
+      expect(article.images[0]).to.be.a('String');
       expect(status).to.be.equal(201);
       expect(success).to.be.equal(true);
       expect(message).to.be.equal('New article created successfully');
