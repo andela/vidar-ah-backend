@@ -19,6 +19,20 @@ export const validUser = {
   password: '1234567'
 };
 
+export const validCommentUser = {
+  username: 'MuhammaduBuhari',
+  email: 'ayinlaolajide@gmail.com',
+  name: 'Muhammadu Buhari',
+  password: '1234567'
+};
+
+export const wrongCommentUser = {
+  username: 'AishaBuhari',
+  email: 'ayinlaolajide2345@gmail.com',
+  name: 'Aisha Buhari',
+  password: '1234567'
+};
+
 export const validUser1 = {
   username: 'flippin',
   email: 'flipping2234@gmail.com',
@@ -73,4 +87,20 @@ export const validUser2 = {
 
 export const invalidUser = {
   email: 'email@domain.com'
+};
+
+export const validFollowUser = {
+  username: 'validfollowuser',
+  email: 'jessam70010@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
+};
+
+export const validFollowUser2 = {
+  username: 'followuser2',
+  email: 'jessam70011@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
 };

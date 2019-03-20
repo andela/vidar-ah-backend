@@ -9,7 +9,8 @@ import dotenv from 'dotenv';
 import swaggerUI from 'swagger-ui-express';
 import routes from './routes/index';
 import doc from './doc.json';
-// import { User } from './models';
+import { User } from './models';
+
 
 // read .env config
 dotenv.config();
@@ -24,7 +25,6 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use(session({
   secret: process.env.SECRET,
   key: 'vidar',
@@ -36,6 +36,16 @@ app.use(session({
   }
 }));
 app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findByPk(id);
+  return done(null, user);
+});
 
 // configure router
 app.use('/api', routes);
