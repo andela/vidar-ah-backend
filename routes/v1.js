@@ -6,6 +6,7 @@ import isUserVerified from '../middleware/verifyUser';
 import Auth from '../middleware/auth';
 import addImages from '../middleware/addImage';
 import generateSlug from '../middleware/generateSlug';
+import checkForArticle from '../middleware/checkIfArticleExist';
 import ArticleController from '../controllers/articles';
 import CategoryController from '../controllers/category';
 import {
@@ -22,7 +23,10 @@ import {
   validateEditComment,
   validateCommentUser,
   validateArticleExist,
-  returnValidationErrors
+  returnValidationErrors,
+  validateArticleId,
+  validateArticleRating,
+  validateGetOrder
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -30,10 +34,11 @@ import CommentController from '../controllers/comment';
 
 const {
   createArticle,
-  getAllArticles,
-  getArticlesByHighestField,
   updateArticle,
-  deleteArticle
+  deleteArticle,
+  rateArticle,
+  getAllArticles,
+  getArticlesByHighestField
 } = ArticleController;
 
 const apiRoutes = express.Router();
@@ -61,7 +66,12 @@ apiRoutes.route('/articles')
   )
   .get(getAllArticles);
 
-apiRoutes.get('/articles/order', getArticlesByHighestField);
+apiRoutes.get(
+  '/articles/order',
+  validateGetOrder,
+  returnValidationErrors,
+  getArticlesByHighestField
+);
 
 apiRoutes.route('/articles/:slug')
   .put(
@@ -82,6 +92,11 @@ apiRoutes.route('/articles/:slug')
     validateArticleAuthor,
     deleteArticle
   );
+
+apiRoutes.route('/articles/rate/:articleId')
+  .post(Auth.verifyUser, isUserVerified,
+    validateArticleId, validateArticleRating,
+    returnValidationErrors, checkForArticle, rateArticle);
 
 apiRoutes.get('/auth/google',
   passport.authenticate(
