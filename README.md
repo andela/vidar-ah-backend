@@ -1,6 +1,6 @@
 Authors Haven - A Social platform for the creative at heart.
 
-[![Build Status](https://travis-ci.com/andela/vidar-ah-backend.svg?branch=develop)](https://travis-ci.com/andela/vidar-ah-backend) [![Coverage Status](https://coveralls.io/repos/github/andela/vidar-ah-backend/badge.svg?branch=ft-create-user-article-%23164139686)](https://coveralls.io/github/andela/vidar-ah-backend?branch=ft-create-user-article-%23164139686) [![](https://img.shields.io/badge/Protected_by-Hound-a873d1.svg)](https://houndci.com)
+[![Build Status](https://travis-ci.com/andela/vidar-ah-backend.svg?branch=develop)](https://travis-ci.com/andela/vidar-ah-backend) [![Coverage Status](https://coveralls.io/repos/github/andela/vidar-ah-backend/badge.svg?branch=develop)](https://coveralls.io/github/andela/vidar-ah-backend?branch=develop) [![](https://img.shields.io/badge/Protected_by-Hound-a873d1.svg)](https://houndci.com)
 =======
 
 ## Vision
