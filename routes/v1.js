@@ -143,14 +143,14 @@ apiRoutes.get(
   ArticleController.getArticleBySlug,
 );
 
-apiRoutes.get(
+apiRoutes.post(
   '/follow/:id',
   Auth.verifyUser,
   followVerification,
   FollowController.followUser
 );
 
-apiRoutes.get(
+apiRoutes.post(
   '/unfollow/:id',
   Auth.verifyUser,
   followVerification,
