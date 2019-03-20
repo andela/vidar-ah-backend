@@ -20,18 +20,16 @@ import {
   validateArticleAuthor,
   validateCategory,
   validateSearch,
-  validateArticleExist,
   validateCreateComment,
   validateEditComment,
   validateCommentUser,
+  validateArticleExist,
   validateArticleId,
-  validateArticleRating,
+  validateArticleRating
 } from '../middleware/validation';
-
-import CommentController from '../controllers/comment';
-
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
+import CommentController from '../controllers/comment';
 
 const {
   createArticle, updateArticle, deleteArticle, rateArticle
@@ -105,10 +103,6 @@ apiRoutes.route('/articles/:slug')
     validateArticleAuthor,
     deleteArticle
   );
-
-apiRoutes.route('/articles/rate/:articleId')
-  .post(Auth.verifyUser, isUserVerified, validateArticleId,
-    validateArticleRating, returnValidationErrors, rateArticle);
 
 apiRoutes.route('/articles/rate/:articleId')
   .post(Auth.verifyUser, isUserVerified,
@@ -232,6 +226,65 @@ apiRoutes.get(
 
 apiRoutes.get(
   '/unfollowuser/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.unfollowUser
+);
+apiRoutes.route('/articles/:slug/comments')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    validateCreateComment,
+    returnValidationErrors,
+    CommentController.createComment
+  )
+  .get(
+    Auth.verifyUser,
+    isUserVerified,
+    validateArticleExist,
+    CommentController.getComments
+  );
+
+apiRoutes.route('/articles/:slug/comments/:id')
+  .patch(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    validateEditComment,
+    returnValidationErrors,
+    CommentController.editComment
+  )
+  .delete(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentUser,
+    returnValidationErrors,
+    CommentController.deleteComment
+  );
+
+
+apiRoutes.get(
+  '/articles/search',
+  validateSearch,
+  returnValidationErrors,
+  ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/:slug',
+  ArticleController.getArticleBySlug,
+);
+
+apiRoutes.post(
+  '/follow/:id',
+  Auth.verifyUser,
+  followVerification,
+  FollowController.followUser
+);
+
+apiRoutes.post(
+  '/unfollow/:id',
   Auth.verifyUser,
   followVerification,
   FollowController.unfollowUser

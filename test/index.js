@@ -1,11 +1,11 @@
-import './article.spec';
 import './comment.spec';
 import './user.spec';
-import './profile.spec';
-import './rating.spec';
-import './login.spec';
+import './article.spec';
 import './socialLoginSpec';
+import './login.spec';
+import './profile.spec';
 import './updateVerifiedStatusHelper.spec';
 import './resetpassword.spec';
 import './category.spec';
 import './follow.spec';
+import './rating.spec';

@@ -10,14 +10,10 @@ export default class FollowController {
    * @returns  {object} response
    */
   static async followUser(req, res) {
-    const { userFollowing, userToFollow, userToFollowId } = req;
-    // Check if user is already following the user and return an error if they are
-    const getFollowing1 = await userFollowing.getFollowing();
-    let userIsFollowing = false;
-    getFollowing1.forEach((element) => {
-      if (element.id === parseInt(userToFollowId, 10)) userIsFollowing = true;
-    });
+    const { userFollowing, userToFollow } = req;
 
+    // Check if user is already following the user and return an error if they are
+    const userIsFollowing = await userFollowing.hasFollowing(userToFollow);
     if (userIsFollowing) {
       return res.status(403).json({
         success: false,
@@ -34,7 +30,7 @@ export default class FollowController {
       });
     }
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       message: 'User followed successfully.'
     });
@@ -49,14 +45,9 @@ export default class FollowController {
   static async unfollowUser(req, res) {
     const { userFollowing } = req;
     const userToUnfollow = req.userToFollow;
-    const userToUnfollowId = req.userToFollowId;
 
     // Check if user is not following the user and return an error if they aren't
-    const getFollowing1 = await userFollowing.getFollowing();
-    let userIsFollowing = false;
-    getFollowing1.forEach((element) => {
-      if (element.id === parseInt(userToUnfollowId, 10)) userIsFollowing = true;
-    });
+    const userIsFollowing = await userFollowing.hasFollowing(userToUnfollow);
 
     if (!userIsFollowing) {
       return res.status(403).json({

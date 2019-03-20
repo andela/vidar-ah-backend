@@ -226,10 +226,10 @@ describe('Make a request to verify account with wrong verificationID', () => {
       .request(app)
       .get('/api/v1/verify/3RDKNCEvjcd')
       .end((err, res) => {
-        const { status, body: { message, success } } = res;
+        const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(404);
         expect(success).to.be.equal(false);
-        expect(message).to.be.equal('User not found');
+        expect(errors[0]).to.be.equal('User not found.');
         done(err);
       });
   });

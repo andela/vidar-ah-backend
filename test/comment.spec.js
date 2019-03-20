@@ -21,7 +21,7 @@ describe('Make a request to signup with valid details', () => {
   it('returns successfully signed up message', (done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(validCommentUser)
       .end((err, res) => {
         const {

@@ -13,9 +13,9 @@ export const user2 = {
 };
 
 export const user3 = {
-  username: 'leksyib',
-  email: 'leksyib14@gmail.com',
   name: 'Olamilekan',
+  username: 'leksyib',
+  email: 'leksyib1t4@gmail.com',
   password: '1234567g'
 };
 
@@ -96,20 +96,6 @@ export const invalidUser = {
   email: 'email@domain.com'
 };
 
-export const validUser3 = {
-  name: 'validUser3',
-  email: 'validUser3@gmail.com',
-  password: 'validUser3',
-  username: 'validuser3'
-};
-
-export const validUser4 = {
-  name: 'validUser4',
-  email: 'validUser4@gmail.com',
-  password: 'validUser4',
-  username: 'validuser4',
-};
-
 export const validFollowUser = {
   username: 'validfollowuser',
   email: 'jessam70010@gmail.com',
@@ -124,4 +110,18 @@ export const validFollowUser2 = {
   name: 'Flipping James',
   password: 'abcdef',
   verified: true
+};
+
+export const validUser3 = {
+  name: 'validUser3',
+  email: 'validUser3@gmail.com',
+  password: 'validUser3',
+  username: 'validuser3'
+};
+
+export const validUser4 = {
+  name: 'validUser4',
+  email: 'validUser4@gmail.com',
+  password: 'validUser4',
+  username: 'validuser4'
 };

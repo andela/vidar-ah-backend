@@ -175,7 +175,6 @@ export const validateEditComment = [
     .isLength({ min: 2 })
     .withMessage('Comments should be at least 2 characters long.'),
 ];
-
 export const validateCommentUser = async (req, res, next) => {
   const {
     user,
@@ -208,7 +207,6 @@ export const validateCommentUser = async (req, res, next) => {
     });
   }
 };
-
 
 export const validateArticleExist = async (req, res, next) => {
   const { slug } = req.params;

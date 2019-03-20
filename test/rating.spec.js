@@ -18,7 +18,7 @@ describe('RATING', () => {
   before((done) => {
     chai
       .request(app)
-      .post('/api/v1/user')
+      .post('/api/v1/user/signup')
       .send(validUser4)
       .end((err, res) => {
         const {
@@ -33,7 +33,7 @@ describe('RATING', () => {
     chai
       .request(app)
       .post('/api/v1/user/signup')
-      .send(validUser4)
+      .send(validUser3)
       .end((err, res) => {
         const {
           status,

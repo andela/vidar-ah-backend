@@ -24,6 +24,5 @@ export default async (req, res, next) => {
   }
   req.userFollowing = userFollowing;
   req.userToFollow = userToFollow;
-  req.userToFollowId = userToFollowId;
   next();
 };
