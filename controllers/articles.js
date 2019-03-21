@@ -1,8 +1,10 @@
 import {
   Article,
-  Reaction,
   User,
-  Ratings
+  Ratings,
+  Comment,
+  Category,
+  Reaction
 } from '../models';
 import Paginate from '../helpers/paginate';
 /**
@@ -369,11 +371,19 @@ export default class ArticleController {
         where: {
           slug
         },
-        include: [{
-          as: 'author',
-          model: User,
-          attributes: ['username', 'email', 'name', 'bio'],
-        }]
+        include: [
+          {
+            as: 'author',
+            model: User,
+            attributes: ['username', 'email', 'name', 'bio'],
+          },
+          {
+            model: Ratings,
+          },
+          {
+            model: Comment,
+          }
+        ]
       });
       return res.status(200).json({
         success: true,
@@ -385,5 +395,113 @@ export default class ArticleController {
         errors: ['Article not found.'],
       });
     }
+  }
+
+  /**
+ * @description - Get all articles
+ * @static
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @memberof ArticleController
+ * @returns {Object} class instance
+ */
+  static async getAllArticles(req, res) {
+    try {
+      let {
+        query: {
+          offset, limit
+        }
+      } = req;
+      offset = Number(offset) || 0;
+      limit = Number(limit) || 10;
+      const results = await Article.findAndCountAll({
+        where: {},
+        offset,
+        limit,
+        include: [
+          {
+            model: User,
+            as: 'author',
+            attributes: ['username', 'bio', 'name']
+          },
+          {
+            model: Category,
+            as: 'category',
+            attributes: ['categoryName']
+          },
+          {
+            model: Ratings,
+          }
+        ]
+      });
+      const { count } = results;
+      const meta = Paginate({ count, limit, offset });
+      return res.status(200).json({
+        success: true,
+        results,
+        ...meta
+      });
+    } catch (error) {
+      return res.status(500).json({
+        succes: false,
+        errors: ['Oops, something wrong occured.']
+      });
+    }
+  }
+
+  /**
+  * @description - Get a specific number of articles with criteria
+  * @static
+  * @param {Object} type - type of order
+  * @memberof ArticleController
+  * @returns {Object} order for findAll
+  */
+  static getOrder(type) {
+    const orders = {
+      ratings: [[Ratings, 'rating', 'DESC']],
+      latest: [['createdAt', 'DESC']],
+      comments: [[Comment, 'comment', 'DESC']]
+    };
+    return orders[type];
+  }
+
+  /**
+  * @description - Get a specific number of articles with criteria
+  * @static
+  * @param {Object} req - the request object
+  * @param {Object} res - the response object
+  * @memberof ArticleController
+  * @returns {Object} class instance
+  */
+  static async getArticlesByHighestField(req, res) {
+    const {
+      query: {
+        amount, type
+      }
+    } = req;
+    const order = ArticleController.getOrder(type);
+    const articles = await Article.findAll({
+      where: {},
+      limit: Number(amount) || 5,
+      order,
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['username', 'bio', 'name']
+        },
+        {
+          model: Comment
+        },
+        {
+          model: Ratings,
+        },
+      ],
+    });
+    return res.status(200).json({
+      success: true,
+      message: 'Articles returned successfully.',
+      articles
+    });
   }
 }

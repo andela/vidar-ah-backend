@@ -29,7 +29,8 @@ import {
   validateArticleExist,
   validateArticleId,
   validateArticleRating,
-  validateCommentExist
+  validateCommentExist,
+  validateGetOrder
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -41,7 +42,9 @@ const {
   deleteArticle,
   likeArticle,
   dislikeArticle,
-  rateArticle
+  rateArticle,
+  getAllArticles,
+  getArticlesByHighestField
 } = ArticleController;
 
 const apiRoutes = express.Router();
@@ -91,7 +94,15 @@ apiRoutes.route('/articles')
     returnValidationErrors,
     generateSlug,
     createArticle
-  );
+  )
+  .get(getAllArticles);
+
+apiRoutes.get(
+  '/articles/order',
+  validateGetOrder,
+  returnValidationErrors,
+  getArticlesByHighestField
+);
 
 apiRoutes.route('/articles/:slug')
   .put(

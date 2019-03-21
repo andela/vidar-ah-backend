@@ -61,6 +61,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Article.belongsTo(models.Category, {
       foreignKey: 'categoryId',
+      as: 'category'
     });
     Article.hasMany(models.Reaction, {
       foreignKey: 'articleSlug',
@@ -68,10 +69,12 @@ module.exports = (sequelize, DataTypes) => {
     });
     Article.hasMany(models.Comment, {
       foreignKey: 'articleSlug',
+      sourceKey: 'slug'
     });
     Article.hasMany(models.Ratings, {
       foreignKey: 'articleId',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
+      sourceKey: 'id'
     });
   };
   return Article;

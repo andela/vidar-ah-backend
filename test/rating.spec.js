@@ -97,9 +97,11 @@ describe('RATING', () => {
 
   describe('Article Rating', () => {
     let newArticle;
-    before((done) => {
+    before(() => {
       updateVerifiedStatus(validUser4.email);
       updateVerifiedStatus(validUser3.email);
+    });
+    it('should bla bla.', (done) => {
       chai
         .request(app)
         .post('/api/v1/articles')
