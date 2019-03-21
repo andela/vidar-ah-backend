@@ -218,11 +218,6 @@ apiRoutes.get(
   ArticleController.searchForArticles,
 );
 
-apiRoutes.get(
-  '/articles/:slug',
-  ArticleController.getArticleBySlug,
-);
-
 apiRoutes.route('/category')
   .post(
     Auth.verifyUser,
@@ -345,6 +340,7 @@ apiRoutes.get(
 
 apiRoutes.get(
   '/articles/:slug',
+  Auth.isLoggedIn,
   ArticleController.getArticleBySlug,
 );
 
@@ -401,5 +397,11 @@ apiRoutes.route('/comments/:id/like')
     validateCommentExist,
     CommentController.likeComment
   );
+
+apiRoutes.get(
+  '/user/readingstats',
+  Auth.verifyUser,
+  UserController.getReadingStats
+);
 
 export default apiRoutes;
