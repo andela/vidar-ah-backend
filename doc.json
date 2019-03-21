@@ -555,7 +555,99 @@
           "description": "Permission denied, user cannot rate their own article"
           }
         }
+      }
+    },
+      "/likeArticle/:slug": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Like an article",
+        "description": "Like an article",
+        "operationId": "likeArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "An article slug used to like the article",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "like",
+            "description": "Like an article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rating"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article liked successfully"
+          },
+          "404": {
+            "description": "Article not found"
+          },
+          "200": {
+          "description": "You have unliked this article"
+          }
+        }
+      }
       },
+      "/dislikeArticle/:slug": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Dislike an article",
+        "description": "Dislike an article",
+        "operationId": "DislikeArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "An article slug used to like the article",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "dislike",
+            "description": "dislike an article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rating"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article disliked successfully"
+          },
+          "404": {
+            "description": "Article not found"
+          },
+          "200": {
+          "description": "You have removed the dislike on this article"
+          }
+        }
+      }
+      },
+      "/articles/:slug": {
       "put": {
         "tags": [
           "Articles"
@@ -595,6 +687,7 @@
             "description": "Invalid title/description/body supplied"
           }
         }
+      }
       },
       "delete": {
         "tags": [
@@ -675,7 +768,6 @@
           }
         }
       }
-    }
   },
   "/articles/{slug}/comments": {
     "post": {
@@ -720,6 +812,7 @@
           "description": "Incomplete request body"
         }
       }
+    }
     },
     "get": {
       "tags": [
@@ -839,30 +932,7 @@
           }
         }
       }
-    }
   },
-  "definitions": {
-    "user": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string",
-          "format": "int64"
-        },
-        "email": {
-          "type": "string",
-          "format": "int64"
-        },
-        "password": {
-          "type": "string",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string",
-          "format": "int64"
-        }
-      }
-    },
     "successfulloginRequest": {
       "title": "successfulloginRequest",
       "example": {
@@ -924,7 +994,6 @@
           "type": "number"
         }
       }
-    }
   },
   "externalDocs": {
     "description": "Find out more about Swagger",

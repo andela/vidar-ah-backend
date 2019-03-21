@@ -42,7 +42,6 @@ class Auth {
   * @returns {undefined}
 */
   static isLoggedIn(req, res, next) {
-    console.log('duygv');
     const token = req.headers['x-access-token'] || req.query.token || req.headers.authorization;
     if (!token) {
       return next();

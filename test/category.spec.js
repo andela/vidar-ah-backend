@@ -11,7 +11,6 @@ import {
   validCategoryEdit
 } from './helpers/categoryDummyData';
 
-import { User, Category } from '../models';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -92,16 +91,13 @@ describe('TESTIN THE CATEGORY FEATURE', () => {
             success, message, id, categoryName
           }
         } = response;
-        console.log('\n\n\ncategoryId', response.body, '\n\n\n');
         categoryId = id;
-        console.log('\n\n\ncategoryId', categoryId, '\n\n\n');
         expect(status).to.be.equal(201);
         expect(success).to.be.equal(true);
         expect(message).to.be.equal('Category successfully added.');
         expect(categoryName).to.be.equal(validCategory.category.toLowerCase());
       });
     });
-    console.log('\n\n\ncategoryId', categoryId, '\n\n\n');
     describe('Make a request with duplicate category', () => {
       it('should return a 409 error message', async () => {
         const res = await chai

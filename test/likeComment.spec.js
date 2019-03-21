@@ -111,7 +111,7 @@ describe('Like a comment', () => {
   });
 });
 describe('Like a comment', () => {
-  before(async () => await updateVerifiedStatus(validLikeCommentUser.email));
+  before(() => updateVerifiedStatus(validLikeCommentUser.email));
   it('returns comment not found', (done) => {
     chai
       .request(app)
@@ -129,7 +129,7 @@ describe('Like a comment', () => {
   });
 });
 describe('Like a comment', () => {
-  before(async () => await updateVerifiedStatus(validLikeCommentUser.email));
+  before(() => updateVerifiedStatus(validLikeCommentUser.email));
   it('returns comment liked successfully', (done) => {
     chai
       .request(app)
@@ -149,7 +149,7 @@ describe('Like a comment', () => {
 });
 
 describe('Unlike a comment', () => {
-  before(async () => await updateVerifiedStatus(validLikeCommentUser.email));
+  before(() => updateVerifiedStatus(validLikeCommentUser.email));
   it('returns comment unliked successfully', (done) => {
     chai
       .request(app)
