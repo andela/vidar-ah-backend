@@ -116,6 +116,7 @@ export const validateArticleAuthor = async (req, res, next) => {
     });
   }
 };
+
 export const validateCategory = [
   check('category')
     .exists()
@@ -141,6 +142,31 @@ export const validatePassword = [
     .custom(value => !/\s/.test(value))
     .withMessage('No spaces are allowed in the password.')
 ];
+
+export const checkIfArticleExists = async (req, res, next) => {
+  const {
+    params: { slug }
+  } = req;
+  try {
+    const article = await Article.findOne({
+      where: {
+        slug
+      }
+    });
+    if (!article) {
+      return res.status(404).json({
+        success: false,
+        errors: ['Article not found']
+      });
+    }
+    return next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      errors: ['Article does not exist']
+    });
+  }
+};
 
 export const validateSearch = [
   check('term')
@@ -175,6 +201,7 @@ export const validateEditComment = [
     .isLength({ min: 2 })
     .withMessage('Comments should be at least 2 characters long.'),
 ];
+
 export const validateCommentUser = async (req, res, next) => {
   const {
     user,
@@ -203,7 +230,7 @@ export const validateCommentUser = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: [error.message]
+      errors: ['Article does not exist']
     });
   }
 };
@@ -231,6 +258,7 @@ export const validateCommentExist = async (req, res, next) => {
     });
   }
 };
+
 
 export const validateArticleExist = async (req, res, next) => {
   const { slug } = req.params;

@@ -20,6 +20,8 @@ import {
   validateArticle,
   validateArticleAuthor,
   validateCategory,
+  returnValidationErrors,
+  checkIfArticleExists,
   validateSearch,
   validateCreateComment,
   validateEditComment,
@@ -27,15 +29,19 @@ import {
   validateArticleExist,
   validateArticleId,
   validateArticleRating,
-  validateCommentExist,
-  returnValidationErrors,
+  validateCommentExist
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
 import CommentController from '../controllers/comment';
 
 const {
-  createArticle, updateArticle, deleteArticle, rateArticle
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  likeArticle,
+  dislikeArticle,
+  rateArticle
 } = ArticleController;
 
 const apiRoutes = express.Router();
@@ -304,6 +310,21 @@ apiRoutes.route('/articles/:slug/comments/:id')
   );
 
 
+apiRoutes.post(
+  '/likeArticle/:slug',
+  Auth.verifyUser,
+  isUserVerified,
+  checkIfArticleExists,
+  likeArticle
+);
+
+apiRoutes.post(
+  '/dislikeArticle/:slug',
+  Auth.verifyUser,
+  isUserVerified,
+  checkIfArticleExists,
+  dislikeArticle
+);
 apiRoutes.get(
   '/articles/search',
   validateSearch,
