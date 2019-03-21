@@ -26,7 +26,7 @@ export default class CreateSuperAdmin {
   static async registerSuperAdmin() {
     try {
       await User.findOrCreate({
-        where: { $or: [{ username: SUPER_ADMIN_EMAIL }, { email: SUPER_ADMIN_USERNAME }] },
+        where: { $or: [{ username: SUPER_ADMIN_USERNAME }, { email: SUPER_ADMIN_EMAIL }] },
         defaults: {
           email: SUPER_ADMIN_EMAIL,
           password: SUPER_ADMIN_PASSWORD,
