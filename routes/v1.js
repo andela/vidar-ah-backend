@@ -18,7 +18,6 @@ import {
   validateEmail,
   validatePassword,
   validateArticle,
-  returnValidationErrors,
   validateArticleAuthor,
   validateCategory,
   validateSearch,
@@ -27,7 +26,9 @@ import {
   validateCommentUser,
   validateArticleExist,
   validateArticleId,
-  validateArticleRating
+  validateArticleRating,
+  validateCommentExist,
+  returnValidationErrors,
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -361,5 +362,12 @@ apiRoutes.route('/articles/:slug/comments/:id')
     CommentController.deleteComment
   );
 
+apiRoutes.route('/comments/:id/like')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentExist,
+    CommentController.likeComment
+  );
 
 export default apiRoutes;
