@@ -55,9 +55,9 @@ export const wrongLikeCommentUser = {
 };
 
 export const validUser1 = {
-  username: 'flippin',
-  email: 'flipping2234@gmail.com',
-  name: 'Flipping James',
+  username: 'fflippin',
+  email: 'fflipping2234@gmail.com',
+  name: 'Fflipping James',
   password: '1234567'
 };
 

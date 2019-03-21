@@ -22,7 +22,7 @@ export default class ArticleController {
  * @returns {Object} class instance
  */
   static async createArticle(req, res) {
-    const images = req.images || [];
+    const images = req.body.images || [];
     const {
       title, description, body, slug, categoryId
     } = req.body;
@@ -94,7 +94,7 @@ export default class ArticleController {
  * @returns {Object} class instance
  */
   static async updateArticle(req, res) {
-    const images = req.images || [];
+    const images = req.body.images || [];
     const {
       title, description, body
     } = req.body;
