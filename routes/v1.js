@@ -45,7 +45,8 @@ const {
   dislikeArticle,
   rateArticle,
   getAllArticles,
-  getArticlesByHighestField
+  getArticlesByHighestField,
+  getAmountOfArticlesByUser,
 } = ArticleController;
 const { viewProfile, editProfile, updateProfileImage } = ProfileController;
 
@@ -222,6 +223,13 @@ apiRoutes.get(
   validateSearch,
   returnValidationErrors,
   ArticleController.searchForArticles,
+);
+
+apiRoutes.get(
+  '/articles/myArticlesCount',
+  Auth.verifyUser,
+  isUserVerified,
+  getAmountOfArticlesByUser
 );
 
 apiRoutes.route('/category')

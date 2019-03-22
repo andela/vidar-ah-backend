@@ -512,4 +512,36 @@ export default class ArticleController {
       articles
     });
   }
+
+  /**
+  * @description - Get a specific number of articles with criteria
+  * @static
+  * @param {Object} req - the request object
+  * @param {Object} res - the response object
+  * @memberof ArticleController
+  * @returns {Object} class instance
+  */
+  static async getAmountOfArticlesByUser(req, res) {
+    try {
+      const {
+        user: {
+          id
+        }
+      } = req;
+      const articles = await Article.findAndCountAll({
+        where: {
+          userId: id
+        }
+      });
+      return res.json({
+        success: true,
+        articleCount: articles.count
+      });
+    } catch (error) {
+      return res.status(500).json({
+        succes: false,
+        errors: ['Oops, something wrong occured.']
+      });
+    }
+  }
 }
