@@ -236,7 +236,7 @@ export default class UserController {
       const viewCount = await user.getView();
       return res.status(200).json({
         success: true,
-        message: viewCount.length
+        numberOfArticlesRead: viewCount.length
       });
     } catch (error) {
       return res.status(500).json({

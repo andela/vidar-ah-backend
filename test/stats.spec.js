@@ -79,11 +79,11 @@ describe('View an article', () => {
       .get('/api/v1/user/readingstats')
       .set('x-access-token', userToken)
       .end((err, res) => {
-        const { status, body: { success, message } } = res;
+        const { status, body: { success, numberOfArticlesRead } } = res;
         expect(status).to.be.equal(200);
         expect(success).to.be.equal(true);
-        expect(message).to.be.a('number');
-        expect(message).to.be.equal(1);
+        expect(numberOfArticlesRead).to.be.a('number');
+        expect(numberOfArticlesRead).to.be.equal(1);
         done(err);
       });
   });
