@@ -125,3 +125,11 @@ export const validUser4 = {
   password: 'validUser4',
   username: 'validuser4'
 };
+
+export const validStatUser = {
+  username: 'validstatuser',
+  email: 'jessamstat@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
+};
