@@ -79,11 +79,10 @@ module.exports = (sequelize, DataTypes) => {
     });
     User.belongsToMany(models.Article, {
       foreignKey: 'userId',
-      as: 'likes',
-      through: models.Reaction
+      as: 'view',
+      through: models.stats
     });
   };
-
 
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();

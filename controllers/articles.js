@@ -5,14 +5,6 @@ import {
   Ratings
 } from '../models';
 import Paginate from '../helpers/paginate';
-// import ReactionController from '../helpers/reaction';
-
-// const {
-//   getAllLikes,
-//   createLikes,
-//   removeLikes,
-//   updateLikes
-// } = ReactionController;
 /**
  * @class ArticleController
  * @override
@@ -181,7 +173,6 @@ export default class ArticleController {
           articleSlug,
           userId,
         },
-        attributes: ['id', 'articleSlug', 'likes', 'userId']
       });
       if (!likeArticle) {
         await Reaction.create({
@@ -195,7 +186,6 @@ export default class ArticleController {
             userId,
             likes: true
           },
-          attributes: ['id', 'articleSlug', 'likes', 'userId']
         });
 
         return res.status(201).json({
@@ -247,7 +237,6 @@ export default class ArticleController {
           articleSlug,
           userId
         },
-        attributes: ['id', 'articleSlug', 'likes', 'userId']
       });
       if (!likeArticle) {
         await Reaction.create({
@@ -261,7 +250,6 @@ export default class ArticleController {
             userId,
             likes: false
           },
-          attributes: ['id', 'articleSlug', 'likes', 'userId']
         });
 
         return res.status(201).json({
@@ -271,6 +259,7 @@ export default class ArticleController {
           dislikes: allDisLikes.count
         });
       }
+
       await Reaction.destroy({
         where: {
           articleSlug,
@@ -399,6 +388,11 @@ export default class ArticleController {
           attributes: ['username', 'email', 'name', 'bio'],
         }]
       });
+      if (req.user) {
+        const { id } = req.user;
+        const viewer = await User.findOne({ where: { id } });
+        await viewer.addView(article);
+      }
       return res.status(200).json({
         success: true,
         article: article.dataValues
