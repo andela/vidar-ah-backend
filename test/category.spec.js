@@ -11,14 +11,14 @@ import {
   validCategoryEdit
 } from './helpers/categoryDummyData';
 
-import { User, Category } from '../models';
+// import { User, Category } from '../models';
 
 chai.use(chaiHttp);
 const { expect } = chai;
 let userToken;
 let categoryId;
 
-describe('TESTIN THE CATEGORY FEATURE', () => {
+describe('TESTING THE CATEGORY FEATURE', () => {
   before(async () => {
     const res = await chai
       .request(app)
@@ -26,10 +26,10 @@ describe('TESTIN THE CATEGORY FEATURE', () => {
       .send(user);
     userToken = res.body.token;
   });
-  after(async () => {
-    await User.truncate({ cascade: false });
-    await Category.truncate({ cascade: false });
-  });
+  // after(async () => {
+  //   await User.truncate({ cascade: false });
+  //   await Category.truncate({ cascade: false });
+  // });
 
   describe('CREATE CATEGORY', () => {
     describe('Make a request without a token', () => {

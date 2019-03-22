@@ -51,10 +51,10 @@ export default class UserController {
       })
       .catch((error) => {
         const errors = [];
-        if (error.errors[0].path === 'username') {
+        if (error.errors && error.errors[0].path === 'username') {
           errors.push(error.errors[0].message);
         }
-        if (error.errors[0].path === 'email') {
+        if (error.errors && error.errors[0].path === 'email') {
           errors.push(error.errors[0].message);
         }
         return res.status(409).json({
@@ -221,5 +221,54 @@ export default class UserController {
       success: true,
       message: 'Password changed successfully.'
     });
+  }
+
+  /**
+   * Returns a token when a user logs in via social account
+   * @static
+   * @param {req} req - Request object
+   * @param {res} res - Response object
+   * @returns {object} - User object
+   */
+  static async socialAuth(req, res) {
+    const {
+      user
+    } = req;
+    try {
+      const token = generateToken(user.id);
+      return res.status(200).json({
+        success: true,
+        message: `Welcome ${user.username}`,
+        token
+      });
+    } catch (err) {
+      return res.status(500).json({
+        sucess: false,
+        errors: [err.message]
+      });
+    }
+  }
+
+  /**
+ * @description Get user reading stats
+ * @param {object} req http request object
+ * @param {object} res http response object
+ * @returns {object} response
+ */
+  static async getReadingStats(req, res) {
+    const { id } = req.user;
+    const user = await User.findOne({ where: { id } });
+    try {
+      const viewCount = await user.getView();
+      return res.status(200).json({
+        success: true,
+        message: viewCount.length
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
   }
 }

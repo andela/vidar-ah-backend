@@ -18,6 +18,7 @@ module.exports = {
     slug: {
       type: Sequelize.STRING,
       allowNull: false,
+      primaryKey: true,
       unique: {
         args: true,
         msg: 'Article should have a unique slug'

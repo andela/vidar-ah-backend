@@ -157,7 +157,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Search for articles without term keyword in the request query', () => {
-    it('Should should return an error', (done) => {
+    it('should return an error', (done) => {
       chai
         .request(app)
         .get('/api/v1/articles/search')
@@ -173,7 +173,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Search for articles with just a term keyword in the request query', () => {
-    it('Should should return an array of results.', (done) => {
+    it('should return an array of results.', (done) => {
       chai
         .request(app)
         .get('/api/v1/articles/search?term=This')
@@ -188,7 +188,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Search for articles with a term keyword and an author filter', () => {
-    it('Should should return an array of results', (done) => {
+    it('should return an array of results', (done) => {
       chai
         .request(app)
         .get('/api/v1/articles/search?term=This&author=flippingg')
@@ -232,29 +232,8 @@ describe('ARTICLES', () => {
     });
   });
 
-  describe('Get an article by its slug', () => {
-    it('should return an array of results', (done) => {
-      chai
-        .request(app)
-        .get(`/api/v1/articles/${articleSlug}`)
-        .end((err, res) => {
-          const { status, body: { success, article } } = res;
-          expect(status).to.be.equal(200);
-          expect(success).to.be.equal(true);
-          expect(article).to.be.an('object');
-          expect(article).to.haveOwnProperty('id');
-          expect(article).to.haveOwnProperty('slug');
-          expect(article).to.haveOwnProperty('title');
-          expect(article).to.haveOwnProperty('body');
-          expect(article).to.haveOwnProperty('description');
-          expect(article).to.haveOwnProperty('author');
-          done(err);
-        });
-    });
-  });
-
   describe('Get an article by a wrong slug', () => {
-    it('Should should return a 404 error', (done) => {
+    it('should return a 404 error', (done) => {
       chai
         .request(app)
         .get('/api/v1/articles/eirubefhdkjcsdc')
@@ -338,6 +317,144 @@ describe('/PUT articles slug', () => {
     expect(res.body).to.have.property('success').equal(false);
     expect(res.body.errors).to.be.an('Array');
     expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
+  });
+});
+
+describe('/GET articles', () => {
+  describe('Get an article by its slug', () => {
+    it('should return the article', (done) => {
+      chai
+        .request(app)
+        .get(`/api/v1/articles/${articleSlug}`)
+        .end((err, res) => {
+          const { status, body: { success, article } } = res;
+          expect(status).to.be.equal(200);
+          expect(success).to.be.equal(true);
+          expect(article).to.be.an('object');
+          expect(article).to.haveOwnProperty('id');
+          expect(article).to.haveOwnProperty('slug');
+          expect(article).to.haveOwnProperty('title');
+          expect(article).to.haveOwnProperty('body');
+          expect(article).to.haveOwnProperty('description');
+          expect(article).to.haveOwnProperty('author');
+          done(err);
+        });
+    });
+  });
+  it('should return pagination metadata', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles?offset=0&limit=10')
+      .end((err, res) => {
+        const {
+          body: {
+            results: {
+              rows,
+              count
+            },
+            totalPages,
+            currentPage
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(rows).to.be.an('array');
+        expect(totalPages).to.be.a('number');
+        expect(currentPage).to.be.a('number');
+        expect(count).to.be.a('number');
+        done(err);
+      });
+  });
+
+  it('should return articles based on passed query params', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=latest')
+      .end((err, res) => {
+        const {
+          body: {
+            articles,
+            message
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(message).to.be.equals('Articles returned successfully.');
+        expect(articles).to.be.an('array');
+        done(err);
+      });
+  });
+
+  it('should return articles based on passed query params', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=comments')
+      .end((err, res) => {
+        const {
+          body: {
+            articles,
+            message
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(articles).to.be.an('array');
+        expect(message).to.be.equals('Articles returned successfully.');
+        done(err);
+      });
+  });
+
+  it('should return articles based on passed query params', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=ratings')
+      .end((err, res) => {
+        const {
+          body: {
+            articles
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(articles).to.be.an('array');
+        done(err);
+      });
+  });
+
+  it('should return an error if there is no order type', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order')
+      .end((err, res) => {
+        const {
+          body: {
+            errors
+          },
+        } = res;
+        expect(res).to.have.status(422);
+        expect(res.body).to.have.property('success').equal(false);
+        expect(errors).to.be.an('array');
+        expect(errors[0]).to.be.equals('Please provide a type of order to get.');
+        done(err);
+      });
+  });
+
+  it('should return an error if order type is invalid', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=erwdcsx')
+      .end((err, res) => {
+        const {
+          body: {
+            errors
+          },
+        } = res;
+        expect(res).to.have.status(422);
+        expect(res.body).to.have.property('success').equal(false);
+        expect(errors).to.be.an('array');
+        expect(errors[0]).to.be.equals('Order type should either be latest, ratings or comments');
+        done(err);
+      });
   });
 });
 

@@ -1,3 +1,4 @@
+
 import './comment.spec';
 import './category.spec';
 import './user.spec';
@@ -8,4 +9,7 @@ import './profile.spec';
 import './updateVerifiedStatusHelper.spec';
 import './resetpassword.spec';
 import './follow.spec';
+import './category.spec';
 import './rating.spec';
+import './likeComment.spec';
+import './stats.spec';

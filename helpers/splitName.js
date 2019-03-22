@@ -5,8 +5,7 @@
  * @returns {object} An object of the split names
  */
 const splitName = (fullName) => {
-  const names = fullName.name;
-  const splitNames = names.split(' ', 2);
+  const splitNames = fullName.split(' ', 2);
   const splitNamesObject = { firstname: splitNames[0], lastname: splitNames[1] };
   return splitNamesObject;
 };

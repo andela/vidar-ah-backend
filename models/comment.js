@@ -15,11 +15,15 @@ module.exports = (sequelize, DataTypes) => {
   Comment.associate = (models) => {
     Comment.belongsTo(models.Article, {
       foreignKey: 'articleSlug',
-      onDelete: 'CASCADE',
+      onDelete: 'CASCADE'
     });
     Comment.belongsTo(models.User, {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
+    });
+    Comment.hasMany(models.CommentLikes, {
+      foreignKey: 'commentId',
+      onDelete: 'CASCADE'
     });
   };
   return Comment;

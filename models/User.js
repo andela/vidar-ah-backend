@@ -60,6 +60,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'user',
       unique: false
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'https://img.icons8.com/ios-glyphs/30/000000/user-male.png'
     }
   };
 
@@ -84,8 +89,16 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
+    User.hasMany(models.CommentLikes, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
+    User.belongsToMany(models.Article, {
+      foreignKey: 'userId',
+      as: 'view',
+      through: models.stats
+    });
   };
-
 
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();

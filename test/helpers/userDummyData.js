@@ -28,8 +28,15 @@ export const validUser = {
 
 export const validCommentUser = {
   username: 'MuhammaduBuhari',
-  email: 'ayinlaolajide@gmail.com',
+  email: 'ayinlaolajide099@gmail.com',
   name: 'Muhammadu Buhari',
+  password: '1234567'
+};
+
+export const validLikeCommentUser = {
+  username: 'FelaAnikulapo',
+  email: 'felasssss@gmail.com',
+  name: 'Fela Kuti',
   password: '1234567'
 };
 
@@ -40,10 +47,17 @@ export const wrongCommentUser = {
   password: '1234567'
 };
 
+export const wrongLikeCommentUser = {
+  username: 'JohnDoe',
+  email: 'johndoe2345@gmail.com',
+  name: 'John Doe',
+  password: '1234567'
+};
+
 export const validUser1 = {
-  username: 'flippin',
-  email: 'flipping2234@gmail.com',
-  name: 'Flipping James',
+  username: 'fflippin',
+  email: 'fflipping2234@gmail.com',
+  name: 'Fflipping James',
   password: '1234567'
 };
 
@@ -124,4 +138,12 @@ export const validUser4 = {
   email: 'validUser4@gmail.com',
   password: 'validUser4',
   username: 'validuser4'
+};
+
+export const validStatUser = {
+  username: 'validstatuser',
+  email: 'jessamstat@gmail.com',
+  name: 'Flipping James',
+  password: 'abcdef',
+  verified: true
 };

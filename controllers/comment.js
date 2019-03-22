@@ -1,4 +1,6 @@
-import { Comment, User } from '../models';
+import Sequelize from 'sequelize';
+import { Comment, User, CommentLikes } from '../models';
+import isCommentLikedByUser from '../helpers/isCommentLikedByUser';
 
 /**
  * @class CommentController
@@ -58,10 +60,19 @@ export default class CommentController {
         where: {
           articleSlug
         },
+        group: ['User.username', 'User.bio', 'User.email', 'Comment.id'],
         include: [
           {
             model: User,
             attributes: ['username', 'bio', 'email']
+          },
+          {
+            model: CommentLikes,
+            attributes: [
+              [
+                Sequelize.fn('COUNT', Sequelize.col('CommentLikes.commentId')), 'commentCount'
+              ]
+            ]
           }
         ]
       });
@@ -145,6 +156,48 @@ export default class CommentController {
           message: 'Comment deleted successfully',
         });
       }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+* @description - Like/unlike an article comment
+* @static
+*
+* @param {object} req - HTTP Request
+* @param {object} res - HTTP Response
+*
+* @memberof CommentController
+*
+* @returns {string} Like/unlike comment result
+*/
+  static async likeComment(req, res) {
+    const { id } = req.params;
+    const { id: userId } = req.user;
+    try {
+      // Delete comment like, if already liked by user
+      if (await isCommentLikedByUser(id, userId)) {
+        await CommentLikes.destroy({
+          where: {
+            userId, commentId: id
+          }
+        });
+        return res.status(201).json({
+          success: true,
+          message: 'Comment unliked successfully',
+        });
+      }
+      await CommentLikes.create({
+        userId, commentId: id
+      });
+      return res.status(201).json({
+        success: true,
+        message: 'Comment liked successfully',
+      });
     } catch (error) {
       return res.status(500).json({
         success: false,
