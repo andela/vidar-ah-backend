@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
     Reaction.belongsTo(models.Article, {
       foreignKey: 'articleSlug',
       as: 'article',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
+      sourceKey: 'slug'
     });
     Reaction.belongsTo(models.User, {
       foreignKey: 'userId',

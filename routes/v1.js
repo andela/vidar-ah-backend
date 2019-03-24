@@ -31,7 +31,7 @@ import {
   validateArticleRating,
   validateCommentExist,
   validateGetOrder,
-  validateImages,
+  validateImages
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -46,7 +46,7 @@ const {
   rateArticle,
   getAllArticles,
   getArticlesByHighestField,
-  getAmountOfArticlesByUser,
+  getAmountOfArticlesByUser
 } = ArticleController;
 const { viewProfile, editProfile, updateProfileImage } = ProfileController;
 
@@ -329,6 +329,14 @@ apiRoutes.route('/articles/:slug/comments/:id')
     CommentController.deleteComment
   );
 
+
+apiRoutes.post(
+  '/likeArticle/:slug',
+  Auth.verifyUser,
+  isUserVerified,
+  checkIfArticleExists,
+  likeArticle
+);
 
 apiRoutes.post(
   '/likeArticle/:slug',

@@ -163,6 +163,12 @@ export default class ArticleController {
   static async likeArticle(req, res) {
     const { id: userId } = req.user;
     const { slug: articleSlug } = req.params;
+
+    const getArticles = await Article.findOne({
+      where: {
+        slug: articleSlug
+      },
+    });
     try {
       const likeArticle = await Reaction.findOne({
         where: {
@@ -183,25 +189,27 @@ export default class ArticleController {
             likes: true
           },
         });
+
         return res.status(201).json({
           success: true,
-          message: 'Article liked successfully',
+          message: 'You have liked this article',
+          getArticles,
           likes: allLikes.count
         });
-      } if (
-        (likeArticle)
-        && (likeArticle.likes === true)) {
-        await Reaction.destroy({
-          where: {
-            articleSlug,
-            userId,
-          }
-        });
-        return res.status(200).json({
-          success: true,
-          message: 'You have unliked this article'
-        });
       }
+
+      await Reaction.destroy({
+        where: {
+          articleSlug,
+          userId,
+        }
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: 'You have unliked this article',
+        getArticles
+      });
     } catch (error) {
       return res.status(500).json({
         success: false,
@@ -220,13 +228,17 @@ export default class ArticleController {
   static async dislikeArticle(req, res) {
     const { id: userId } = req.user;
     const { slug: articleSlug } = req.params;
-
+    const getArticles = await Article.findOne({
+      where: {
+        slug: articleSlug
+      },
+    });
     try {
       const likeArticle = await Reaction.findOne({
         where: {
           articleSlug,
           userId
-        }
+        },
       });
       if (!likeArticle) {
         await Reaction.create({
@@ -246,20 +258,19 @@ export default class ArticleController {
           message: 'Article disliked successfully',
           dislikes: allDisLikes.count
         });
-      } if (
-        (likeArticle)
-        && (likeArticle.likes === false)) {
-        await Reaction.destroy({
-          where: {
-            articleSlug,
-            userId,
-          }
-        });
-        return res.status(200).json({
-          success: true,
-          message: 'You have removed the dislike on this article'
-        });
       }
+
+      await Reaction.destroy({
+        where: {
+          articleSlug,
+          userId,
+        }
+      });
+      return res.status(200).json({
+        success: true,
+        message: 'You have removed the dislike on this article',
+        getArticles
+      });
     } catch (error) {
       return res.status(500).json({
         success: false,

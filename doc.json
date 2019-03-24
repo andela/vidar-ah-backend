@@ -602,6 +602,7 @@
         }
       }
       },
+      
       "/dislikeArticle/:slug": {
       "post": {
         "tags": [
