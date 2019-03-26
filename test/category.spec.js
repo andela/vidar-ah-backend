@@ -68,7 +68,7 @@ describe('CREATE CATEGORY', () => {
   });
 
   describe('Make a request with valid and verified credentials', () => {
-    before(() => { updateVerifiedStatus(newUser2.email); });
+    before(async () => { await updateVerifiedStatus(newUser2.email); });
     it('should return a success message with status 201', (done) => {
       chai
         .request(app)
@@ -90,7 +90,7 @@ describe('CREATE CATEGORY', () => {
   });
 
   describe('Make a request with duplicate category', () => {
-    before(() => { updateVerifiedStatus(newUser2.email); });
+    before(async () => { await updateVerifiedStatus(newUser2.email); });
     it('should return a 409 error message', (done) => {
       chai
         .request(app)

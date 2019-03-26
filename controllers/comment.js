@@ -1,4 +1,5 @@
-import { Comment, User } from '../models';
+import Sequelize from 'sequelize';
+import { Comment, User, commentLikes } from '../models';
 
 /**
  * @class CommentController
@@ -58,10 +59,20 @@ export default class CommentController {
         where: {
           articleSlug
         },
+        group: ['User.username', 'User.bio', 'User.email', 'Comment.id'],
         include: [
           {
             model: User,
             attributes: ['username', 'bio', 'email']
+          },
+          {
+            as: 'likes',
+            model: commentLikes,
+            attributes: [
+              [
+                Sequelize.fn('COUNT', Sequelize.col('likes.id')), 'commentCount'
+              ]
+            ]
           }
         ]
       });
@@ -145,6 +156,50 @@ export default class CommentController {
           message: 'Comment deleted successfully',
         });
       }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+* @description - Like/unlike an article comment
+* @static
+*
+* @param {object} req - HTTP Request
+* @param {object} res - HTTP Response
+*
+* @memberof CommentController
+*
+* @returns {string} Like/unlike comment result
+*/
+  static async likeComment(req, res) {
+    const { id } = req.params;
+    const { id: userId } = req.user;
+    const currentUser = await User.findOne({ where: { id: userId } });
+    const currentComment = await Comment.findOne({ where: { id } });
+    const userHasLiked = await currentUser.hasCommentLiked(currentComment.id);
+    try {
+      if (userHasLiked) {
+        await commentLikes.destroy({
+          where: {
+            userId, commentId: id
+          }
+        });
+        return res.status(201).json({
+          success: true,
+          message: 'Comment unliked successfully',
+          comment: currentComment
+        });
+      }
+      await currentUser.addCommentLiked(currentComment.id);
+      return res.status(201).json({
+        success: true,
+        message: 'Comment liked successfully',
+        comment: currentComment
+      });
     } catch (error) {
       return res.status(500).json({
         success: false,

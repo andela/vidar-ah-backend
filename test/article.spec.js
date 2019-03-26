@@ -412,7 +412,7 @@ describe('/POST articles like', () => {
   it('should return an error if the article is not found', (done) => {
     chai
       .request(app)
-      .post('/api/v1/likeArticle/article-writing-b4ngik')
+      .post('/api/v1/like_article/article-writing-b4ngik')
       .set('authorization', userToken2)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -425,7 +425,7 @@ describe('/POST articles like', () => {
   it('should create an article like reaction', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/likeArticle/${articleSlug2}`)
+      .post(`/api/v1/like_article/${articleSlug2}`)
       .set('authorization', userToken2)
       .end((err, res) => {
         reaction = res.body.reaction;
@@ -439,7 +439,7 @@ describe('/POST articles like', () => {
   it('should unlike an article reaction if the article has been liked', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/likeArticle/${articleSlug2}`)
+      .post(`/api/v1/like_article/${articleSlug2}`)
       .set('authorization', userToken2)
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -455,7 +455,7 @@ describe('/POST articles dislike', () => {
   it('should create an article dislike reaction', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/dislikeArticle/${articleSlug2}`)
+      .post(`/api/v1/dislike_article/${articleSlug2}`)
       .set('authorization', userToken2)
       .end((err, res) => {
         reaction = res.body.reaction;
@@ -469,7 +469,7 @@ describe('/POST articles dislike', () => {
   it('should remove an article reaction if the article has been disliked', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/dislikeArticle/${articleSlug2}`)
+      .post(`/api/v1/dislike_article/${articleSlug2}`)
       .set('authorization', userToken2)
       .end((err, res) => {
         expect(res).to.have.status(200);

@@ -28,8 +28,15 @@ export const validUser = {
 
 export const validCommentUser = {
   username: 'MuhammaduBuhari',
-  email: 'ayinlaolajide@gmail.com',
+  email: 'ayinlaolajide099@gmail.com',
   name: 'Muhammadu Buhari',
+  password: '1234567'
+};
+
+export const validLikeCommentUser = {
+  username: 'FelaAnikulapo',
+  email: 'felasssss@gmail.com',
+  name: 'Fela Kuti',
   password: '1234567'
 };
 
@@ -37,6 +44,13 @@ export const wrongCommentUser = {
   username: 'AishaBuhari',
   email: 'ayinlaolajide2345@gmail.com',
   name: 'Aisha Buhari',
+  password: '1234567'
+};
+
+export const wrongLikeCommentUser = {
+  username: 'JohnDoe',
+  email: 'johndoe2345@gmail.com',
+  name: 'John Doe',
   password: '1234567'
 };
 

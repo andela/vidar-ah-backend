@@ -234,6 +234,30 @@ export const validateCommentUser = async (req, res, next) => {
     });
   }
 };
+export const validateCommentExist = async (req, res, next) => {
+  const {
+    params: { id }
+  } = req;
+  try {
+    const comment = await Comment.findOne({
+      where: {
+        id
+      }
+    });
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        errors: ['Comment not found.']
+      });
+    }
+    return next();
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: [error.message]
+    });
+  }
+};
 
 
 export const validateArticleExist = async (req, res, next) => {

@@ -26,7 +26,8 @@ import {
   validateCommentUser,
   validateArticleExist,
   validateArticleId,
-  validateArticleRating
+  validateArticleRating,
+  validateCommentExist,
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -51,7 +52,7 @@ apiRoutes.route('/userprofile')
   .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
     returnValidationErrors, ProfileController.editProfile);
 
-apiRoutes.route('/verify/:verificationId')
+apiRoutes.route('/verify/:verification_id')
   .get(UserController.verifyAccount);
 
 apiRoutes.route('/articles')
@@ -146,14 +147,14 @@ apiRoutes.post(
 );
 
 apiRoutes.post(
-  '/resetpassword/:passwordResetToken',
+  '/resetpassword/:password_reset_token',
   validatePassword,
   returnValidationErrors,
   UserController.resetPassword
 );
 
 apiRoutes.post(
-  '/likeArticle/:slug',
+  '/like_article/:slug',
   Auth.verifyUser,
   isUserVerified,
   checkIfArticleExists,
@@ -161,7 +162,7 @@ apiRoutes.post(
 );
 
 apiRoutes.post(
-  '/dislikeArticle/:slug',
+  '/dislike_article/:slug',
   Auth.verifyUser,
   isUserVerified,
   checkIfArticleExists,
@@ -231,5 +232,12 @@ apiRoutes.get(
   Auth.verifyUser,
   UserController.getReadingStats
 );
+apiRoutes.route('/comments/:id/like')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentExist,
+    CommentController.likeComment
+  );
 
 export default apiRoutes;
