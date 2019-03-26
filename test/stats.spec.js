@@ -32,7 +32,7 @@ describe('Make a request to signup with valid details', () => {
 });
 
 describe('Create an article by an authenticated and verified user', () => {
-  before(() => { updateVerifiedStatus(validStatUser.email); });
+  before(async () => { await updateVerifiedStatus(validStatUser.email); });
   it('should create a new article.', (done) => {
     chai
       .request(app)
