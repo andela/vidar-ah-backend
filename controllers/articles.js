@@ -1,12 +1,12 @@
 import db, {
   Article,
   User,
+  Reaction,
   Ratings,
   Comment,
   Category
 } from '../models';
 import Paginate from '../helpers/paginate';
-
 /**
  * @class ArticleController
  * @override
@@ -154,6 +154,127 @@ export default class ArticleController {
   }
 
   /**
+   * @desc create a reaction
+   * @param {Object} articleSlug, the response obje
+   * @param {Object} userId - the response object
+   * @param {Object} like - the response object
+   * @memberof ArticleController
+   * @return {Object} returns an object
+   */
+  static async createReaction(articleSlug, userId, like) {
+    let createdReaction;
+    const likeArticle = await Reaction.findOne({
+      where: {
+        articleSlug,
+        userId,
+      },
+    });
+    if (!likeArticle) {
+      await Reaction.create({
+        articleSlug,
+        userId,
+        likes: like,
+      });
+      createdReaction = true;
+    } else {
+      await Reaction.destroy({
+        where: {
+          articleSlug,
+          userId,
+        }
+      });
+      createdReaction = false;
+    }
+    const allLikes = await Reaction.findAndCountAll({
+      where: {
+        articleSlug,
+        userId,
+        likes: like
+      },
+    });
+    return { ...allLikes, createdReaction };
+  }
+
+  /**
+   * @desc check if a user likes an article
+   * @param {Object} req - the request object
+   * @param {Object} res - the response object
+   * @memberof ArticleController
+   * @return {Object} returns an object
+   */
+  static async likeArticle(req, res) {
+    try {
+      const { id: userId } = req.user;
+      const { slug: articleSlug } = req.params;
+      const getArticles = await Article.findOne({
+        where: {
+          slug: articleSlug
+        },
+      });
+      const reaction = await ArticleController.createReaction(articleSlug, userId, 'true');
+
+      if (reaction.createdReaction) {
+        return res.status(201).json({
+          success: true,
+          message: 'You have liked this article',
+          getArticles,
+          likes: reaction.count
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        message: 'You have unliked this article',
+        getArticles,
+        likes: reaction.count
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+   * @desc check if a user dislikes an article
+   * @param {Object} req - the request object
+   * @param {Object} res - the response object
+   * @memberof ArticleController
+   * @return {Object} returns an object
+   */
+  static async dislikeArticle(req, res) {
+    try {
+      const { id: userId } = req.user;
+      const { slug: articleSlug } = req.params;
+      const getArticles = await Article.findOne({
+        where: {
+          slug: articleSlug
+        },
+      });
+      const reaction = await ArticleController.createReaction(articleSlug, userId, 'false');
+      if (reaction.createdReaction) {
+        return res.status(201).json({
+          success: true,
+          message: 'You have disliked this article',
+          getArticles,
+          dislikes: reaction.count
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        message: 'You have removed the dislike on this article',
+        getArticles,
+        dislikes: reaction.count
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
    * @description - Search for articles
    * @static
    * @param {Object} req - the request object
@@ -270,7 +391,6 @@ export default class ArticleController {
           }
         ]
       });
-
       if (req.user) {
         const { id } = req.user;
         const viewer = await User.findOne({ where: { id } });

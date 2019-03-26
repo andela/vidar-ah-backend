@@ -18,6 +18,8 @@ import {
   validateArticle,
   validateArticleAuthor,
   validateCategory,
+  returnValidationErrors,
+  checkIfArticleExists,
   validateSearch,
   validateCreateComment,
   validateEditComment,
@@ -27,7 +29,6 @@ import {
   validateArticleRating,
   validateGetOrder,
   validateCommentExist,
-  returnValidationErrors,
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -37,6 +38,8 @@ const {
   createArticle,
   updateArticle,
   deleteArticle,
+  likeArticle,
+  dislikeArticle,
   rateArticle,
   getAllArticles,
   getArticlesByHighestField
@@ -52,7 +55,7 @@ apiRoutes.route('/userprofile')
   .patch(Auth.verifyUser, isUserVerified, validateProfileChange,
     returnValidationErrors, ProfileController.editProfile);
 
-apiRoutes.route('/verify/:verificationId')
+apiRoutes.route('/verify/:verification_id')
   .get(UserController.verifyAccount);
 
 apiRoutes.route('/articles')
@@ -155,12 +158,27 @@ apiRoutes.post(
 );
 
 apiRoutes.post(
-  '/resetpassword/:passwordResetToken',
+  '/resetpassword/:password_reset_token',
   validatePassword,
   returnValidationErrors,
   UserController.resetPassword
 );
 
+apiRoutes.post(
+  '/like_article/:slug',
+  Auth.verifyUser,
+  isUserVerified,
+  checkIfArticleExists,
+  likeArticle
+);
+
+apiRoutes.post(
+  '/dislike_article/:slug',
+  Auth.verifyUser,
+  isUserVerified,
+  checkIfArticleExists,
+  dislikeArticle
+);
 apiRoutes.get(
   '/articles/search',
   validateSearch,
