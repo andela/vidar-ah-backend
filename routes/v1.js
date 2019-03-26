@@ -23,10 +23,11 @@ import {
   validateEditComment,
   validateCommentUser,
   validateArticleExist,
-  returnValidationErrors,
   validateArticleId,
   validateArticleRating,
-  validateGetOrder
+  validateGetOrder,
+  validateCommentExist,
+  returnValidationErrors,
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -169,6 +170,7 @@ apiRoutes.get(
 
 apiRoutes.get(
   '/articles/:slug',
+  Auth.isLoggedIn,
   ArticleController.getArticleBySlug,
 );
 
@@ -218,5 +220,17 @@ apiRoutes.route('/articles/:slug/comments/:id')
     CommentController.deleteComment
   );
 
+apiRoutes.get(
+  '/user/readingstats',
+  Auth.verifyUser,
+  UserController.getReadingStats
+);
+apiRoutes.route('/comments/:id/like')
+  .post(
+    Auth.verifyUser,
+    isUserVerified,
+    validateCommentExist,
+    CommentController.likeComment
+  );
 
 export default apiRoutes;

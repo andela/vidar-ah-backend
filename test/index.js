@@ -9,3 +9,5 @@ import './resetpassword.spec';
 import './category.spec';
 import './follow.spec';
 import './rating.spec';
+import './stats.spec';
+import './likeComment.spec';

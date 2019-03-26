@@ -4,10 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     comment: {
       allowNull: false,
       type: DataTypes.STRING,
-      unique: {
-        args: true,
-        msg: 'The comment already exists'
-      }
     },
     articleSlug: DataTypes.STRING,
     userId: DataTypes.INTEGER
@@ -21,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
     });
+    Comment.hasMany(models.commentLikes, {
+      as: 'likes',
+      foreignKey: 'commentId',
+      onDelete: 'CASCADE'
+    });
+    Comment.belongsToMany(models.User, { as: 'commentLiker', through: models.commentLikes, foreignKey: 'commentId' });
   };
   return Comment;
 };

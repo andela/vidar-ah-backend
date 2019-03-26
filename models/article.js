@@ -72,6 +72,11 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
       sourceKey: 'id'
     });
+    Article.belongsToMany(models.User, {
+      foreignKey: 'articleId',
+      as: 'viewers',
+      through: models.stats
+    });
   };
   return Article;
 };

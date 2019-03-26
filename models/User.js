@@ -77,8 +77,18 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
+    User.belongsToMany(models.Article, {
+      foreignKey: 'userId',
+      as: 'view',
+      through: models.stats
+    });
+    User.belongsToMany(models.Comment, {
+      as: 'commentLiked',
+      through: models.commentLikes,
+      foreignKey: 'userId',
+      targetKey: 'commentId'
+    });
   };
-
 
   User.hook('beforeValidate', (user) => {
     user.verificationId = shortId.generate();

@@ -81,7 +81,7 @@ export default class ArticleController {
         }))
       });
     } catch (error) {
-      return res.status(400).json({ success: false, errors: ['Error rating this article'] });
+      return res.status(500).json({ success: false, errors: ['Error rating this article'] });
     }
   }
 
@@ -270,6 +270,12 @@ export default class ArticleController {
           }
         ]
       });
+
+      if (req.user) {
+        const { id } = req.user;
+        const viewer = await User.findOne({ where: { id } });
+        await viewer.addView(article);
+      }
       return res.status(200).json({
         success: true,
         article: article.dataValues
