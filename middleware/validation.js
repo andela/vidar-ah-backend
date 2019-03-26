@@ -264,3 +264,11 @@ export const validateArticleId = [
     .isUUID()
     .withMessage('Please provide a valid id for the article')
 ];
+
+export const validateGetOrder = [
+  check('type')
+    .exists()
+    .withMessage('Please provide a type of order to get.')
+    .custom(value => ['latest', 'ratings', 'comments'].indexOf(value) !== -1)
+    .withMessage('Order type should either be latest, ratings or comments')
+];

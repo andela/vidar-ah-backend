@@ -1,4 +1,10 @@
-import { Article, User, Ratings } from '../models';
+import db, {
+  Article,
+  User,
+  Ratings,
+  Comment,
+  Category
+} from '../models';
 import Paginate from '../helpers/paginate';
 
 /**
@@ -250,11 +256,19 @@ export default class ArticleController {
         where: {
           slug
         },
-        include: [{
-          as: 'author',
-          model: User,
-          attributes: ['username', 'email', 'name', 'bio'],
-        }]
+        include: [
+          {
+            as: 'author',
+            model: User,
+            attributes: ['username', 'email', 'name', 'bio'],
+          },
+          {
+            model: Ratings,
+          },
+          {
+            model: Comment,
+          }
+        ]
       });
 
       if (req.user) {
@@ -272,5 +286,122 @@ export default class ArticleController {
         errors: ['Article not found.'],
       });
     }
+  }
+
+  /**
+ * @description - Get all articles
+ * @static
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @memberof ArticleController
+ * @returns {Object} class instance
+ */
+  static async getAllArticles(req, res) {
+    try {
+      let {
+        query: {
+          offset, limit
+        }
+      } = req;
+      offset = Number(offset) || 0;
+      limit = Number(limit) || 10;
+      const results = await Article.findAndCountAll({
+        where: {},
+        offset,
+        limit,
+        include: [
+          {
+            model: User,
+            as: 'author',
+            attributes: ['username', 'bio', 'name']
+          },
+          {
+            model: Category,
+            as: 'category',
+            attributes: ['categoryName']
+          },
+          {
+            model: Ratings,
+          }
+        ]
+      });
+      const { count } = results;
+      const meta = Paginate({ count, limit, offset });
+      return res.status(200).json({
+        success: true,
+        results,
+        ...meta
+      });
+    } catch (error) {
+      return res.status(500).json({
+        succes: false,
+        errors: ['Oops, something wrong occured.']
+      });
+    }
+  }
+
+  /**
+  * @description - Generate query for request to get articles with order
+  * @static
+  * @param {Object} type - type of order
+  * @param {Object} amount - amount of articles to get
+  * @memberof ArticleController
+  * @returns {Object} order for findAll
+  */
+  static getQuery(type, amount) {
+    const orders = {
+      ratings:
+      `
+        SELECT "Articles".*, ROUND(AVG("Ratings".rating), 1) AS avg_rating
+        FROM "Ratings"
+        JOIN "Articles" ON "Ratings"."articleId" = "Articles".id
+        GROUP BY "Articles".id, "Articles".slug
+        ORDER BY avg_rating DESC
+        LIMIT ${Number(amount) || 5}
+      `,
+      latest:
+      `
+        SELECT *
+        FROM "Articles"
+        ORDER BY "Articles"."createdAt" DESC
+        LIMIT ${Number(amount) || 5}
+      `,
+      comments:
+      `
+        SELECT "Articles".*, COUNT("Comments".comment) AS comment_count
+        FROM "Comments"
+        JOIN "Articles" ON "Comments"."articleSlug" = "Articles".slug
+        GROUP BY "Articles".id, "Articles".slug
+        ORDER BY comment_count DESC
+        LIMIT ${Number(amount) || 5}
+      `
+    };
+    return orders[type];
+  }
+
+  /**
+  * @description - Get a specific number of articles with criteria
+  * @static
+  * @param {Object} req - the request object
+  * @param {Object} res - the response object
+  * @memberof ArticleController
+  * @returns {Object} class instance
+  */
+  static async getArticlesByHighestField(req, res) {
+    const {
+      query: {
+        amount, type
+      }
+    } = req;
+    const query = ArticleController.getQuery(type, amount);
+    const [, articles] = await db.sequelize.query(
+      query,
+      { raw: false }
+    );
+    return res.status(200).json({
+      success: true,
+      message: 'Articles returned successfully.',
+      articles: articles.rows
+    });
   }
 }

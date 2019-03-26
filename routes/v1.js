@@ -25,6 +25,7 @@ import {
   validateArticleExist,
   validateArticleId,
   validateArticleRating,
+  validateGetOrder,
   validateCommentExist,
   returnValidationErrors,
 } from '../middleware/validation';
@@ -33,7 +34,12 @@ import followVerification from '../middleware/follow';
 import CommentController from '../controllers/comment';
 
 const {
-  createArticle, updateArticle, deleteArticle, rateArticle
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  rateArticle,
+  getAllArticles,
+  getArticlesByHighestField
 } = ArticleController;
 
 const apiRoutes = express.Router();
@@ -58,7 +64,15 @@ apiRoutes.route('/articles')
     returnValidationErrors,
     generateSlug,
     createArticle
-  );
+  )
+  .get(getAllArticles);
+
+apiRoutes.get(
+  '/articles/order',
+  validateGetOrder,
+  returnValidationErrors,
+  getArticlesByHighestField
+);
 
 apiRoutes.route('/articles/:slug')
   .put(
