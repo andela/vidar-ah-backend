@@ -97,21 +97,16 @@ describe('RATING', () => {
 
   describe('Article Rating', () => {
     let newArticle;
-    before((done) => {
-      updateVerifiedStatus(validUser4.email);
-      updateVerifiedStatus(validUser3.email);
-      chai
+    before(async () => {
+      await updateVerifiedStatus(validUser4.email);
+      await updateVerifiedStatus(validUser3.email);
+      await chai
         .request(app)
         .post('/api/v1/articles')
         .set('authorization', userToken1)
         .send(article1)
-        .end((err, res) => {
-          const { status, body: { message, success, article } } = res;
-          expect(status).to.be.equal(201);
-          expect(success).to.be.equal(true);
-          expect(message).to.be.equal('New article created successfully');
-          newArticle = article;
-          done(err);
+        .then((res) => {
+          newArticle = res.body.article;
         });
     });
 

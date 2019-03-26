@@ -82,6 +82,12 @@ module.exports = (sequelize, DataTypes) => {
       as: 'view',
       through: models.stats
     });
+    User.belongsToMany(models.Comment, {
+      as: 'commentLiked',
+      through: models.commentLikes,
+      foreignKey: 'userId',
+      targetKey: 'commentId'
+    });
   };
 
   User.hook('beforeValidate', (user) => {
