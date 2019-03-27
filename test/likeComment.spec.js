@@ -150,20 +150,17 @@ describe('Like a comment', () => {
 
 describe('Unlike a comment', () => {
   before(() => updateVerifiedStatus(validLikeCommentUser.email));
-  it('returns comment unliked successfully', (done) => {
-    chai
+  it('returns comment unliked successfully', async () => {
+    const res = await chai
       .request(app)
       .post(`/api/v1/comments/${commentId}/like`)
-      .set('x-access-token', userToken)
-      .end((err, res) => {
-        const {
-          status,
-          body: { success, message }
-        } = res;
-        expect(status).to.be.equal(201);
-        expect(success).to.be.equal(true);
-        expect(message).to.be.equal('Comment unliked successfully');
-        done(err);
-      });
+      .set('x-access-token', userToken);
+    const {
+      status,
+      body: { success, message }
+    } = res;
+    expect(status).to.be.equal(201);
+    expect(success).to.be.equal(true);
+    expect(message).to.be.equal('Comment unliked successfully');
   });
 });
