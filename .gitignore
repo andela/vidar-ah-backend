@@ -34,3 +34,17 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
+# Report files for Mochawesome HTML report
+mochawesome-report
+
+# Ignore environmental variables
+.env
+
+# Ignore yarn generated files
+yarn.lock
+dist/
+
+# Ignore vscode files
+.vscode/
+#coveralls code coverage reports
+.nyc_output/

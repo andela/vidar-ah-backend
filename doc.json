@@ -1,0 +1,913 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "A Social platform for the creative at heart",
+    "version": "1.0.0",
+    "title": "Authors Haven",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "vidar.ah2019@gmail.com"
+    },
+    "license": {
+      "name": "GNU General Public License",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
+    }
+  },
+  "host": "vidar-ah-backend-staging.herokuapp.com",
+  "basePath": "/api/v1",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/user": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User registration",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Profile details",
+            "in": "body",
+            "description": "To register user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Signup successful"
+          },
+          "409": {
+            "description": "User already exists"
+          },
+          "422": {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/auth/google": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "google api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/twitter": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "twitter api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/auth/facebook": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User registration or login",
+        "description": "A Social platform for the creative at heart",
+        "consumes": [
+          "facebook api"
+        ],
+        "produces": [
+          "authorization token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Signup or login successful"
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "description": "A user with valid email and password can log in successfully. Optionally, user can set a rememberMe property to true to stay logged in for a very long time.",
+        "summary": "successful login",
+        "tags": [
+          "login with email"
+        ],
+        "operationId": "UserLoginPost",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/successfulloginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/userprofile": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "View user profile",
+        "description": "Get user's profile information",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return's user's profile details"
+          },
+          "401": {
+            "description": "Authentication error"
+          }
+        }
+        
+      },
+      "patch": {
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Update user's profile ",
+        "description": "Update user's profile information",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Update user profile",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/profile"
+            }
+          }
+        ],
+        "responses": {
+          "205": {
+            "description": "Returns updated profile"
+          },
+          "422": {
+            "description": "Required fields not present"
+          },
+          "401": {
+            "description": "Authentication error"
+          }
+        }
+      }
+    },
+    "/articles": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Create an article",
+        "description": "",
+        "operationId": "addArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Create user article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New article created successfully"
+          },
+          "422": {
+            "description": "Email is invalid"
+          }
+        }
+      }
+    },
+    "/resetpassword/{key}": {
+      "post": {
+        "tags": [
+          "Reset password"
+        ],
+        "summary": "Verify user reset password key and change password",
+        "description": "Verify user reset password key and change password",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "description": "key sent with the link to the user email",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "schema": {
+              "$ref": "#/definitions/resetPassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "headers": {},
+            "description": "You can now reset your password."
+          },
+          "410": {
+            "description": "Your link has expired. Please try to reset password again."
+          },
+          "404": {
+            "description": "Password reset token not found."
+          }
+        }
+      }
+    },
+    "/follow/{id}": {
+      "get": {
+        "tags": [
+          "Follow"
+        ],
+        "summary": "Follow user",
+        "description": "Follow a user",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to follow",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User followed successfully."
+          },
+          "403": {
+            "description": "You cannot follow a user twice."
+          }
+        }
+      }
+    },
+    "/unfollow/{id}": {
+      "get": {
+        "tags": [
+          "Follow"
+        ],
+        "summary": "Unfollow user",
+        "description": "Unfollow a user",
+        "consumes": [
+          "application/x-www-form-urlencoded",
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to unfollow",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User unfollowed successfully."
+          },
+          "403": {
+            "description": "You cannot unfollow a user you are not following."
+          }
+        }
+      }
+    },
+    "/articles/rate/:articleId": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Rate an article",
+        "description": "Give ratings on an article",
+        "operationId": "rateArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "rating",
+            "description": "Rate an article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rating"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article has been rated as (rating)"
+          },
+          "422": {
+            "description": "Please provide a valid rating for this article"
+          },
+          "404": {
+            "description": "This article does not exist"
+          },
+          "403": {
+          "description": "Permission denied, user cannot rate their own article"
+          }
+        }
+      }
+    },
+      "/like_article/:slug": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Like an article",
+        "description": "Like an article",
+        "operationId": "likeArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "An article slug used to like the article",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "like",
+            "description": "Like an article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rating"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article liked successfully"
+          },
+          "404": {
+            "description": "Article not found"
+          },
+          "200": {
+          "description": "You have unliked this article"
+          }
+        }
+      }
+      },
+      "/dislike_article/:slug": {
+      "post": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Dislike an article",
+        "description": "Dislike an article",
+        "operationId": "DislikeArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "An article slug used to like the article",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "dislike",
+            "description": "dislike an article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/rating"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article disliked successfully"
+          },
+          "404": {
+            "description": "Article not found"
+          },
+          "200": {
+          "description": "You have removed the dislike on this article"
+          }
+        }
+      }
+      },
+      "/articles/:slug": {
+      "put": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Update an article",
+        "description": "",
+        "operationId": "updateArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updates article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article updated successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Articles"
+        ],
+        "summary": "Delete an article",
+        "description": "",
+        "operationId": "deleteArticle",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Deletes article",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/articles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article deleted successfully"
+          },
+          "422": {
+            "description": "Invalid title/description/body supplied"
+          }
+        }
+      }
+    },
+    "/comments{id}/like": {
+      "put": {
+        "tags": [
+          "CommentLike"
+        ],
+        "summary": "Like a comment article",
+        "description": "",
+        "operationId": "Like comment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "id",
+            "description": "Id of comment to like",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Article liked/unliked successfully"
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        }
+      }
+  },
+  "/articles/{slug}/comments": {
+    "post": {
+      "tags": [
+        "Comment"
+      ],
+      "summary": "Create a comment",
+      "description": "",
+      "operationId": "createComment",
+      "consumes": [
+        "application/json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "authorization",
+          "in": "header",
+          "description": "A token to verify the user",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "slug",
+          "in": "path",
+          "description": "slug of article to relate comment to",
+          "required": true
+        },
+        {
+          "in": "body",
+          "name": "comment",
+          "description": "Comment body",
+          "required": true
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "New comment created successfully"
+        },
+        "422": {
+          "description": "Incomplete request body"
+        }
+      }
+    }
+    },
+    "get": {
+      "tags": [
+        "Comment"
+      ],
+      "summary": "Get all article comments",
+      "description": "",
+      "operationId": "getComments",
+      "consumes": [
+        "application/json"
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "parameters": [
+        {
+          "name": "authorization",
+          "in": "header",
+          "description": "A token to verify the user",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "slug",
+          "in": "path",
+          "description": "slug of article to get comments for",
+          "required": true
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "Comments returned successfully"
+        },
+        "404": {
+          "description": "No comments found"
+        }
+      }
+    },
+    "/articles/{slug}/comments/{id}": {
+      "patch": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Update a comment",
+        "description": "",
+        "operationId": "updateComment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of comment to be updated",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "comment",
+            "description": "New comment",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "New comment created successfully"
+          },
+          "422": {
+            "description": "Incomplete request body"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Comment"
+        ],
+        "summary": "Delete a comment",
+        "description": "",
+        "operationId": "deleteComment",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "A token to verify the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of comment to be deleted",
+            "required": true
+          }
+        ],
+        "responses": {
+          "205": {
+            "description": "Comment deleted successfully"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+  },
+  "definitions": {
+    "user": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string",
+          "format": "int64"
+        },
+        "password": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "successfulloginRequest": {
+      "title": "successfulloginRequest",
+      "example": {
+        "email": "testing123559@gmail.com",
+        "password": "testing"
+      },
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        }
+      }
+    },
+    "articles": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
+    "rating": {
+      "type": "object",
+      "properties": {
+        "rating": {
+          "type": "integer"
+        },
+        "articleId": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
+}

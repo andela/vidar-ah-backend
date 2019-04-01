@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "10"
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database vidarapp;' -U postgres
+script:
+  - npm install && npm install sequelize-cli -g
+  - npm run test
+after_success: 
+  - npm run coverage
