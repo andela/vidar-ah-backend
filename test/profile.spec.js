@@ -1,6 +1,7 @@
 // Require the dependencies
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import path from 'path';
 import app from '../index';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import { validUser, profileDetails } from './helpers/userDummyData';
@@ -112,6 +113,39 @@ describe('Update profile details', () => {
         expect(body.email).to.have.string('jamesbondxxc@gmail.com');
         expect(body.name).to.have.string('NewFirstName');
         expect(body.bio).to.have.string('basketball');
+        done(err);
+      });
+  });
+
+  it('should update a user profile image', (done) => {
+    chai
+      .request(app)
+      .patch('/api/v1/userprofile/image')
+      .set('authorization', userToken)
+      .attach('image', path.join(__dirname, 'assets', 'testImage.jpg'))
+      .type('form')
+      .end((err, res) => {
+        const { status, body: { success, result, message } } = res;
+        console.log(res.body)
+        expect(status).to.be.equal(205);
+        expect(result.image).to.be.a('String');
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal('Profile image successfully updated');
+        done(err);
+      });
+  });
+
+  it('should not update a user profile image if image is not sent', (done) => {
+    chai
+      .request(app)
+      .patch('/api/v1/userprofile/image')
+      .set('authorization', userToken)
+      .type('form')
+      .end((err, res) => {
+        const { status, body: { errors, success } } = res;
+        expect(status).to.be.equal(422);
+        expect(success).to.be.equal(false);
+        expect(errors[0]).to.be.equal('An image file should be uploaded to complete this request');
         done(err);
       });
   });

@@ -3,6 +3,7 @@
 /* eslint-disable prefer-destructuring */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import path from 'path';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import app from '../index';
 import { article1, user2 } from './helpers/dummyData';
@@ -67,6 +68,22 @@ describe('ARTICLES', () => {
       expect(message).to.be.equal('New article created successfully');
     });
 
+    it('Should create a new article with image.', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/v1/articles')
+        .set('authorization', token)
+        .attach('image', path.join(__dirname, 'assets', 'testImage.jpg'))
+        .type('form')
+        .field(article1);
+      const { status, body: { message, success, article } } = res;
+      expect(article.images).to.be.an('Array');
+      expect(article.images[0]).to.be.a('String');
+      expect(status).to.be.equal(201);
+      expect(success).to.be.equal(true);
+      expect(message).to.be.equal('New article created successfully');
+    });
+
     it('should not create if title is not set.', (done) => {
       article1.title = undefined;
       chai
@@ -99,6 +116,7 @@ describe('ARTICLES', () => {
           expect(errors[0]).to.be.equal('Article should have a title.');
           expect(errors[1]).to.be.equal('Title should be at least 6 characters long.');
           expect(errors[2]).to.be.equal('Article should have a description.');
+          expect(errors[3]).to.be.equal('Description should be at least 6 characters long.');
           done(err);
         });
     });
@@ -160,7 +178,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Search for articles without term keyword in the request query', () => {
-    it('Should should return an error', (done) => {
+    it('should return an error', (done) => {
       chai
         .request(app)
         .get('/api/v1/articles/search')
@@ -176,7 +194,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Search for articles with just a term keyword in the request query', () => {
-    it('Should should return an array of results.', (done) => {
+    it('should return an array of results.', (done) => {
       chai
         .request(app)
         .get('/api/v1/articles/search?term=This')
@@ -191,7 +209,7 @@ describe('ARTICLES', () => {
   });
 
   describe('Search for articles with a term keyword and an author filter', () => {
-    it('Should should return an array of results', (done) => {
+    it('should return an array of results', (done) => {
       chai
         .request(app)
         .get('/api/v1/articles/search?term=This&author=flippingg')
@@ -235,29 +253,8 @@ describe('ARTICLES', () => {
     });
   });
 
-  // describe('Get an article by its slug', () => {
-  //   it('should return an array of results', (done) => {
-  //     chai
-  //       .request(app)
-  //       .get(`/api/v1/articles/${articleSlug}`)
-  //       .end((err, res) => {
-  //         const { status, body: { success, article } } = res;
-  //         expect(status).to.be.equal(200);
-  //         expect(success).to.be.equal(true);
-  //         expect(article).to.be.an('object');
-  //         expect(article).to.haveOwnProperty('id');
-  //         expect(article).to.haveOwnProperty('slug');
-  //         expect(article).to.haveOwnProperty('title');
-  //         expect(article).to.haveOwnProperty('body');
-  //         expect(article).to.haveOwnProperty('description');
-  //         expect(article).to.haveOwnProperty('author');
-  //         done(err);
-  //       });
-  //   });
-  // });
-
   describe('Get an article by a wrong slug', () => {
-    it('Should should return a 404 error', (done) => {
+    it('should return a 404 error', (done) => {
       chai
         .request(app)
         .get('/api/v1/articles/eirubefhdkjcsdc')
@@ -271,117 +268,6 @@ describe('ARTICLES', () => {
         });
     });
   });
-});
-
-describe('Search for articles without term keyword in the request query', () => {
-  it('Should should return an error', (done) => {
-    chai
-      .request(app)
-      .get('/api/v1/articles/search')
-      .end((err, res) => {
-        const { status, body: { success, errors } } = res;
-        expect(status).to.be.equal(422);
-        expect(success).to.be.equal(false);
-        expect(errors).to.be.an('Array');
-        expect(errors[0]).to.be.equals('Please provide a valid search term.');
-        done(err);
-      });
-  });
-});
-
-// describe('Search for articles with just a term keyword in the request query', () => {
-//   it('Should should return an array of results.', (done) => {
-//     chai
-//       .request(app)
-//       .get('/api/v1/articles/search?term=This')
-//       .end((err, res) => {
-//         const { status, body: { success, results } } = res;
-//         expect(status).to.be.equal(200);
-//         expect(success).to.be.equal(true);
-//         expect(results).to.be.an('Array');
-//         done(err);
-//       });
-//   });
-// });
-
-// describe('Search for articles with a term keyword and an author filter', () => {
-//   it('Should should return an array of results', (done) => {
-//     chai
-//       .request(app)
-//       .get('/api/v1/articles/search?term=This&author=flippingg')
-//       .end((err, res) => {
-//         const { status, body: { success, results } } = res;
-//         expect(status).to.be.equal(200);
-//         expect(success).to.be.equal(true);
-//         expect(results).to.be.an('Array');
-//         done(err);
-//       });
-//   });
-// });
-
-// describe('Search for articles with a term keyword and a date range filter', () => {
-//   it('Should should return an array of results', (done) => {
-//     chai
-//       .request(app)
-//       .get('/api/v1/articles/search?term=This&startDate=2018-10-10&endDate=2020-10-10')
-//       .end((err, res) => {
-//         const { status, body: { success, results } } = res;
-//         expect(status).to.be.equal(200);
-//         expect(success).to.be.equal(true);
-//         expect(results).to.be.an('Array');
-//         done(err);
-//       });
-//   });
-// });
-
-describe('/PUT articles slug', () => {
-  before((done) => {
-    chai
-      .request(app)
-      .post('/api/v1/user/signup')
-      .send(myUser)
-      .end((err, res) => {
-        userToken2 = res.body.token;
-        done();
-      });
-  });
-
-  describe('Get an article by its slug', () => {
-    it('Should should return an array of results', (done) => {
-      chai
-        .request(app)
-        .get(`/api/v1/articles/${articleSlug}`)
-        .end((err, res) => {
-          const { status, body: { success, article } } = res;
-          expect(status).to.be.equal(200);
-          expect(success).to.be.equal(true);
-          expect(article).to.be.an('object');
-          expect(article).to.haveOwnProperty('id');
-          expect(article).to.haveOwnProperty('slug');
-          expect(article).to.haveOwnProperty('title');
-          expect(article).to.haveOwnProperty('body');
-          expect(article).to.haveOwnProperty('description');
-          expect(article).to.haveOwnProperty('author');
-          done(err);
-        });
-    });
-  });
-
-  // describe('Get an article by a wrong slug', () => {
-  //   it('Should should return a 404 error', (done) => {
-  //     chai
-  //       .request(app)
-  //       .get('/api/v1/articles/eirubefhdkjcsdc')
-  //       .end((err, res) => {
-  //         const { status, body: { success, errors } } = res;
-  //         expect(status).to.be.equal(404);
-  //         expect(success).to.be.equal(false);
-  //         expect(errors).to.be.an('Array');
-  //         expect(errors[0]).to.equal('Article not found.');
-  //         done(err);
-  //       });
-  //   });
-  // });
 });
 
 describe('/PUT articles slug', () => {
@@ -441,63 +327,199 @@ describe('/PUT articles slug', () => {
       });
   });
 
-  before(() => { updateVerifiedStatus(myUser.email); });
-  it('should return an error if the user is not the owner of the article', (done) => {
-    chai
+  before(async () => { await updateVerifiedStatus(myUser.email); });
+  it('should return an error if the user is not the owner of the article', async () => {
+    const res = await chai
       .request(app)
       .put(`/api/v1/articles/${articleSlug}`)
       .set('authorization', userToken2)
-      .send(article2)
+      .send(article2);
+    expect(res).to.have.status(403);
+    expect(res.body).to.have.property('success').equal(false);
+    expect(res.body.errors).to.be.an('Array');
+    expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
+  });
+});
+
+describe('/GET articles', () => {
+  describe('Get an article by its slug', () => {
+    it('should return the article', (done) => {
+      chai
+        .request(app)
+        .get(`/api/v1/articles/${articleSlug}`)
+        .end((err, res) => {
+          const { status, body: { success, article } } = res;
+          expect(status).to.be.equal(200);
+          expect(success).to.be.equal(true);
+          expect(article).to.be.an('object');
+          expect(article).to.haveOwnProperty('id');
+          expect(article).to.haveOwnProperty('slug');
+          expect(article).to.haveOwnProperty('title');
+          expect(article).to.haveOwnProperty('body');
+          expect(article).to.haveOwnProperty('description');
+          expect(article).to.haveOwnProperty('author');
+          done(err);
+        });
+    });
+  });
+  it('should return pagination metadata', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles?offset=0&limit=10')
+      .end((err, res) => {
+        const {
+          body: {
+            results: {
+              rows,
+              count
+            },
+            totalPages,
+            currentPage
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(rows).to.be.an('array');
+        expect(totalPages).to.be.a('number');
+        expect(currentPage).to.be.a('number');
+        expect(count).to.be.a('number');
+        done(err);
+      });
+  });
+
+  it('should return articles based on passed query params', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=latest')
+      .end((err, res) => {
+        const {
+          body: {
+            articles,
+            message
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(message).to.be.equals('Articles returned successfully.');
+        expect(articles).to.be.an('array');
+        done(err);
+      });
+  });
+
+  it('should return articles based on passed query params', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=comments')
+      .end((err, res) => {
+        const {
+          body: {
+            articles,
+            message
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(articles).to.be.an('array');
+        expect(message).to.be.equals('Articles returned successfully.');
+        done(err);
+      });
+  });
+
+  it('should return articles based on passed query params', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=ratings')
+      .end((err, res) => {
+        const {
+          body: {
+            articles
+          },
+        } = res;
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(articles).to.be.an('array');
+        done(err);
+      });
+  });
+
+  it('should return an error if there is no order type', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order')
+      .end((err, res) => {
+        const {
+          body: {
+            errors
+          },
+        } = res;
+        expect(res).to.have.status(422);
+        expect(res.body).to.have.property('success').equal(false);
+        expect(errors).to.be.an('array');
+        expect(errors[0]).to.be.equals('Please provide a type of order to get.');
+        done(err);
+      });
+  });
+
+  it('should return an error if order type is invalid', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/articles/order?type=erwdcsx')
+      .end((err, res) => {
+        const {
+          body: {
+            errors
+          },
+        } = res;
+        expect(res).to.have.status(422);
+        expect(res.body).to.have.property('success').equal(false);
+        expect(errors).to.be.an('array');
+        expect(errors[0]).to.be.equals('Order type should either be latest, ratings or comments');
+        done(err);
+      });
+  });
+});
+
+describe('/DELETE articles slug', () => {
+  it('should return an error if the user is not the owner of the article', (done) => {
+    chai
+      .request(app)
+      .delete(`/api/v1/articles/${articleSlug}`)
+      .set('authorization', userToken2)
       .end((err, res) => {
         expect(res).to.have.status(403);
         expect(res.body).to.have.property('success').equal(false);
-        expect(res.body.errors).to.be.an('Array');
         expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
         done(err);
       });
   });
 
-  describe('/DELETE articles slug', () => {
-    it('should return an error if the user is not the owner of the article', (done) => {
-      chai
-        .request(app)
-        .delete(`/api/v1/articles/${articleSlug}`)
-        .set('authorization', userToken2)
-        .end((err, res) => {
-          expect(res).to.have.status(403);
-          expect(res.body).to.have.property('success').equal(false);
-          expect(res.body.errors[0]).to.be.equal('You are unauthorized to perform this action');
-          done(err);
-        });
-    });
+  it('should delete an article', (done) => {
+    chai
+      .request(app)
+      .delete(`/api/v1/articles/${articleSlug}`)
+      .set('authorization', userToken)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(res.body).to.have.property('message').equal('Article deleted successfully');
+        done(err);
+      });
+  });
 
-    it('should delete an article', (done) => {
-      chai
-        .request(app)
-        .delete(`/api/v1/articles/${articleSlug}`)
-        .set('authorization', userToken)
-        .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res.body).to.have.property('success').equal(true);
-          expect(res.body).to.have.property('message').equal('Article deleted successfully');
-          done(err);
-        });
-    });
-
-    it('should return an error if the article is not found', (done) => {
-      chai
-        .request(app)
-        .delete('/api/v1/articles/eab6fbb6-aeda-4e1b-b4be-3582f51a6d30')
-        .set('authorization', userToken)
-        .end((err, res) => {
-          expect(res).to.have.status(404);
-          expect(res.body).to.have.property('success').equal(false);
-          expect(res.body.errors[0]).to.be.equal('Article not found');
-          done(err);
-        });
-    });
+  it('should return an error if the article is not found', (done) => {
+    chai
+      .request(app)
+      .delete('/api/v1/articles/eab6fbb6-aeda-4e1b-b4be-3582f51a6d30')
+      .set('authorization', userToken)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        expect(res.body).to.have.property('success').equal(false);
+        expect(res.body.errors[0]).to.be.equal('Article not found');
+        done(err);
+      });
   });
 });
+
 
 describe('/POST articles like', () => {
   it('should create an article', (done) => {
@@ -518,7 +540,7 @@ describe('/POST articles like', () => {
   it('should return an error if the article is not found', (done) => {
     chai
       .request(app)
-      .post('/api/v1/likeArticle/article-writing-b4ngik')
+      .post('/api/v1/like_article/article-writing-b4ngik')
       .set('authorization', userToken2)
       .end((err, res) => {
         expect(res).to.have.status(404);
@@ -531,7 +553,7 @@ describe('/POST articles like', () => {
   it('should create an article like reaction', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/likeArticle/${articleSlug2}`)
+      .post(`/api/v1/like_article/${articleSlug2}`)
       .set('authorization', userToken2)
       .end((err, res) => {
         reaction = res.body.reaction;
@@ -545,7 +567,7 @@ describe('/POST articles like', () => {
   it('should unlike an article reaction if the article has been liked', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/likeArticle/${articleSlug2}`)
+      .post(`/api/v1/like_article/${articleSlug2}`)
       .set('authorization', userToken2)
       .end((err, res) => {
         expect(res).to.have.status(200);
@@ -561,13 +583,13 @@ describe('/POST articles dislike', () => {
   it('should create an article dislike reaction', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/dislikeArticle/${articleSlug2}`)
+      .post(`/api/v1/dislike_article/${articleSlug2}`)
       .set('authorization', userToken2)
       .end((err, res) => {
         reaction = res.body.reaction;
         expect(res).to.have.status(201);
         expect(res.body).to.have.property('success').equal(true);
-        expect(res.body).to.have.property('message').equal('Article disliked successfully');
+        expect(res.body).to.have.property('message').equal('You have disliked this article');
         done(err);
       });
   });
@@ -575,7 +597,7 @@ describe('/POST articles dislike', () => {
   it('should remove an article reaction if the article has been disliked', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/dislikeArticle/${articleSlug2}`)
+      .post(`/api/v1/dislike_article/${articleSlug2}`)
       .set('authorization', userToken2)
       .end((err, res) => {
         expect(res).to.have.status(200);

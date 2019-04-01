@@ -4,7 +4,7 @@ import chaiHttp from 'chai-http';
 import faker from 'faker';
 import app from '../index';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
-import { newUser, validLoginUser } from './helpers/userDummyData';
+import { newUser, validLoginUser, superAdmin } from './helpers/userDummyData';
 
 // Configure chai
 chai.use(chaiHttp);
@@ -158,6 +158,23 @@ describe('User login authentication: ', () => {
           expect(errors[0]).to.be.equal('Password is incorrect. * Forgotten your password?');
           done(err);
         });
+    });
+  });
+
+  describe('Make a request to login with super admin credentials', () => {
+    it('should return a success message with status 200', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/v1/user/login')
+        .send(superAdmin);
+      const {
+        status,
+        body: { success, message }
+      } = res;
+      expect(res.body).be.an('object').which.has.keys(['success', 'message', 'token']);
+      expect(status).to.be.equal(200);
+      expect(success).to.be.equal(true);
+      expect(message).to.be.equal(`Welcome ${superAdmin.username}`);
     });
   });
 });

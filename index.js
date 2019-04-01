@@ -14,7 +14,6 @@ import { User } from './models';
 
 const { registerSuperAdmin } = CreateSuperAdmin;
 
-
 // read .env config
 dotenv.config();
 const isProduction = process.env.NODE_ENV === 'production';

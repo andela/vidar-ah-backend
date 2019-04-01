@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize';
-import { Comment, User, CommentLikes } from '../models';
-import isCommentLikedByUser from '../helpers/isCommentLikedByUser';
+import { Comment, User, commentLikes } from '../models';
 
 /**
  * @class CommentController
@@ -67,10 +66,11 @@ export default class CommentController {
             attributes: ['username', 'bio', 'email']
           },
           {
-            model: CommentLikes,
+            as: 'likes',
+            model: commentLikes,
             attributes: [
               [
-                Sequelize.fn('COUNT', Sequelize.col('CommentLikes.commentId')), 'commentCount'
+                Sequelize.fn('COUNT', Sequelize.col('likes.id')), 'commentCount'
               ]
             ]
           }
@@ -178,10 +178,12 @@ export default class CommentController {
   static async likeComment(req, res) {
     const { id } = req.params;
     const { id: userId } = req.user;
+    const currentUser = await User.findOne({ where: { id: userId } });
+    const currentComment = await Comment.findOne({ where: { id } });
+    const userHasLiked = await currentUser.hasCommentLiked(currentComment.id);
     try {
-      // Delete comment like, if already liked by user
-      if (await isCommentLikedByUser(id, userId)) {
-        await CommentLikes.destroy({
+      if (userHasLiked) {
+        await commentLikes.destroy({
           where: {
             userId, commentId: id
           }
@@ -189,14 +191,14 @@ export default class CommentController {
         return res.status(201).json({
           success: true,
           message: 'Comment unliked successfully',
+          comment: currentComment
         });
       }
-      await CommentLikes.create({
-        userId, commentId: id
-      });
+      await currentUser.addCommentLiked(currentComment.id);
       return res.status(201).json({
         success: true,
         message: 'Comment liked successfully',
+        comment: currentComment
       });
     } catch (error) {
       return res.status(500).json({

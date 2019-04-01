@@ -59,14 +59,6 @@ class Auth {
   }
 
   /**
-  * @description Middleware function to verify super admin
-  * @param {object} req http request object
-  * @param {object} res http response object
-  * @param {Function} next next middleware function
-  * @returns {Function} next middleware function
-*/
-
-  /**
   * @description Middleware function to verify admin
   * @param {object} req http request object
   * @param {object} res http response object

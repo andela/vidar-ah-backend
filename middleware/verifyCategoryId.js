@@ -1,5 +1,3 @@
-import { Category } from '../models';
-
 export default async (req, res, next) => {
   const { params: { id } } = req;
 
@@ -9,14 +7,6 @@ export default async (req, res, next) => {
     return res.status(400).json({
       success: false,
       errors: ['Invalid category id.']
-    });
-  }
-
-  const category = await Category.findOne({ where: { id } });
-  if (!category) {
-    return res.status(404).json({
-      success: false,
-      errors: ['No category matches the specified id. Please confirm the category Id and try again.']
     });
   }
 

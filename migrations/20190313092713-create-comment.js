@@ -8,8 +8,7 @@ module.exports = {
     },
     comment: {
       type: Sequelize.STRING,
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
     articleSlug: {
       type: Sequelize.STRING

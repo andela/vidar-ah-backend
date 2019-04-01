@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
@@ -113,10 +114,10 @@ export default class UserController {
      */
   static verifyAccount(req, res) {
     const {
-      params: { verificationId }
+      params: { verification_id }
     } = req;
     User.findOne({
-      where: { verificationId }
+      where: { verificationId: verification_id }
     }).then((foundUser) => {
       if (foundUser) {
         return foundUser
@@ -186,9 +187,11 @@ export default class UserController {
    * @returns {object} response
    */
   static async resetPassword(req, res) {
-    const { params: { passwordResetToken } } = req;
+    const { params: { password_reset_token } } = req;
     const { password } = req.body;
-    const getPasswordResetToken = await User.findOne({ where: { passwordResetToken } });
+    const getPasswordResetToken = await User.findOne(
+      { where: { passwordResetToken: password_reset_token } }
+    );
     if (!getPasswordResetToken) {
       return res.status(404).json({
         success: false,
@@ -206,9 +209,9 @@ export default class UserController {
       await User.update(
         {
           password,
-          passwordResetToken: ''
+          password_reset_token: ''
         },
-        { where: { passwordResetToken } }
+        { where: { passwordResetToken: password_reset_token } }
       );
     } catch (error) {
       return res.status(500).json({

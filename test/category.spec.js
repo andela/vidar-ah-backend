@@ -1,24 +1,29 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sinonChai from 'sinon-chai';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import assignRole from './helpers/assignRole';
 import app from '../index';
 import {
   user,
   validCategory,
+  validCategory2,
+  validCategoryBySuperAdmin,
   invalidCategoryTooShort,
   invalidCategoryDuplicate,
   validCategoryEdit
 } from './helpers/categoryDummyData';
 
-// import { User, Category } from '../models';
+import { superAdmin } from './helpers/userDummyData';
 
 chai.use(chaiHttp);
+chai.use(sinonChai);
 const { expect } = chai;
 let userToken;
 let categoryId;
+let superAdminToken;
 
-describe('TESTING THE CATEGORY FEATURE', () => {
+describe('Testing the category features', () => {
   before(async () => {
     const res = await chai
       .request(app)
@@ -31,7 +36,15 @@ describe('TESTING THE CATEGORY FEATURE', () => {
   //   await Category.truncate({ cascade: false });
   // });
 
-  describe('CREATE CATEGORY', () => {
+  before(async () => {
+    const res = await chai
+      .request(app)
+      .post('/api/v1/user/login')
+      .send(superAdmin);
+    superAdminToken = res.body.token;
+  });
+
+  describe('Create category', () => {
     describe('Make a request without a token', () => {
       it('It should return a 401 unauthorized error', async () => {
         const response = await chai
@@ -76,6 +89,26 @@ describe('TESTING THE CATEGORY FEATURE', () => {
       });
     });
 
+    describe('Make a request to create category as a super admin', () => {
+      it('should return a success message with status 201', async () => {
+        const response = await chai
+          .request(app)
+          .post('/api/v1/category')
+          .set('x-access-token', superAdminToken)
+          .send(validCategoryBySuperAdmin);
+        const {
+          status, body: {
+            success, message, id, categoryName
+          }
+        } = response;
+        categoryId = id;
+        expect(status).to.be.equal(201);
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal('Category successfully added.');
+        expect(categoryName).to.be.equal(validCategoryBySuperAdmin.category.toLowerCase());
+      });
+    });
+
     describe('Make a request with admin credentials', () => {
       before(async () => {
         await updateVerifiedStatus(user.email);
@@ -117,23 +150,64 @@ describe('TESTING THE CATEGORY FEATURE', () => {
       });
     });
 
-    describe('Make a request with category name less than 3 letters', () => {
-      it('should return a 422 error message', async () => {
+    describe('Make a request with valid and verified credentials', () => {
+      before(async () => { await updateVerifiedStatus(user.email); });
+      it('should return a success message with status 201', async () => {
         const res = await chai
           .request(app)
           .post('/api/v1/category')
           .set('authorization', userToken)
-          .send(invalidCategoryTooShort);
+          .send(validCategory2);
         const {
           status,
-          body: { success, errors }
+          body: { success, message, categoryName }
         } = res;
-        expect(status).to.be.equal(422);
-        expect(success).to.be.equal(false);
-        expect(errors[0]).to.be.equal('Category must be at least 3 characters long and no more than 30.');
+        expect(status).to.be.equal(201);
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal('Category successfully added.');
+        expect(categoryName).to.be.equal(validCategory2.category.toLowerCase());
+      });
+    });
+    describe('Make a request with category name less than 3 letters', () => {
+      it('should return a 422 error message', (done) => {
+        chai
+          .request(app)
+          .post('/api/v1/category')
+          .set('authorization', userToken)
+          .send(invalidCategoryTooShort)
+          .end((err, res) => {
+            const {
+              status,
+              body: { success, errors }
+            } = res;
+            expect(status).to.be.equal(422);
+            expect(success).to.be.equal(false);
+            expect(errors[0]).to.be.equal('Category must be at least 3 characters long and no more than 30.');
+            done(err);
+          });
       });
     });
 
+    describe('Make a request with duplicate category', () => {
+      before(async () => { await updateVerifiedStatus(user.email); });
+      it('should return a 409 error message', (done) => {
+        chai
+          .request(app)
+          .post('/api/v1/category')
+          .set('authorization', userToken)
+          .send(invalidCategoryDuplicate)
+          .end((err, res) => {
+            const {
+              status,
+              body: { success, errors }
+            } = res;
+            expect(status).to.be.equal(409);
+            expect(success).to.be.equal(false);
+            expect(errors[0]).to.be.equal('The specified category already exists');
+            done(err);
+          });
+      });
+    });
     describe('Make a request with category not specified', () => {
       it('should return a 422 error message', async () => {
         const res = await chai
@@ -172,7 +246,7 @@ describe('TESTING THE CATEGORY FEATURE', () => {
     });
   });
 
-  describe('EDIT CATEGORY', () => {
+  describe('Edit Category', () => {
     describe('Make a request with valid admin credentials', () => {
       before(async () => {
         await updateVerifiedStatus(user.email);
@@ -229,7 +303,7 @@ describe('TESTING THE CATEGORY FEATURE', () => {
     });
   });
 
-  describe('DELETE CATEGORY', () => {
+  describe('Delete Category', () => {
     describe('Make a request with valid admin credentials', () => {
       before((done) => {
         updateVerifiedStatus(user.email);

@@ -254,7 +254,7 @@ export const validateCommentExist = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      errors: ['Article does not exist']
+      error: [error.message]
     });
   }
 };

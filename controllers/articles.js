@@ -1,10 +1,10 @@
-import {
+import db, {
   Article,
   User,
+  Reaction,
   Ratings,
   Comment,
-  Category,
-  Reaction
+  Category
 } from '../models';
 import Paginate from '../helpers/paginate';
 /**
@@ -81,7 +81,7 @@ export default class ArticleController {
         }))
       });
     } catch (error) {
-      return res.status(400).json({ success: false, errors: ['Error rating this article'] });
+      return res.status(500).json({ success: false, errors: ['Error rating this article'] });
     }
   }
 
@@ -154,6 +154,48 @@ export default class ArticleController {
   }
 
   /**
+   * @desc create a reaction
+   * @param {Object} articleSlug, the response obje
+   * @param {Object} userId - the response object
+   * @param {Object} like - the response object
+   * @memberof ArticleController
+   * @return {Object} returns an object
+   */
+  static async createReaction(articleSlug, userId, like) {
+    let createdReaction;
+    const likeArticle = await Reaction.findOne({
+      where: {
+        articleSlug,
+        userId,
+      },
+    });
+    if (!likeArticle) {
+      await Reaction.create({
+        articleSlug,
+        userId,
+        likes: like,
+      });
+      createdReaction = true;
+    } else {
+      await Reaction.destroy({
+        where: {
+          articleSlug,
+          userId,
+        }
+      });
+      createdReaction = false;
+    }
+    const allLikes = await Reaction.findAndCountAll({
+      where: {
+        articleSlug,
+        userId,
+        likes: like
+      },
+    });
+    return { ...allLikes, createdReaction };
+  }
+
+  /**
    * @desc check if a user likes an article
    * @param {Object} req - the request object
    * @param {Object} res - the response object
@@ -161,54 +203,29 @@ export default class ArticleController {
    * @return {Object} returns an object
    */
   static async likeArticle(req, res) {
-    const { id: userId } = req.user;
-    const { slug: articleSlug } = req.params;
-
-    const getArticles = await Article.findOne({
-      where: {
-        slug: articleSlug
-      },
-    });
     try {
-      const likeArticle = await Reaction.findOne({
+      const { id: userId } = req.user;
+      const { slug: articleSlug } = req.params;
+      const getArticles = await Article.findOne({
         where: {
-          articleSlug,
-          userId
-        }
+          slug: articleSlug
+        },
       });
-      if (!likeArticle) {
-        await Reaction.create({
-          articleSlug,
-          userId,
-          likes: true,
-        });
-        const allLikes = await Reaction.findAndCountAll({
-          where: {
-            articleSlug,
-            userId,
-            likes: true
-          },
-        });
+      const reaction = await ArticleController.createReaction(articleSlug, userId, 'true');
 
+      if (reaction.createdReaction) {
         return res.status(201).json({
           success: true,
           message: 'You have liked this article',
           getArticles,
-          likes: allLikes.count
+          likes: reaction.count
         });
       }
-
-      await Reaction.destroy({
-        where: {
-          articleSlug,
-          userId,
-        }
-      });
-
       return res.status(200).json({
         success: true,
         message: 'You have unliked this article',
-        getArticles
+        getArticles,
+        likes: reaction.count
       });
     } catch (error) {
       return res.status(500).json({
@@ -226,50 +243,28 @@ export default class ArticleController {
    * @return {Object} returns an object
    */
   static async dislikeArticle(req, res) {
-    const { id: userId } = req.user;
-    const { slug: articleSlug } = req.params;
-    const getArticles = await Article.findOne({
-      where: {
-        slug: articleSlug
-      },
-    });
     try {
-      const likeArticle = await Reaction.findOne({
+      const { id: userId } = req.user;
+      const { slug: articleSlug } = req.params;
+      const getArticles = await Article.findOne({
         where: {
-          articleSlug,
-          userId
+          slug: articleSlug
         },
       });
-      if (!likeArticle) {
-        await Reaction.create({
-          articleSlug,
-          userId,
-          likes: false
-        });
-        const allDisLikes = await Reaction.findAndCountAll({
-          where: {
-            articleSlug,
-            userId,
-            likes: false
-          },
-        });
+      const reaction = await ArticleController.createReaction(articleSlug, userId, 'false');
+      if (reaction.createdReaction) {
         return res.status(201).json({
           success: true,
-          message: 'Article disliked successfully',
-          dislikes: allDisLikes.count
+          message: 'You have disliked this article',
+          getArticles,
+          dislikes: reaction.count
         });
       }
-
-      await Reaction.destroy({
-        where: {
-          articleSlug,
-          userId,
-        }
-      });
       return res.status(200).json({
         success: true,
         message: 'You have removed the dislike on this article',
-        getArticles
+        getArticles,
+        dislikes: reaction.count
       });
     } catch (error) {
       return res.status(500).json({
@@ -447,9 +442,6 @@ export default class ArticleController {
           },
           {
             model: Ratings,
-          },
-          {
-            model: Comment
           }
         ]
       });
@@ -466,6 +458,45 @@ export default class ArticleController {
         errors: ['Oops, something wrong occured.']
       });
     }
+  }
+
+  /**
+  * @description - Generate query for request to get articles with order
+  * @static
+  * @param {Object} type - type of order
+  * @param {Object} amount - amount of articles to get
+  * @memberof ArticleController
+  * @returns {Object} order for findAll
+  */
+  static getQuery(type, amount) {
+    const orders = {
+      ratings:
+      `
+        SELECT "Articles".*, ROUND(AVG("Ratings".rating), 1) AS avg_rating
+        FROM "Ratings"
+        JOIN "Articles" ON "Ratings"."articleId" = "Articles".id
+        GROUP BY "Articles".id, "Articles".slug
+        ORDER BY avg_rating DESC
+        LIMIT ${Number(amount) || 5}
+      `,
+      latest:
+      `
+        SELECT *
+        FROM "Articles"
+        ORDER BY "Articles"."createdAt" DESC
+        LIMIT ${Number(amount) || 5}
+      `,
+      comments:
+      `
+        SELECT "Articles".*, COUNT("Comments".comment) AS comment_count
+        FROM "Comments"
+        JOIN "Articles" ON "Comments"."articleSlug" = "Articles".slug
+        GROUP BY "Articles".id, "Articles".slug
+        ORDER BY comment_count DESC
+        LIMIT ${Number(amount) || 5}
+      `
+    };
+    return orders[type];
   }
 
   /**
@@ -498,61 +529,15 @@ export default class ArticleController {
         amount, type
       }
     } = req;
-    const order = ArticleController.getOrder(type);
-    const articles = await Article.findAll({
-      where: {},
-      limit: Number(amount) || 5,
-      order,
-      include: [
-        {
-          model: User,
-          as: 'author',
-          attributes: ['username', 'bio', 'name']
-        },
-        {
-          model: Comment
-        },
-        {
-          model: Ratings,
-        },
-      ],
-    });
+    const query = ArticleController.getQuery(type, amount);
+    const [, articles] = await db.sequelize.query(
+      query,
+      { raw: false }
+    );
     return res.status(200).json({
       success: true,
       message: 'Articles returned successfully.',
-      articles
+      articles: articles.rows
     });
-  }
-
-  /**
-  * @description - Get a specific number of articles with criteria
-  * @static
-  * @param {Object} req - the request object
-  * @param {Object} res - the response object
-  * @memberof ArticleController
-  * @returns {Object} class instance
-  */
-  static async getAmountOfArticlesByUser(req, res) {
-    try {
-      const {
-        user: {
-          id
-        }
-      } = req;
-      const articles = await Article.findAndCountAll({
-        where: {
-          userId: id
-        }
-      });
-      return res.json({
-        success: true,
-        articleCount: articles.count
-      });
-    } catch (error) {
-      return res.status(500).json({
-        succes: false,
-        errors: ['Oops, something wrong occured.']
-      });
-    }
   }
 }

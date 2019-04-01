@@ -55,17 +55,25 @@ export default class CategoryController {
     const { body: { category } } = req;
     const { id } = req;
     try {
-      const result = await Category.update({
-        categoryName: category
-      },
-      { where: { id }, returning: true });
-      const { dataValues: { id: returnedId, categoryName } } = result[1][0];
+      const result = await Category.update(
+        {
+          categoryName: category
+        },
+        { where: { id }, returning: true }
+      );
       if (result[0]) {
+        const { dataValues: { id: returnedId, categoryName } } = result[1][0];
         return res.status(200).json({
           success: true,
           message: 'Category successfully updated',
           categoryName,
           id: returnedId
+        });
+      }
+      if (!result[0]) {
+        return res.status(404).json({
+          success: false,
+          errors: ['No category matches the specified id. Please confirm the category Id and try again.']
         });
       }
     } catch (error) {
@@ -83,21 +91,15 @@ export default class CategoryController {
   static async deleteCategory(req, res) {
     const { params: { id } } = req;
     try {
-      const deletedCategory = await Category.findOne({
-        where: { id }, returning: true
-      });
       await Category.destroy({
         where: {
           id
         },
         returning: true
       });
-      const { dataValues: { id: returnedId, categoryName } } = deletedCategory;
       return res.status(200).json({
         success: true,
         message: 'Category deleted.',
-        categoryName,
-        id: returnedId
       });
     } catch (err) {
       return res.status(500).json({ success: false, errors: [err.message] });
