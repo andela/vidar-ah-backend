@@ -60,6 +60,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'user',
       unique: false
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'https://img.icons8.com/ios-glyphs/30/000000/user-male.png'
     }
   };
 
