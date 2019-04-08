@@ -9,6 +9,7 @@ import swaggerUI from 'swagger-ui-express';
 import routes from './routes/index';
 import doc from './doc.json';
 import CreateSuperAdmin from './seeders/createSuperAdmin';
+import CreateArticles from './seeders/createArticles';
 
 const { registerSuperAdmin } = CreateSuperAdmin;
 
@@ -74,6 +75,7 @@ app.use((err, res) => {
 });
 
 registerSuperAdmin();
+CreateArticles();
 
 // finally, let's start our server...
 app.listen(process.env.PORT, () => {
