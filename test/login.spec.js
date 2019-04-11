@@ -171,7 +171,7 @@ describe('User login authentication: ', () => {
         status,
         body: { success, message }
       } = res;
-      expect(res.body).be.an('object').which.has.keys(['success', 'message', 'token']);
+      expect(res.body).be.an('object').which.has.keys(['success', 'message', 'token', 'user']);
       expect(status).to.be.equal(200);
       expect(success).to.be.equal(true);
       expect(message).to.be.equal(`Welcome ${superAdmin.username}`);

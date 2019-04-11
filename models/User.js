@@ -5,7 +5,7 @@ import sendMail from '../helpers/emails';
 
 dotenv.config();
 
-const { HOST_URL } = process.env;
+const { HOST_URL_FRONTEND } = process.env;
 
 module.exports = (sequelize, DataTypes) => {
   const userSchema = {
@@ -113,7 +113,7 @@ module.exports = (sequelize, DataTypes) => {
     const emailPayload = {
       name,
       email,
-      link: `${HOST_URL}/api/v1/verify/${verificationId}`,
+      link: `${HOST_URL_FRONTEND}/verify/${verificationId}`,
       subject: "Welcome to Author's Haven",
       message: 'verify your account'
     };
