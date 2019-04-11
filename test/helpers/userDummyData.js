@@ -110,7 +110,7 @@ export const validLoginUser = {
 
 export const myUser = {
   username: 'Alex20',
-  email: 'jacynnadi20@gmail.com',
+  email: 'jacynnad120@gmail.com',
   name: 'Jacy20',
   password: 'password'
 };

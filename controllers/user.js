@@ -7,7 +7,7 @@ import sendMail from '../helpers/emails';
 import getName from '../helpers/user';
 import { User } from '../models';
 
-const { HOST_URL } = process.env;
+const { HOST_URL_FRONTEND } = process.env;
 
 dotenv.config();
 const { JWT_SECRET } = process.env;
@@ -41,12 +41,15 @@ export default class UserController {
     })
       .then((newUser) => {
         const {
-          dataValues: { id }
+          dataValues: { id, role }
         } = newUser;
         const token = generateToken(id);
         return res.status(201).json({
           success: true,
           message: 'You have signed up successfully.',
+          user: {
+            name, username, email, role
+          },
           token
         });
       })
@@ -91,9 +94,18 @@ export default class UserController {
     const expiresIn = rememberMe ? '240h' : '24h';
     try {
       const token = generateToken(user.id, expiresIn);
+      const {
+        username, email, name, role
+      } = user;
       return res.status(200).json({
         success: true,
-        message: `Welcome ${user.username}`,
+        message: `Welcome ${username}`,
+        user: {
+          username,
+          email,
+          name,
+          role
+        },
         token
       });
     } catch (err) {
@@ -168,7 +180,7 @@ export default class UserController {
     const emailPayload = {
       name,
       email,
-      link: `${HOST_URL}/api/v1/resetpassword/${passwordResetToken}`,
+      link: `${HOST_URL_FRONTEND}/resetpassword/${passwordResetToken}`,
       subject: 'Reset your password',
       message: 'reset your password'
     };
