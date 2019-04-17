@@ -606,4 +606,19 @@ describe('/POST articles dislike', () => {
         done(err);
       });
   });
+
+  it('create an article with a wrong token', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/articles')
+      .send(article1)
+      .set('authorization', 'eyj.wpiecjwirejncvoeie[spcjoeirnoeirjnoeircerr')
+      .end((err, res) => {
+        expect(res).to.have.status(401);
+        expect(res.body).to.have.property('success').equal(false);
+        expect(res.body).to.have.property('errors');
+        expect(res.body.errors[0]).equal('Your session has expired, please login again to continue');
+        done(err);
+      });
+  });
 });

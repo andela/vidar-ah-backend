@@ -1,4 +1,5 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import UserController from '../controllers/user';
 import passport from '../auth/passport';
 import ProfileController from '../controllers/profile';
@@ -118,10 +119,17 @@ apiRoutes.get('/auth/google',
 
 apiRoutes.get('/auth/google/callback',
   passport.authenticate(
-    'google', { failureRedirect: '/login' }
+    'google', { failureRedirect: `${process.env.HOST_URL_FRONTEND}/login` }
   ),
   (req, res) => {
-    res.redirect('/');
+    const { user } = req;
+    user.password = undefined;
+    user.verified = undefined;
+    user.verificationId = undefined;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+    const token = jwt.sign({ ...req.user }, process.env.JWT_SECRET);
+    res.redirect(`${process.env.HOST_URL_FRONTEND}/social/callback?token=${token}`);
   });
 
 apiRoutes.get('/auth/facebook',
@@ -133,10 +141,17 @@ apiRoutes.get('/auth/facebook',
 
 apiRoutes.get('/auth/facebook/callback',
   passport.authenticate(
-    'facebook', { failureRedirect: '/login' }
+    'facebook', { failureRedirect: `${process.env.HOST_URL_FRONTEND}/login` }
   ),
   (req, res) => {
-    res.redirect('/');
+    const { user } = req;
+    user.password = undefined;
+    user.verified = undefined;
+    user.verificationId = undefined;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+    const token = jwt.sign({ ...req.user }, process.env.JWT_SECRET);
+    res.redirect(`${process.env.HOST_URL_FRONTEND}/social/callback?token=${token}`);
   });
 
 apiRoutes.post(
