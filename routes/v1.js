@@ -144,6 +144,7 @@ apiRoutes.get('/auth/facebook/callback',
     'facebook', { failureRedirect: `${process.env.HOST_URL_FRONTEND}/login` }
   ),
   (req, res) => {
+    console.log(req.user);
     const { user } = req;
     user.password = undefined;
     user.verified = undefined;
