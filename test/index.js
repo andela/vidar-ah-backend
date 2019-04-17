@@ -1,7 +1,13 @@
+import './comment.spec';
+import './category.spec';
 import './user.spec';
 import './socialLoginSpec';
-
-require('./user.spec');
-require('./profile.spec');
-require('./login.spec');
-require('./updateVerifiedStatusHelper.spec');
+import './login.spec';
+import './profile.spec';
+import './article.spec';
+import './updateVerifiedStatusHelper.spec';
+import './resetpassword.spec';
+import './follow.spec';
+import './rating.spec';
+import './stats.spec';
+import './likeComment.spec';

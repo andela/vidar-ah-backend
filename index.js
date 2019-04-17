@@ -1,7 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
-import session from 'express-session';
 import cors from 'cors';
 import passport from 'passport';
 import errorhandler from 'errorhandler';
@@ -9,6 +8,9 @@ import dotenv from 'dotenv';
 import swaggerUI from 'swagger-ui-express';
 import routes from './routes/index';
 import doc from './doc.json';
+import CreateSuperAdmin from './seeders/createSuperAdmin';
+
+const { registerSuperAdmin } = CreateSuperAdmin;
 
 // read .env config
 dotenv.config();
@@ -24,18 +26,7 @@ app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(session({
-  secret: process.env.SECRET,
-  key: 'vidar',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 60000,
-    expires: false
-  }
-}));
 app.use(passport.initialize());
-app.use(passport.session());
 
 // configure router
 app.use('/api', routes);
@@ -81,6 +72,8 @@ app.use((err, res) => {
     },
   });
 });
+
+registerSuperAdmin();
 
 // finally, let's start our server...
 app.listen(process.env.PORT, () => {
