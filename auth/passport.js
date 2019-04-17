@@ -75,7 +75,7 @@ passport.use(new FacebookStrategy(
         email
       }
     });
-    return done(null, user[0]);
+    return done(null, user[0].dataValues);
   }
 ));
 
