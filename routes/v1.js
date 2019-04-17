@@ -129,7 +129,6 @@ apiRoutes.get('/auth/google/callback',
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
     const token = jwt.sign({ ...user }, process.env.JWT_SECRET);
-    console.log(user);
     res.redirect(`${process.env.HOST_URL_FRONTEND}/social/callback?token=${token}`);
   });
 
