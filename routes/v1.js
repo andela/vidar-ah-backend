@@ -128,7 +128,7 @@ apiRoutes.get('/auth/google/callback',
     user.verificationId = undefined;
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
-    const token = jwt.sign({ ...req.user }, process.env.JWT_SECRET);
+    const token = jwt.sign({ ...user }, process.env.JWT_SECRET);
     console.log(user);
     res.redirect(`${process.env.HOST_URL_FRONTEND}/social/callback?token=${token}`);
   });
@@ -151,7 +151,7 @@ apiRoutes.get('/auth/facebook/callback',
     user.verificationId = undefined;
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
-    const token = jwt.sign({ ...req.user }, process.env.JWT_SECRET);
+    const token = jwt.sign({ ...user }, process.env.JWT_SECRET);
     res.redirect(`${process.env.HOST_URL_FRONTEND}/social/callback?token=${token}`);
   });
 
