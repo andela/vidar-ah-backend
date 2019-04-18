@@ -32,7 +32,7 @@ export default class ProfileController {
       });
 
       const {
-        email, username, name, bio, createdAt, updatedAt
+        email, username, name, bio, createdAt, updatedAt, interests, image
       } = foundUser;
       const userProfile = {
         id,
@@ -40,6 +40,8 @@ export default class ProfileController {
         username,
         name,
         bio,
+        interests,
+        image,
         createdAt,
         updatedAt
       };
@@ -71,10 +73,12 @@ export default class ProfileController {
    */
   static async editProfile(req, res) {
     const { id } = req.user;
-    const { bio, firstname, lastname } = req.body;
+    const {
+      bio, firstname, lastname, interests
+    } = req.body;
     const name = `${firstname} ${lastname}`;
     try {
-      const [, [updatedProfile]] = await User.update({ bio, name }, {
+      const [, [updatedProfile]] = await User.update({ bio, name, interests }, {
         returning: true,
         raw: true,
         where: { id }
@@ -84,7 +88,7 @@ export default class ProfileController {
 
       const splitNamesObject = splitName(updatedProfile.name);
 
-      return res.status(205).json({
+      return res.status(202).json({
         success: true,
         body: _.extendOwn(updatedProfile, splitNamesObject)
       });
@@ -111,7 +115,7 @@ export default class ProfileController {
       const [, [{
         name, email, username, bio, image: profilePic, createdAt, updatedAt
       }]] = await User.update({ image }, { returning: true, raw: true, where: { id } });
-      return res.status(205).json({
+      return res.status(202).json({
         success: true,
         message: 'Profile image successfully updated',
         result: {

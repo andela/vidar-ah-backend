@@ -1,14 +1,20 @@
 // Require the dependencies
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
+import CommentController from '../controllers/comment';
 import app from '../index';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import { validCommentUser, wrongCommentUser } from './helpers/userDummyData';
 import { validComment } from './helpers/commentDummyData';
 import { article2 } from './helpers/articleDummyData';
 
+const { createComment } = CommentController;
+
 // Configure chai
 chai.use(chaiHttp);
+chai.use(sinonChai);
 const { expect } = chai;
 
 // Keep Token
@@ -132,6 +138,27 @@ describe('Post a comment', () => {
 });
 describe('Post a comment', () => {
   before(() => updateVerifiedStatus(validCommentUser.email));
+
+  it('fakes server error getting all cats', async () => {
+    const req = {
+      user: { id: 3 },
+      params: {
+        slug: articleSlug,
+      },
+      body: {
+        comment: null
+      }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await createComment(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
+  });
+
   it('returns successfully post comment', (done) => {
     chai
       .request(app)

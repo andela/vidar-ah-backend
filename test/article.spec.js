@@ -3,14 +3,20 @@
 /* eslint-disable prefer-destructuring */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import path from 'path';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import app from '../index';
 import { article1, user2 } from './helpers/dummyData';
 import { article2 } from './helpers/articleDummyData';
 import { myUser } from './helpers/userDummyData';
+import articleController from '../controllers/articles';
+
+const { createArticle } = articleController;
 
 chai.use(chaiHttp);
+chai.use(sinonChai);
 const { expect } = chai;
 
 let userToken;
@@ -55,7 +61,7 @@ describe('ARTICLES', () => {
   describe('Create an article by an authenticated and verified user', () => {
     before(async () => { await updateVerifiedStatus(user2.email); });
 
-    it('Should create a new article.', async () => {
+    it('should create a new article.', async () => {
       const res = await chai
         .request(app)
         .post('/api/v1/articles')
@@ -68,7 +74,27 @@ describe('ARTICLES', () => {
       expect(message).to.be.equal('New article created successfully');
     });
 
-    it('Should create a new article with image.', async () => {
+    it('should return a server error.', async () => {
+      const req = {
+        user: { id: 3 },
+        params: {
+          slug: articleSlug,
+        },
+        body: {
+          ...article1,
+        }
+      };
+      const res = {
+        status() {},
+        json() {}
+      };
+
+      sinon.stub(res, 'status').returnsThis(500);
+      await createArticle(req, res);
+      expect(res.status).to.have.been.calledOnceWith(500);
+    });
+
+    it('should create a new article with image.', async () => {
       const res = await chai
         .request(app)
         .post('/api/v1/articles')

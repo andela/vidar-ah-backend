@@ -7,10 +7,10 @@ import sendMail from '../helpers/emails';
 import getName from '../helpers/user';
 import { User } from '../models';
 
-const { HOST_URL_FRONTEND } = process.env;
-
 dotenv.config();
-const { JWT_SECRET } = process.env;
+
+const { HOST_URL_FRONTEND, JWT_SECRET } = process.env;
+
 const generateToken = (id, expiresIn = '24h') => jwt.sign({ id }, JWT_SECRET, { expiresIn });
 
 /**
@@ -30,14 +30,15 @@ export default class UserController {
   static registerUser(req, res) {
     const {
       body: {
-        email, username, password, name
+        email, username, password, name, interests
       }
     } = req;
     User.create({
       email,
       username,
       password,
-      name
+      name,
+      interests
     })
       .then((newUser) => {
         const {
