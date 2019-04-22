@@ -1,14 +1,20 @@
 import dotenv from 'dotenv';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import app from '../index';
 import { validFollowUser, validFollowUser2 } from './helpers/userDummyData';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import getId from './helpers/userDetails';
+import followController from '../controllers/follow';
+
+const { getUserFollowers, getUserFollowings } = followController;
 
 dotenv.config();
 
 chai.use(chaiHttp);
+chai.use(sinonChai);
 const { expect } = chai;
 
 let userToken = [];
@@ -169,6 +175,76 @@ describe('Make a valid request to unfollow another user', () => {
         expect(message).to.be.equal('User unfollowed successfully.');
         done(err);
       });
+  });
+});
+
+describe("Make a request to get a user's followers and followings", () => {
+  it('should return the user followers with a success message.', (done) => {
+    const url = '/api/v1/user/followers';
+    chai
+      .request(app)
+      .get(url)
+      .set('Authorization', userToken)
+      .end((err, res) => {
+        const {
+          status, body: {
+            message, success, followers,
+          }
+        } = res;
+        expect(status).to.be.equal(200);
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal("Successfully gotten user's followers");
+        expect(followers).to.be.instanceOf(Array);
+        done(err);
+      });
+  });
+
+  it('should return the user followers with a success message.', (done) => {
+    const url = '/api/v1/user/followings';
+    chai
+      .request(app)
+      .get(url)
+      .set('Authorization', userToken)
+      .end((err, res) => {
+        const {
+          status, body: {
+            message, success, followings
+          }
+        } = res;
+        expect(status).to.be.equal(200);
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal("Successfully gotten user's followings");
+        expect(followings).to.be.instanceOf(Array);
+        done(err);
+      });
+  });
+
+  it('should return a server error.', async () => {
+    const req = {
+      user: { id: null }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await getUserFollowers(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
+  });
+
+  it('should return a server error.', async () => {
+    const req = {
+      user: { id: null }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await getUserFollowings(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
   });
 });
 
