@@ -259,7 +259,6 @@ export const validateCommentExist = async (req, res, next) => {
   }
 };
 
-
 export const validateArticleExist = async (req, res, next) => {
   const { slug } = req.params;
   try {
@@ -306,3 +305,13 @@ export const validateImages = [
     .exists()
     .withMessage('An image file should be uploaded to complete this request')
 ];
+
+export const validateInterest = (req, res, next) => {
+  const { body: { interests } } = req;
+  if (interests) {
+    req.body.interests = interests
+      .split(',')
+      .map(interest => interest.replace(/(\[|\])/, '').trim().toLowerCase());
+  }
+  return next();
+};

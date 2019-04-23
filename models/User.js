@@ -65,6 +65,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'https://img.icons8.com/ios-glyphs/30/000000/user-male.png'
+    },
+    interests: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+      unique: false,
+      defaultValue: [],
     }
   };
 
