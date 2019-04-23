@@ -391,14 +391,36 @@ export default class ArticleController {
           }
         ]
       });
+
+      const likes = await article.getArticleReactions({ where: { likes: true } });
+      const dislikes = await article.getArticleReactions({ where: { likes: false } });
+
       if (req.user) {
         const { id } = req.user;
         const viewer = await User.findOne({ where: { id } });
         await viewer.addView(article);
+
+        let userReaction;
+
+        const getUserReaction = await article.getArticleReactions({ where: { userId: id } });
+        if (getUserReaction[0]) {
+          userReaction = (getUserReaction[0].likes) ? 'like' : 'dislike';
+        } else userReaction = null;
+
+        return res.status(200).json({
+          success: true,
+          article: article.dataValues,
+          likeCount: likes.length,
+          dislikeCount: dislikes.length,
+          userReaction
+        });
       }
+
       return res.status(200).json({
         success: true,
-        article: article.dataValues
+        article: article.dataValues,
+        likeCount: likes.length,
+        dislikeCount: dislikes.length,
       });
     } catch (error) {
       return res.status(404).json({
@@ -471,7 +493,7 @@ export default class ArticleController {
   static getQuery(type, amount) {
     const orders = {
       ratings:
-      `
+        `
         SELECT "Articles".*, ROUND(AVG("Ratings".rating), 1) AS avg_rating
         FROM "Ratings"
         JOIN "Articles" ON "Ratings"."articleId" = "Articles".id
@@ -480,14 +502,14 @@ export default class ArticleController {
         LIMIT ${Number(amount) || 5}
       `,
       latest:
-      `
+        `
         SELECT *
         FROM "Articles"
         ORDER BY "Articles"."createdAt" DESC
         LIMIT ${Number(amount) || 5}
       `,
       comments:
-      `
+        `
         SELECT "Articles".*, COUNT("Comments".comment) AS comment_count
         FROM "Comments"
         JOIN "Articles" ON "Comments"."articleSlug" = "Articles".slug
