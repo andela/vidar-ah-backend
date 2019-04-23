@@ -1,13 +1,19 @@
 // Require the dependencies
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import path from 'path';
 import app from '../index';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import { validUser, profileDetails } from './helpers/userDummyData';
+import profileController from '../controllers/profile';
+
+const { updateProfileImage } = profileController;
 
 // Configure chai
 chai.use(chaiHttp);
+chai.use(sinonChai);
 const { expect } = chai;
 
 // Keep Token
@@ -106,7 +112,7 @@ describe('Update profile details', () => {
           status,
           body: { success, body }
         } = res;
-        expect(status).to.be.equal(205);
+        expect(status).to.be.equal(202);
         expect(success).to.be.equal(true);
         expect(body).to.be.a('Object');
         expect(body.username).to.have.string('JamesBond');
@@ -126,7 +132,7 @@ describe('Update profile details', () => {
       .type('form')
       .end((err, res) => {
         const { status, body: { success, result, message } } = res;
-        expect(status).to.be.equal(205);
+        expect(status).to.be.equal(202);
         expect(result.image).to.be.a('String');
         expect(success).to.be.equal(true);
         expect(message).to.be.equal('Profile image successfully updated');
@@ -147,6 +153,26 @@ describe('Update profile details', () => {
         expect(errors[0]).to.be.equal('An image file should be uploaded to complete this request');
         done(err);
       });
+  });
+
+
+  it('should return a server error.', async () => {
+    const req = {
+      user: {
+        id: 1
+      },
+      body: {
+        images: [null]
+      }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await updateProfileImage(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
   });
 });
 

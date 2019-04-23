@@ -1,14 +1,20 @@
 import dotenv from 'dotenv';
 import chai from 'chai';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import chaiHttp from 'chai-http';
 import app from '../index';
 import { validStatUser } from './helpers/userDummyData';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import { statArticle } from './helpers/dummyData';
+import userController from '../controllers/user';
+
+const { getReadingStats } = userController;
 
 dotenv.config();
 
 chai.use(chaiHttp);
+chai.use(sinonChai);
 const { expect } = chai;
 
 let userToken;
@@ -67,7 +73,7 @@ describe('View an article', () => {
 });
 
 describe('View an article', () => {
-  it('should a number', async () => {
+  it('should return a number', async () => {
     const res = await chai
       .request(app)
       .get('/api/v1/user/readingstats')
@@ -77,5 +83,18 @@ describe('View an article', () => {
     expect(success).to.be.equal(true);
     expect(numberOfArticlesRead).to.be.a('number');
     expect(numberOfArticlesRead).to.be.equal(1);
+  });
+
+  it('should return a server error', async () => {
+    const req = {
+      user: { id: null },
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+    sinon.stub(res, 'status').returnsThis(500);
+    await getReadingStats(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
   });
 });

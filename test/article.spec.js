@@ -3,14 +3,20 @@
 /* eslint-disable prefer-destructuring */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import path from 'path';
 import updateVerifiedStatus from './helpers/updateVerifiedStatus';
 import app from '../index';
 import { article1, user2 } from './helpers/dummyData';
 import { article2 } from './helpers/articleDummyData';
 import { myUser } from './helpers/userDummyData';
+import articleController from '../controllers/articles';
+
+const { createArticle } = articleController;
 
 chai.use(chaiHttp);
+chai.use(sinonChai);
 const { expect } = chai;
 
 let userToken;
@@ -55,7 +61,7 @@ describe('ARTICLES', () => {
   describe('Create an article by an authenticated and verified user', () => {
     before(async () => { await updateVerifiedStatus(user2.email); });
 
-    it('Should create a new article.', async () => {
+    it('should create a new article.', async () => {
       const res = await chai
         .request(app)
         .post('/api/v1/articles')
@@ -68,7 +74,27 @@ describe('ARTICLES', () => {
       expect(message).to.be.equal('New article created successfully');
     });
 
-    it('Should create a new article with image.', async () => {
+    it('should return a server error.', async () => {
+      const req = {
+        user: { id: 3 },
+        params: {
+          slug: articleSlug,
+        },
+        body: {
+          ...article1,
+        }
+      };
+      const res = {
+        status() {},
+        json() {}
+      };
+
+      sinon.stub(res, 'status').returnsThis(500);
+      await createArticle(req, res);
+      expect(res.status).to.have.been.calledOnceWith(500);
+    });
+
+    it('should create a new article with image.', async () => {
       const res = await chai
         .request(app)
         .post('/api/v1/articles')
@@ -347,8 +373,17 @@ describe('/GET articles', () => {
       chai
         .request(app)
         .get(`/api/v1/articles/${articleSlug}`)
+        .set('authorization', token)
         .end((err, res) => {
-          const { status, body: { success, article } } = res;
+          const {
+            status, body: {
+              success,
+              article,
+              likeCount,
+              dislikeCount,
+              userReaction
+            }
+          } = res;
           expect(status).to.be.equal(200);
           expect(success).to.be.equal(true);
           expect(article).to.be.an('object');
@@ -358,6 +393,36 @@ describe('/GET articles', () => {
           expect(article).to.haveOwnProperty('body');
           expect(article).to.haveOwnProperty('description');
           expect(article).to.haveOwnProperty('author');
+          expect(likeCount).to.be.equal(0);
+          expect(dislikeCount).to.be.equal(0);
+          expect(userReaction).to.be.equal(null);
+          done(err);
+        });
+    });
+    it('should return the article if user is not logged in', (done) => {
+      chai
+        .request(app)
+        .get(`/api/v1/articles/${articleSlug}`)
+        .end((err, res) => {
+          const {
+            status, body: {
+              success,
+              article,
+              likeCount,
+              dislikeCount,
+            }
+          } = res;
+          expect(status).to.be.equal(200);
+          expect(success).to.be.equal(true);
+          expect(article).to.be.an('object');
+          expect(article).to.haveOwnProperty('id');
+          expect(article).to.haveOwnProperty('slug');
+          expect(article).to.haveOwnProperty('title');
+          expect(article).to.haveOwnProperty('body');
+          expect(article).to.haveOwnProperty('description');
+          expect(article).to.haveOwnProperty('author');
+          expect(likeCount).to.be.equal(0);
+          expect(dislikeCount).to.be.equal(0);
           done(err);
         });
     });
@@ -537,6 +602,21 @@ describe('/POST articles like', () => {
       });
   });
 
+  it('should create another article', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/articles')
+      .set('authorization', userToken)
+      .send(article2)
+      .end((err, res) => {
+        articleSlug3 = res.body.article.slug;
+        expect(res).to.have.status(201);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(res.body).to.have.property('message').equal('New article created successfully');
+        done(err);
+      });
+  });
+
   it('should return an error if the article is not found', (done) => {
     chai
       .request(app)
@@ -564,6 +644,20 @@ describe('/POST articles like', () => {
       });
   });
 
+  it('should create an article like reaction', (done) => {
+    chai
+      .request(app)
+      .post(`/api/v1/like_article/${articleSlug3}`)
+      .set('authorization', userToken2)
+      .end((err, res) => {
+        reaction = res.body.reaction;
+        expect(res).to.have.status(201);
+        expect(res.body).to.have.property('success').equal(true);
+        expect(res.body).to.have.property('message').equal('You have liked this article');
+        done(err);
+      });
+  });
+
   it('should unlike an article reaction if the article has been liked', (done) => {
     chai
       .request(app)
@@ -578,6 +672,38 @@ describe('/POST articles like', () => {
   });
 });
 
+describe('Get a liked article by its slug', () => {
+  it('should return the article', (done) => {
+    chai
+      .request(app)
+      .get(`/api/v1/articles/${articleSlug3}`)
+      .set('authorization', userToken2)
+      .end((err, res) => {
+        const {
+          status, body: {
+            success,
+            article,
+            likeCount,
+            dislikeCount,
+            userReaction
+          }
+        } = res;
+        expect(status).to.be.equal(200);
+        expect(success).to.be.equal(true);
+        expect(article).to.be.an('object');
+        expect(article).to.haveOwnProperty('id');
+        expect(article).to.haveOwnProperty('slug');
+        expect(article).to.haveOwnProperty('title');
+        expect(article).to.haveOwnProperty('body');
+        expect(article).to.haveOwnProperty('description');
+        expect(article).to.haveOwnProperty('author');
+        expect(likeCount).to.be.equal(1);
+        expect(dislikeCount).to.be.equal(0);
+        expect(userReaction).to.be.equal('like');
+        done(err);
+      });
+  });
+});
 
 describe('/POST articles dislike', () => {
   it('should create an article dislike reaction', (done) => {

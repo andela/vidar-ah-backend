@@ -32,6 +32,7 @@ import {
   validateGetOrder,
   validateCommentExist,
   validateImages,
+  validateInterest
 } from '../middleware/validation';
 import FollowController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -52,12 +53,12 @@ const { viewProfile, editProfile, updateProfileImage } = ProfileController;
 const apiRoutes = express.Router();
 
 apiRoutes.route('/user/signup')
-  .post(validateSignup, returnValidationErrors, UserController.registerUser);
+  .post(validateSignup, validateInterest, returnValidationErrors, UserController.registerUser);
 
 apiRoutes.route('/userprofile')
   .get(Auth.verifyUser, isUserVerified, viewProfile)
   .patch(Auth.verifyUser, isUserVerified, addImages, validateProfileChange,
-    returnValidationErrors, editProfile);
+    validateInterest, returnValidationErrors, editProfile);
 
 apiRoutes.route('/userprofile/image')
   .patch(Auth.verifyUser, isUserVerified, addImages,

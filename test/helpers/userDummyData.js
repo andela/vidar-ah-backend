@@ -32,7 +32,8 @@ export const user3 = {
   name: 'Olamilekan',
   username: 'leksyib',
   email: 'leksyib1t4@gmail.com',
-  password: '1234567g'
+  password: '1234567g',
+  interests: 'Sports'
 };
 
 export const validUser = {

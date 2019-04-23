@@ -389,16 +389,41 @@ export default class ArticleController {
           {
             model: Comment,
           }
+        ],
+        order: [
+          [Comment, 'createdAt', 'desc']
         ]
       });
+
+      const likes = await article.getArticleReactions({ where: { likes: true } });
+      const dislikes = await article.getArticleReactions({ where: { likes: false } });
+
       if (req.user) {
         const { id } = req.user;
         const viewer = await User.findOne({ where: { id } });
         await viewer.addView(article);
+
+        let userReaction;
+
+        const getUserReaction = await article.getArticleReactions({ where: { userId: id } });
+        if (getUserReaction[0]) {
+          userReaction = (getUserReaction[0].likes) ? 'like' : 'dislike';
+        } else userReaction = null;
+
+        return res.status(200).json({
+          success: true,
+          article: article.dataValues,
+          likeCount: likes.length,
+          dislikeCount: dislikes.length,
+          userReaction
+        });
       }
+
       return res.status(200).json({
         success: true,
-        article: article.dataValues
+        article: article.dataValues,
+        likeCount: likes.length,
+        dislikeCount: dislikes.length,
       });
     } catch (error) {
       return res.status(404).json({
@@ -471,27 +496,31 @@ export default class ArticleController {
   static getQuery(type, amount) {
     const orders = {
       ratings:
-      `
-        SELECT "Articles".*, ROUND(AVG("Ratings".rating), 1) AS avg_rating
+        `
+        SELECT "Articles".*,"name", ROUND(AVG("Ratings".rating), 1) AS avg_rating
         FROM "Ratings"
         JOIN "Articles" ON "Ratings"."articleId" = "Articles".id
-        GROUP BY "Articles".id, "Articles".slug
+        LEFT JOIN "Users" ON "Users".id = "Articles"."userId"
+        GROUP BY "Articles".id, "Articles".slug, "Users".name
         ORDER BY avg_rating DESC
         LIMIT ${Number(amount) || 5}
       `,
       latest:
-      `
-        SELECT *
+        `
+        SELECT "Articles".*,"name"
         FROM "Articles"
+        LEFT JOIN "Users" ON "Users".id = "Articles"."userId"
+        GROUP BY "Users".name, "Articles".id, "Articles".title, "Articles".slug, "Users".id
         ORDER BY "Articles"."createdAt" DESC
         LIMIT ${Number(amount) || 5}
       `,
       comments:
-      `
-        SELECT "Articles".*, COUNT("Comments".comment) AS comment_count
+        `
+        SELECT "Articles".*, "name", COUNT("Comments".comment) AS comment_count
         FROM "Comments"
         JOIN "Articles" ON "Comments"."articleSlug" = "Articles".slug
-        GROUP BY "Articles".id, "Articles".slug
+        LEFT JOIN "Users" ON "Users".id = "Articles"."userId"
+        GROUP BY "Articles".id, "Articles".slug, "Users".name
         ORDER BY comment_count DESC
         LIMIT ${Number(amount) || 5}
       `
