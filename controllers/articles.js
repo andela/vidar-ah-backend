@@ -389,6 +389,9 @@ export default class ArticleController {
           {
             model: Comment,
           }
+        ],
+        order: [
+          [Comment, 'createdAt', 'desc']
         ]
       });
 
@@ -494,26 +497,30 @@ export default class ArticleController {
     const orders = {
       ratings:
         `
-        SELECT "Articles".*, ROUND(AVG("Ratings".rating), 1) AS avg_rating
+        SELECT "Articles".*,"name", ROUND(AVG("Ratings".rating), 1) AS avg_rating
         FROM "Ratings"
         JOIN "Articles" ON "Ratings"."articleId" = "Articles".id
-        GROUP BY "Articles".id, "Articles".slug
+        LEFT JOIN "Users" ON "Users".id = "Articles"."userId"
+        GROUP BY "Articles".id, "Articles".slug, "Users".name
         ORDER BY avg_rating DESC
         LIMIT ${Number(amount) || 5}
       `,
       latest:
         `
-        SELECT *
+        SELECT "Articles".*,"name"
         FROM "Articles"
+        LEFT JOIN "Users" ON "Users".id = "Articles"."userId"
+        GROUP BY "Users".name, "Articles".id, "Articles".title, "Articles".slug, "Users".id
         ORDER BY "Articles"."createdAt" DESC
         LIMIT ${Number(amount) || 5}
       `,
       comments:
         `
-        SELECT "Articles".*, COUNT("Comments".comment) AS comment_count
+        SELECT "Articles".*, "name", COUNT("Comments".comment) AS comment_count
         FROM "Comments"
         JOIN "Articles" ON "Comments"."articleSlug" = "Articles".slug
-        GROUP BY "Articles".id, "Articles".slug
+        LEFT JOIN "Users" ON "Users".id = "Articles"."userId"
+        GROUP BY "Articles".id, "Articles".slug, "Users".name
         ORDER BY comment_count DESC
         LIMIT ${Number(amount) || 5}
       `

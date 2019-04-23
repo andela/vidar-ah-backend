@@ -48,7 +48,7 @@ export default class UserController {
           success: true,
           message: 'You have signed up successfully.',
           user: {
-            name, username, email, role
+            name, username, email, role, id
           },
           token
         });
@@ -95,7 +95,7 @@ export default class UserController {
     try {
       const token = generateToken(user.id, expiresIn);
       const {
-        username, email, name, role
+        username, email, name, role, id
       } = user;
       return res.status(200).json({
         success: true,
@@ -104,7 +104,8 @@ export default class UserController {
           username,
           email,
           name,
-          role
+          role,
+          id
         },
         token
       });
