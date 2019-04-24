@@ -306,6 +306,12 @@ export const validateImages = [
     .withMessage('An image file should be uploaded to complete this request')
 ];
 
+export const validateReport = [
+  check('type')
+    .exists()
+    .withMessage('Please specify a report type.')
+];
+
 export const validateInterest = (req, res, next) => {
   const { body: { interests } } = req;
   if (interests) {

@@ -11,7 +11,7 @@ dotenv.config();
 
 const { HOST_URL_FRONTEND, JWT_SECRET } = process.env;
 
-const generateToken = (id, expiresIn = '24h') => jwt.sign({ id }, JWT_SECRET, { expiresIn });
+const generateToken = (id, role, expiresIn = '24h') => jwt.sign({ id, role }, JWT_SECRET, { expiresIn });
 
 /**
  * @class UserController
@@ -44,7 +44,7 @@ export default class UserController {
         const {
           dataValues: { id, role }
         } = newUser;
-        const token = generateToken(id);
+        const token = generateToken(id, role);
         return res.status(201).json({
           success: true,
           message: 'You have signed up successfully.',
@@ -94,10 +94,10 @@ export default class UserController {
     }
     const expiresIn = rememberMe ? '240h' : '24h';
     try {
-      const token = generateToken(user.id, expiresIn);
       const {
         username, email, name, role, id
       } = user;
+      const token = generateToken(user.id, role, expiresIn);
       return res.status(200).json({
         success: true,
         message: `Welcome ${username}`,

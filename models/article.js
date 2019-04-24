@@ -82,6 +82,10 @@ module.exports = (sequelize, DataTypes) => {
       as: 'viewers',
       through: models.stats
     });
+    Article.hasMany(models.reports, {
+      foreignKey: 'articleSlug',
+      sourceKey: 'slug',
+    });
   };
   return Article;
 };
