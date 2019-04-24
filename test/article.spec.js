@@ -13,7 +13,7 @@ import { article2 } from './helpers/articleDummyData';
 import { myUser } from './helpers/userDummyData';
 import articleController from '../controllers/articles';
 
-const { createArticle } = articleController;
+const { createArticle, dislikeArticle, likeArticle } = articleController;
 
 chai.use(chaiHttp);
 chai.use(sinonChai);
@@ -602,6 +602,28 @@ describe('/POST articles like', () => {
       });
   });
 
+  it('should return a server error.', async () => {
+    const req = {
+      user: {
+        id: null
+      },
+      params: {
+        slug: null
+      },
+      body: {
+        slug: null
+      }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await likeArticle(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
+  });
+
   it('should create another article', (done) => {
     chai
       .request(app)
@@ -731,6 +753,28 @@ describe('/POST articles dislike', () => {
         expect(res.body).to.have.property('message').equal('You have removed the dislike on this article');
         done(err);
       });
+  });
+
+  it('should return a server error.', async () => {
+    const req = {
+      user: {
+        id: null
+      },
+      params: {
+        slug: null
+      },
+      body: {
+        slug: null
+      }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await dislikeArticle(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
   });
 
   it('create an article with a wrong token', (done) => {
