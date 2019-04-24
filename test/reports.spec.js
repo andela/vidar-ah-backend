@@ -43,8 +43,8 @@ describe('Testing the reporting feature', () => {
     it('It should return a 401 unauthorized error', async () => {
       const response = await chai
         .request(app)
-        .post('/api/v1/report/id')
-        .send({ type: 'harrasment' });
+        .post('/api/v1/report')
+        .send({ type: 'harrasment', slug: articleSlug });
       const { status, body: { success, errors } } = response;
       expect(status).to.be.eqls(401);
       expect(success).to.be.eqls(false);
@@ -71,9 +71,9 @@ describe('Testing the reporting feature', () => {
     it('It should return a success message', async () => {
       const response = await chai
         .request(app)
-        .post(`/api/v1/report/${articleSlug}`)
+        .post('/api/v1/report/')
         .set('x-access-token', userToken)
-        .send({ type: 'harrasment', message: 'thats so wrong' });
+        .send({ type: 'harrasment', message: 'thats so wrong', slug: articleSlug });
       const { status, body: { success, message } } = response;
       expect(status).to.be.eqls(200);
       expect(success).to.be.eqls(true);
@@ -95,20 +95,6 @@ describe('Testing the reporting feature', () => {
       expect(status).to.be.equal(200);
       expect(success).to.be.equal(true);
       expect(reports).to.be.an('Array');
-    });
-  });
-
-  describe('Make a request to report an article that doesnt exist', () => {
-    it('It should return a success message', async () => {
-      const response = await chai
-        .request(app)
-        .post('/api/v1/report/osrjniceirjjvcderv')
-        .set('x-access-token', userToken)
-        .send({ type: 'harrasment', message: 'thats so wrong' });
-      const { status, body: { success, errors } } = response;
-      expect(status).to.be.eqls(404);
-      expect(success).to.be.eqls(false);
-      expect(errors[0]).to.be.eqls('Article not found');
     });
   });
 });

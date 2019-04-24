@@ -1,3 +1,4 @@
+import { User } from '../models';
 
 /**
  * Controller for follow and unfollow
@@ -69,5 +70,59 @@ export default class FollowController {
       success: true,
       message: 'User unfollowed successfully.'
     });
+  }
+
+  /**
+   * @description Get user's followers and followings stats
+   * @param {object} req http request object
+   * @param {object} res http response object
+   * @returns {object} response
+   */
+  static async getUserFollowers(req, res) {
+    const { id } = req.user;
+    const attributes = {
+      attributes: ['id', 'email', 'username', 'name', 'image', 'bio']
+    };
+    try {
+      const user = await User.findOne({ where: { id } });
+      const userFollowers = await user.getFollowers(attributes);
+      return res.status(200).json({
+        success: true,
+        message: "Successfully gotten user's followers",
+        followers: userFollowers,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+   * @description Get user's followings stats
+   * @param {object} req http request object
+   * @param {object} res http response object
+   * @returns {object} response
+   */
+  static async getUserFollowings(req, res) {
+    const { id } = req.user;
+    const attributes = {
+      attributes: ['id', 'email', 'username', 'name', 'image', 'bio']
+    };
+    try {
+      const user = await User.findOne({ where: { id } });
+      const userFollowings = await user.getFollowing(attributes);
+      return res.status(200).json({
+        success: true,
+        message: "Successfully gotten user's followings",
+        followings: userFollowings
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
   }
 }

@@ -19,10 +19,9 @@ export default class ReportsController {
    *
    * @returns {object} response
    */
-  static async reportAnArticle(req, res) {
+  static async reportArticle(req, res) {
     const {
-      body: { type, message },
-      params: { slug },
+      body: { type, message, slug },
       user: { id }
     } = req;
     await reports.create({
@@ -46,12 +45,13 @@ export default class ReportsController {
    *
    * @returns {object} response
    */
-  static async getAllReports(req, res) {
+  static async getReports(req, res) {
     const allReports = await reports.findAll({
       where: {},
       include: [{
         model: Article,
-        as: 'article'
+        as: 'article',
+        attributes: ['slug', 'title']
       }, {
         model: User,
         as: 'user',

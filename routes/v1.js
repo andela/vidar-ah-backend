@@ -35,10 +35,14 @@ import {
   validateInterest,
   validateReport
 } from '../middleware/validation';
-import FollowController from '../controllers/follow';
+import followController from '../controllers/follow';
 import followVerification from '../middleware/follow';
 import CommentController from '../controllers/comment';
 import ReportsController from '../controllers/reports';
+
+const {
+  followUser, unfollowUser, getUserFollowers, getUserFollowings
+} = followController;
 
 const {
   createArticle,
@@ -50,6 +54,7 @@ const {
   getAllArticles,
   getArticlesByHighestField
 } = ArticleController;
+
 const { viewProfile, editProfile, updateProfileImage } = ProfileController;
 
 const apiRoutes = express.Router();
@@ -242,14 +247,14 @@ apiRoutes.post(
   '/follow/:id',
   Auth.verifyUser,
   followVerification,
-  FollowController.followUser
+  followUser
 );
 
 apiRoutes.post(
   '/unfollow/:id',
   Auth.verifyUser,
   followVerification,
-  FollowController.unfollowUser
+  unfollowUser
 );
 apiRoutes.route('/articles/:slug/comments')
   .post(
@@ -298,19 +303,38 @@ apiRoutes.route('/comments/:id/like')
   );
 
 apiRoutes.post(
-  '/report/:slug',
+  '/report/',
   Auth.verifyUser,
   validateReport,
   returnValidationErrors,
-  validateArticleExist,
-  ReportsController.reportAnArticle
+  ReportsController.reportArticle
 );
 
 apiRoutes.get(
   '/reports',
   Auth.verifyUser,
   Auth.authorizeAdmin,
-  ReportsController.getAllReports
+  ReportsController.getReports
 );
+
+apiRoutes.route('/user/followers')
+  .get(
+    Auth.verifyUser,
+    isUserVerified,
+    getUserFollowers
+  );
+
+apiRoutes.route('/user/followings')
+  .get(
+    Auth.verifyUser,
+    isUserVerified,
+    getUserFollowings
+  );
+
+apiRoutes.route('/user/articlescount')
+  .get(
+    Auth.verifyUser,
+    UserController.getUserArticlesCount
+  );
 
 export default apiRoutes;
