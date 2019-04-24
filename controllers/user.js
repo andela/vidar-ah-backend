@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import shortId from 'shortid';
 import sendMail from '../helpers/emails';
 import getName from '../helpers/user';
-import { User } from '../models';
+import { User, Article } from '../models';
 
 dotenv.config();
 
@@ -254,6 +254,28 @@ export default class UserController {
       return res.status(200).json({
         success: true,
         numberOfArticlesRead: viewCount.length
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
+   * @description Get user's article count
+   * @param {object} req http request object
+   * @param {object} res http response object
+   * @returns {object} response
+   */
+  static async getUserArticlesCount(req, res) {
+    const { id: userId } = req.user;
+    try {
+      const { count } = await Article.findAndCountAll({ where: { userId } });
+      return res.status(200).json({
+        success: true,
+        articleCount: count
       });
     } catch (error) {
       return res.status(500).json({
