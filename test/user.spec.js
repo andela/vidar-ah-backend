@@ -9,6 +9,7 @@ import getVerificationId from './helpers/getVerificationId';
 // Configure chai
 chai.use(chaiHttp);
 const { expect } = chai;
+let userToken;
 
 describe('Make a request to an unidentified route', () => {
   it('returns 404 error', (done) => {
@@ -31,7 +32,8 @@ describe('Make a request to signup with valid details', () => {
       .post('/api/v1/user/signup')
       .send(validUser1)
       .end((err, res) => {
-        const { status, body: { message, success } } = res;
+        const { status, body: { message, success, token } } = res;
+        userToken = token;
         expect(status).to.be.equal(201);
         expect(success).to.be.equal(true);
         expect(message).to.be.equal('You have signed up successfully.');
@@ -230,6 +232,22 @@ describe('Make a request to verify account with wrong verificationID', () => {
         expect(status).to.be.equal(404);
         expect(success).to.be.equal(false);
         expect(errors[0]).to.be.equal('User not found.');
+        done(err);
+      });
+  });
+});
+
+describe('Make a request to get the article count of a user', () => {
+  it("should return the number count of the user's articles", (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/user/articlescount')
+      .set('Authorization', userToken)
+      .end((err, res) => {
+        const { status, body: { success, articleCount } } = res;
+        expect(status).to.be.equal(200);
+        expect(success).to.be.equal(true);
+        expect(articleCount).to.be.a('number');
         done(err);
       });
   });
