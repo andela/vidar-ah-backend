@@ -260,7 +260,7 @@ export const validateCommentExist = async (req, res, next) => {
 };
 
 export const validateArticleExist = async (req, res, next) => {
-  const { slug } = req.params;
+  const { slug } = req.params || req.body;
   try {
     const article = await Article.findOne({ where: { slug } });
 
@@ -304,6 +304,15 @@ export const validateImages = [
   check('images')
     .exists()
     .withMessage('An image file should be uploaded to complete this request')
+];
+
+export const validateReport = [
+  check('type')
+    .exists()
+    .withMessage('Please specify a report type.'),
+  check('slug')
+    .exists()
+    .withMessage('Slug is required.')
 ];
 
 export const validateInterest = (req, res, next) => {

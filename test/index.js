@@ -11,3 +11,4 @@ import './follow.spec';
 import './rating.spec';
 import './stats.spec';
 import './likeComment.spec';
+import './reports.spec';

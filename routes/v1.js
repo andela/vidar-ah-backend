@@ -32,11 +32,13 @@ import {
   validateGetOrder,
   validateCommentExist,
   validateImages,
-  validateInterest
+  validateInterest,
+  validateReport
 } from '../middleware/validation';
 import followController from '../controllers/follow';
 import followVerification from '../middleware/follow';
 import CommentController from '../controllers/comment';
+import ReportsController from '../controllers/reports';
 
 const {
   followUser, unfollowUser, getUserFollowers, getUserFollowings
@@ -299,6 +301,21 @@ apiRoutes.route('/comments/:id/like')
     validateCommentExist,
     CommentController.likeComment
   );
+
+apiRoutes.post(
+  '/report/',
+  Auth.verifyUser,
+  validateReport,
+  returnValidationErrors,
+  ReportsController.reportArticle
+);
+
+apiRoutes.get(
+  '/reports',
+  Auth.verifyUser,
+  Auth.authorizeAdmin,
+  ReportsController.getReports
+);
 
 apiRoutes.route('/user/followers')
   .get(
