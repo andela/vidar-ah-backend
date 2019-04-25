@@ -205,7 +205,7 @@ export default class ArticleController {
   static async likeArticle(req, res) {
     try {
       const { id: userId } = req.user;
-      const { slug: articleSlug } = req.params;
+      const { slug: articleSlug } = req.body;
       const getArticles = await Article.findOne({
         where: {
           slug: articleSlug
@@ -245,7 +245,7 @@ export default class ArticleController {
   static async dislikeArticle(req, res) {
     try {
       const { id: userId } = req.user;
-      const { slug: articleSlug } = req.params;
+      const { slug: articleSlug } = req.body;
       const getArticles = await Article.findOne({
         where: {
           slug: articleSlug
@@ -442,6 +442,7 @@ export default class ArticleController {
  * @returns {Object} class instance
  */
   static async getAllArticles(req, res) {
+    const { authorId } = req.query;
     try {
       let {
         query: {
@@ -451,7 +452,7 @@ export default class ArticleController {
       offset = Number(offset) || 0;
       limit = Number(limit) || 10;
       const results = await Article.findAndCountAll({
-        where: {},
+        where: authorId ? { userId: authorId } : {},
         offset,
         limit,
         include: [
@@ -467,6 +468,11 @@ export default class ArticleController {
           },
           {
             model: Ratings,
+          },
+          {
+            model: Reaction,
+            as: 'articleReactions',
+            attributes: ['likes', 'userId']
           }
         ]
       });

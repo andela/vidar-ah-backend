@@ -13,7 +13,7 @@ import { article2 } from './helpers/articleDummyData';
 import { myUser } from './helpers/userDummyData';
 import articleController from '../controllers/articles';
 
-const { createArticle } = articleController;
+const { createArticle, dislikeArticle, likeArticle } = articleController;
 
 chai.use(chaiHttp);
 chai.use(sinonChai);
@@ -602,6 +602,28 @@ describe('/POST articles like', () => {
       });
   });
 
+  it('should return a server error.', async () => {
+    const req = {
+      user: {
+        id: null
+      },
+      params: {
+        slug: null
+      },
+      body: {
+        slug: null
+      }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await likeArticle(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
+  });
+
   it('should create another article', (done) => {
     chai
       .request(app)
@@ -620,8 +642,9 @@ describe('/POST articles like', () => {
   it('should return an error if the article is not found', (done) => {
     chai
       .request(app)
-      .post('/api/v1/like_article/article-writing-b4ngik')
+      .post('/api/v1/like_article')
       .set('authorization', userToken2)
+      .send({ slug: 'article-writingd-b4nfgik' })
       .end((err, res) => {
         expect(res).to.have.status(404);
         expect(res.body).to.have.property('success').equal(false);
@@ -633,8 +656,9 @@ describe('/POST articles like', () => {
   it('should create an article like reaction', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/like_article/${articleSlug2}`)
+      .post('/api/v1/like_article')
       .set('authorization', userToken2)
+      .send({ slug: articleSlug2 })
       .end((err, res) => {
         reaction = res.body.reaction;
         expect(res).to.have.status(201);
@@ -647,8 +671,9 @@ describe('/POST articles like', () => {
   it('should create an article like reaction', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/like_article/${articleSlug3}`)
+      .post('/api/v1/like_article')
       .set('authorization', userToken2)
+      .send({ slug: articleSlug3 })
       .end((err, res) => {
         reaction = res.body.reaction;
         expect(res).to.have.status(201);
@@ -661,8 +686,9 @@ describe('/POST articles like', () => {
   it('should unlike an article reaction if the article has been liked', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/like_article/${articleSlug2}`)
+      .post('/api/v1/like_article')
       .set('authorization', userToken2)
+      .send({ slug: articleSlug2 })
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.property('success').equal(true);
@@ -709,8 +735,9 @@ describe('/POST articles dislike', () => {
   it('should create an article dislike reaction', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/dislike_article/${articleSlug2}`)
+      .post('/api/v1/dislike_article')
       .set('authorization', userToken2)
+      .send({ slug: articleSlug2 })
       .end((err, res) => {
         reaction = res.body.reaction;
         expect(res).to.have.status(201);
@@ -723,14 +750,37 @@ describe('/POST articles dislike', () => {
   it('should remove an article reaction if the article has been disliked', (done) => {
     chai
       .request(app)
-      .post(`/api/v1/dislike_article/${articleSlug2}`)
+      .post('/api/v1/dislike_article')
       .set('authorization', userToken2)
+      .send({ slug: articleSlug2 })
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body).to.have.property('success').equal(true);
         expect(res.body).to.have.property('message').equal('You have removed the dislike on this article');
         done(err);
       });
+  });
+
+  it('should return a server error.', async () => {
+    const req = {
+      user: {
+        id: null
+      },
+      params: {
+        slug: null
+      },
+      body: {
+        slug: null
+      }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await dislikeArticle(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
   });
 
   it('create an article with a wrong token', (done) => {
@@ -744,6 +794,22 @@ describe('/POST articles dislike', () => {
         expect(res.body).to.have.property('success').equal(false);
         expect(res.body).to.have.property('errors');
         expect(res.body.errors[0]).equal('Your session has expired, please login again to continue');
+        done(err);
+      });
+  });
+});
+describe('Make a request with an invalid token', () => {
+  it('should return session expired', (done) => {
+    const invalidToken = `${userToken2}111`;
+    chai
+      .request(app)
+      .get(`/api/v1/articles/${articleSlug2}`)
+      .set('Authorization', invalidToken)
+      .end((err, res) => {
+        const { status, body: { success, errors } } = res;
+        expect(status).to.be.equal(401);
+        expect(success).to.be.equal(false);
+        expect(errors[0]).to.be.equal('Your session has expired, please login again to continue');
         done(err);
       });
   });

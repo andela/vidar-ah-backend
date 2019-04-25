@@ -1,7 +1,7 @@
 import { User } from '../models';
 
 export default async (req, res, next) => {
-  const userToFollowId = req.params.id;
+  const userToFollowId = req.body.id;
   const { id } = req.user;
 
   // Return an error if a user tries to follow their account
