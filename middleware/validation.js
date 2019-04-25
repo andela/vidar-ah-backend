@@ -144,9 +144,7 @@ export const validatePassword = [
 ];
 
 export const checkIfArticleExists = async (req, res, next) => {
-  const {
-    params: { slug }
-  } = req;
+  const slug = (req.params.slug) ? req.params.slug : req.body.slug;
   try {
     const article = await Article.findOne({
       where: {
