@@ -1,4 +1,6 @@
 
+import Hooks from '../helpers/notificationHook';
+
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
     comment: {
@@ -24,5 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Comment.belongsToMany(models.User, { as: 'commentLiker', through: models.commentLikes, foreignKey: 'commentId' });
   };
+
+  Comment.hook('afterCreate', comment => Hooks.handleNewCommentNotification(sequelize, comment));
   return Comment;
 };

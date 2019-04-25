@@ -15,8 +15,13 @@ const transporter = nodemailer.createTransport({
     pass: EMAIL_PASSWORD,
   },
 });
-
-const sendMail = (payload) => {
+/**
+ *
+ * @param {object} payload The user details, the subject and message for the email
+ * @param {boolean} notification determines how the message sent will be formatted
+ * @returns {object} The return response by sendmail
+ */
+const sendMail = async (payload, notification = false) => {
   const {
     email,
     name,
@@ -25,14 +30,20 @@ const sendMail = (payload) => {
     message
   } = payload;
 
+  const paragraph = (notification === true)
+    ? `${message}.`
+    : `Please click <a href="${link}">here</a> to ${message}.`;
+
+
   const mailOptions = {
     from: EMAIL_ADDRESS,
     to: email,
     subject,
     html: `<h1>Hi ${name}</h1>
-      <p>Please click <a href="${link}">here</a> to ${message}.</p>
+      <p>${paragraph}</p>
     `,
   };
+
   return transporter.sendMail(mailOptions);
 };
 

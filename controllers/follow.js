@@ -1,4 +1,4 @@
-import { User } from '../models';
+import { User, follows } from '../models';
 
 /**
  * Controller for follow and unfollow
@@ -24,7 +24,10 @@ export default class FollowController {
 
     // Add a new follower
     try {
-      await userToFollow.addFollower(userFollowing);
+      await follows.create({
+        followingId: userToFollow.id,
+        followerId: userFollowing.id
+      });
     } catch (error) {
       return res.status(500).json({
         message: error.message
