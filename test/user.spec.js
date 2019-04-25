@@ -252,3 +252,19 @@ describe('Make a request to get the article count of a user', () => {
       });
   });
 });
+describe('Make a request with an invalid token', () => {
+  it('should return session expired', (done) => {
+    const invalidToken = `${userToken}111`;
+    chai
+      .request(app)
+      .get('/api/v1/user/articlescount')
+      .set('Authorization', invalidToken)
+      .end((err, res) => {
+        const { status, body: { success, errors } } = res;
+        expect(status).to.be.equal(401);
+        expect(success).to.be.equal(false);
+        expect(errors[0]).to.be.equal('Your session has expired, please login again to continue');
+        done(err);
+      });
+  });
+});

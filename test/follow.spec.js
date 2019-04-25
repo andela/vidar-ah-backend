@@ -58,8 +58,9 @@ describe('Make a request to follow a non existing user', () => {
   it('Returns an error message.', (done) => {
     chai
       .request(app)
-      .post('/api/v1/follow/1111')
+      .post('/api/v1/follow')
       .set('x-access-token', userToken)
+      .send({ id: 1111 })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(404);
@@ -74,11 +75,12 @@ describe('Make a request to follow a non existing user', () => {
 describe('Make a request to follow a non verified user', () => {
   it('Returns an error message.', async () => {
     userId2 = await getId(validFollowUser2.email);
-    const url = `/api/v1/follow/${userId2}`;
+    const url = '/api/v1/follow/';
     chai
       .request(app)
       .post(url)
       .set('x-access-token', userToken)
+      .send({ id: userId2 })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(404);
@@ -92,11 +94,12 @@ describe('Make a request to follow a non verified user', () => {
 describe('Make a request to follow self', () => {
   it('Returns an error message.', async () => {
     const userId = await getId(validFollowUser.email);
-    const url = `/api/v1/follow/${userId}`;
+    const url = '/api/v1/follow/';
     chai
       .request(app)
       .post(url)
       .set('x-access-token', userToken)
+      .send({ id: userId })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(403);
@@ -110,11 +113,12 @@ describe('Make a request to follow self', () => {
 describe('Make a request to unfollow another user not currently being followed', () => {
   before(() => updateVerifiedStatus(validFollowUser2.email));
   it('Returns an error message.', (done) => {
-    const url = `/api/v1/unfollow/${userId2}`;
+    const url = '/api/v1/unfollow/';
     chai
       .request(app)
       .post(url)
       .set('x-access-token', userToken)
+      .send({ id: userId2 })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(403);
@@ -128,11 +132,12 @@ describe('Make a request to unfollow another user not currently being followed',
 
 describe('Make a valid request to follow another user', () => {
   it('Returns a success message.', (done) => {
-    const url = `/api/v1/follow/${userId2}`;
+    const url = '/api/v1/follow/';
     chai
       .request(app)
       .post(url)
       .set('x-access-token', userToken)
+      .send({ id: userId2 })
       .end((err, res) => {
         const { status, body: { message, success } } = res;
         expect(status).to.be.equal(201);
@@ -145,11 +150,12 @@ describe('Make a valid request to follow another user', () => {
 
 describe('Make a request to follow another user again', () => {
   it('Returns an error message.', (done) => {
-    const url = `/api/v1/follow/${userId2}`;
+    const url = '/api/v1/follow/';
     chai
       .request(app)
       .post(url)
       .set('x-access-token', userToken)
+      .send({ id: userId2 })
       .end((err, res) => {
         const { status, body: { errors, success } } = res;
         expect(status).to.be.equal(403);
@@ -163,11 +169,12 @@ describe('Make a request to follow another user again', () => {
 
 describe('Make a valid request to unfollow another user', () => {
   it('Returns a success message.', (done) => {
-    const url = `/api/v1/unfollow/${userId2}`;
+    const url = '/api/v1/unfollow/';
     chai
       .request(app)
       .post(url)
       .set('x-access-token', userToken)
+      .send({ id: userId2 })
       .end((err, res) => {
         const { status, body: { message, success } } = res;
         expect(status).to.be.equal(200);

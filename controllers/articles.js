@@ -205,7 +205,7 @@ export default class ArticleController {
   static async likeArticle(req, res) {
     try {
       const { id: userId } = req.user;
-      const { slug: articleSlug } = req.params;
+      const { slug: articleSlug } = req.body;
       const getArticles = await Article.findOne({
         where: {
           slug: articleSlug
@@ -245,7 +245,7 @@ export default class ArticleController {
   static async dislikeArticle(req, res) {
     try {
       const { id: userId } = req.user;
-      const { slug: articleSlug } = req.params;
+      const { slug: articleSlug } = req.body;
       const getArticles = await Article.findOne({
         where: {
           slug: articleSlug

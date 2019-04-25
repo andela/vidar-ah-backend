@@ -216,7 +216,7 @@ apiRoutes.post(
 );
 
 apiRoutes.post(
-  '/like_article/:slug',
+  '/like_article',
   Auth.verifyUser,
   isUserVerified,
   checkIfArticleExists,
@@ -224,7 +224,7 @@ apiRoutes.post(
 );
 
 apiRoutes.post(
-  '/dislike_article/:slug',
+  '/dislike_article',
   Auth.verifyUser,
   isUserVerified,
   checkIfArticleExists,
@@ -244,14 +244,14 @@ apiRoutes.get(
 );
 
 apiRoutes.post(
-  '/follow/:id',
+  '/follow',
   Auth.verifyUser,
   followVerification,
   followUser
 );
 
 apiRoutes.post(
-  '/unfollow/:id',
+  '/unfollow',
   Auth.verifyUser,
   followVerification,
   unfollowUser
