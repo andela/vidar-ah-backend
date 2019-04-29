@@ -30,7 +30,7 @@ passport.use(new GoogleStrategy(
       name: { givenName }
     } = profile;
     const user = await User.findOrCreate({
-      where: { email },
+      where: { email, username: givenName },
       defaults: {
         name: displayName,
         username: givenName,
@@ -68,7 +68,7 @@ passport.use(new FacebookStrategy(
      */
     const { displayName } = profile;
     const user = await User.findOrCreate({
-      where: { email },
+      where: { email, username },
       defaults: {
         name: displayName,
         username,
