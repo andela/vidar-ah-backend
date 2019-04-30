@@ -275,6 +275,58 @@ export default class ArticleController {
   }
 
   /**
+   * @description - Get all reactions on all user articles
+   * @static
+   * @param {Object} req - the request object
+   * @param {Object} res - the response object
+   * @memberof ArticleController
+   * @returns {Object} class instance
+   */
+  static async getAllReactions(req, res) {
+    const { id } = req.user;
+    try {
+      let reactions = await Article.findAll({
+        where: { userId: id },
+        attributes: [],
+        include: [{
+          model: Reaction,
+          as: 'articleReactions',
+          attributes: ['likes', 'userId']
+        }]
+      });
+      if (reactions.length !== 0) {
+        reactions = reactions
+          .reduce((accumulator, nextValue) => {
+            if (!accumulator.articleReactions) return nextValue;
+            return [...accumulator.articleReactions, ...nextValue.articleReactions];
+          }, {})
+          .reduce((accumulator, nextValue) => {
+            if (nextValue.userId === id) return accumulator;
+            return {
+              likes: nextValue.likes ? accumulator.likes + 1 : accumulator.likes,
+              dislikes: nextValue.dislikes ? accumulator.dislikes + 1 : accumulator.dislikes
+            };
+          }, {
+            likes: 0,
+            dislikes: 0
+          });
+      }
+      const { likes, dislikes } = reactions;
+      return res.status(200).json({
+        success: true,
+        message: 'Successfully gotten all reactions on user articles.',
+        likes: likes || 0,
+        dislikes: dislikes || 0
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        errors: [error.message]
+      });
+    }
+  }
+
+  /**
    * @description - Search for articles
    * @static
    * @param {Object} req - the request object
