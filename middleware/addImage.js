@@ -18,7 +18,7 @@ const imageParser = multer({ storage }).array('image', 5);
 
 export default async (req, res, next) => {
   await imageParser(req, res, (error) => {
-    if (error) return res.json({ success: false, error });
+    if (error) return res.json({ success: false, error: [error.message] });
     if (req.files) {
       req.body.images = req.files.map(image => image.url);
       return next();

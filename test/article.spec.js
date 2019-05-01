@@ -13,7 +13,9 @@ import { article2 } from './helpers/articleDummyData';
 import { myUser } from './helpers/userDummyData';
 import articleController from '../controllers/articles';
 
-const { createArticle, dislikeArticle, likeArticle } = articleController;
+const {
+  createArticle, dislikeArticle, likeArticle, getAllReactions
+} = articleController;
 
 chai.use(chaiHttp);
 chai.use(sinonChai);
@@ -108,6 +110,19 @@ describe('ARTICLES', () => {
       expect(status).to.be.equal(201);
       expect(success).to.be.equal(true);
       expect(message).to.be.equal('New article created successfully');
+    });
+
+    it('should return an error when a wrong file format is uploaded.', async () => {
+      const res = await chai
+        .request(app)
+        .post('/api/v1/articles')
+        .set('authorization', token)
+        .attach('image', path.join(__dirname, 'assets', 'testfile.wav'))
+        .type('form')
+        .field(article1);
+      const { body: { success, error } } = res;
+      expect(success).to.be.equal(false);
+      expect(error).to.be.a('Array');
     });
 
     it('should not create if title is not set.', (done) => {
@@ -571,6 +586,28 @@ describe('/DELETE articles slug', () => {
       });
   });
 
+  it('should return a server error.', async () => {
+    const req = {
+      user: {
+        id: null
+      },
+      params: {
+        slug: null
+      },
+      body: {
+        slug: null
+      }
+    };
+    const res = {
+      status() {},
+      json() {}
+    };
+
+    sinon.stub(res, 'status').returnsThis(500);
+    await likeArticle(req, res);
+    expect(res.status).to.have.been.calledOnceWith(500);
+  });
+
   it('should return an error if the article is not found', (done) => {
     chai
       .request(app)
@@ -810,6 +847,28 @@ describe('Make a request with an invalid token', () => {
         expect(status).to.be.equal(401);
         expect(success).to.be.equal(false);
         expect(errors[0]).to.be.equal('Your session has expired, please login again to continue');
+        done(err);
+      });
+  });
+});
+
+describe("Make a request to get all reaction on a user's article", () => {
+  it('should return all user reations', (done) => {
+    chai
+      .request(app)
+      .get('/api/v1/user/article_reactions')
+      .set('Authorization', userToken2)
+      .end((err, res) => {
+        const {
+          status, body: {
+            success, message, likes, dislikes
+          }
+        } = res;
+        expect(status).to.be.equal(200);
+        expect(success).to.be.equal(true);
+        expect(message).to.be.equal('Successfully gotten all reactions on user articles.');
+        expect(likes).to.be.a('number');
+        expect(dislikes).to.be.a('number');
         done(err);
       });
   });

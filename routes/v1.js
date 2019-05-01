@@ -52,7 +52,8 @@ const {
   dislikeArticle,
   rateArticle,
   getAllArticles,
-  getArticlesByHighestField
+  getArticlesByHighestField,
+  getAllReactions,
 } = ArticleController;
 
 const { viewProfile, editProfile, updateProfileImage } = ProfileController;
@@ -335,6 +336,12 @@ apiRoutes.route('/user/articlescount')
   .get(
     Auth.verifyUser,
     UserController.getUserArticlesCount
+  );
+
+apiRoutes.route('/user/article_reactions')
+  .get(
+    Auth.verifyUser,
+    getAllReactions
   );
 
 export default apiRoutes;
