@@ -13,7 +13,6 @@ import {
   invalidCategoryDuplicate,
   validCategoryEdit
 } from './helpers/categoryDummyData';
-
 import { superAdmin } from './helpers/userDummyData';
 
 chai.use(chaiHttp);

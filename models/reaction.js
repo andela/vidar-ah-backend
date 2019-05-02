@@ -1,3 +1,5 @@
+import Hooks from '../helpers/notificationHook';
+
 module.exports = (sequelize, DataTypes) => {
   const Reaction = sequelize.define('Reaction', {
     userId: {
@@ -28,5 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       as: 'user'
     });
   };
+  Reaction.hook('afterCreate', reaction => Hooks.handleLikeNotification(sequelize, reaction));
   return Reaction;
 };

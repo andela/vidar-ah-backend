@@ -10,6 +10,7 @@ import generateSlug from '../middleware/generateSlug';
 import checkForArticle from '../middleware/checkIfArticleExist';
 import ArticleController from '../controllers/articles';
 import CategoryController from '../controllers/category';
+import NotificationsController from '../controllers/notifications';
 import verifyCategoryId from '../middleware/verifyCategoryId';
 import {
   validateSignup,
@@ -33,7 +34,8 @@ import {
   validateCommentExist,
   validateImages,
   validateInterest,
-  validateReport
+  validateReport,
+  validateNotificationChoice,
 } from '../middleware/validation';
 import followController from '../controllers/follow';
 import followVerification from '../middleware/follow';
@@ -52,7 +54,8 @@ const {
   dislikeArticle,
   rateArticle,
   getAllArticles,
-  getArticlesByHighestField
+  getArticlesByHighestField,
+  getAllReactions,
 } = ArticleController;
 
 const { viewProfile, editProfile, updateProfileImage } = ProfileController;
@@ -336,5 +339,25 @@ apiRoutes.route('/user/articlescount')
     Auth.verifyUser,
     UserController.getUserArticlesCount
   );
+
+apiRoutes.route('/user/article_reactions')
+  .get(
+    Auth.verifyUser,
+    getAllReactions
+  );
+apiRoutes.get(
+  '/notifications',
+  Auth.verifyUser,
+  isUserVerified,
+  NotificationsController.getNotifications
+);
+
+apiRoutes.patch(
+  '/notifications',
+  Auth.verifyUser,
+  isUserVerified,
+  validateNotificationChoice,
+  NotificationsController.setNotificationChoice
+);
 
 export default apiRoutes;

@@ -39,7 +39,7 @@ export default class CategoryController {
           errors: [error.errors[0].message]
         });
       }
-      return res.status(500).json({ success: false, error: [error.message] });
+      return res.status(500).json({ success: false, errors: [error.message] });
     }
   }
 

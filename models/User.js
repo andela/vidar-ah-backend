@@ -14,51 +14,58 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: {
         args: true,
-        msg: 'Email already exists',
-      },
+        msg: 'Email already exists'
+      }
     },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: {
         args: true,
-        msg: 'Username already exists',
-      },
+        msg: 'Username already exists'
+      }
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     },
     verified: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: false,
+      defaultValue: false
     },
     verificationId: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     bio: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     },
     passwordResetToken: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     },
     passwordResetTokenExpires: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true
     },
     role: {
       type: DataTypes.ENUM,
       values: ['superadmin', 'admin', 'user'],
       allowNull: false,
       defaultValue: 'user',
+      unique: false
+    },
+    notificationChoice: {
+      type: DataTypes.ENUM,
+      values: ['appOnly', 'emailOnly', 'both', 'none'],
+      allowNull: false,
+      defaultValue: 'both',
       unique: false
     },
     image: {
@@ -70,7 +77,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
       unique: false,
-      defaultValue: [],
+      defaultValue: []
     }
   };
 
@@ -92,6 +99,10 @@ module.exports = (sequelize, DataTypes) => {
       through: models.follows
     });
     User.hasMany(models.Comment, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
+    User.hasMany(models.notification, {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
@@ -125,7 +136,6 @@ module.exports = (sequelize, DataTypes) => {
     };
     sendMail(emailPayload);
   });
-
   // eslint-disable-next-line func-names
   User.prototype.verifyAccount = async function () {
     this.verified = true;

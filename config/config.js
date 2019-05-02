@@ -21,7 +21,7 @@ const config = {
     database: process.env.DB_TEST,
     host: process.env.DB_HOST,
     dialect: 'postgres',
-  },
+  }
 };
 
 module.exports = config;

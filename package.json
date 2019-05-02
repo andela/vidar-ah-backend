@@ -51,6 +51,7 @@
     "passport-local": "^1.0.0",
     "passport-twitter": "^1.0.4",
     "pg": "^7.8.1",
+    "pusher": "^2.2.0",
     "request": "^2.87.0",
     "sequelize": "^4.42.0",
     "sequelize-cli": "^5.4.0",
