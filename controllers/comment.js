@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 import { Comment, User, commentLikes } from '../models';
 
+
 /**
  * @class CommentController
  *  @override
@@ -27,6 +28,7 @@ export default class CommentController {
       const newComment = await Comment.create({
         userId: id, articleSlug, comment
       });
+
       return res.status(205).json({
         success: true,
         message: 'New article comment created successfully',

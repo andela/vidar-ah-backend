@@ -322,3 +322,37 @@ export const validateInterest = (req, res, next) => {
   }
   return next();
 };
+
+export const validateNotificationChoice = async (req, res, next) => {
+  let { notificationChoice } = req.body;
+
+  if (!notificationChoice) {
+    return res.status(400).json({
+      success: false,
+      errors: [
+        'Please provide a valid notificationChoice, e.g notificationChoice: email only'
+      ]
+    });
+  }
+  switch (notificationChoice.toLowerCase()) {
+    case 'email only':
+      notificationChoice = 'emailOnly';
+      break;
+    case 'app only':
+      notificationChoice = 'appOnly';
+      break;
+    case 'both':
+      break;
+    case 'none':
+      break;
+    default:
+      return res.status(400).json({
+        success: false,
+        errors: [
+          'Invalid notification choice, allowed values are email only, app only, both, or none'
+        ]
+      });
+  }
+  req.notificationChoice = notificationChoice;
+  return next();
+};

@@ -121,6 +121,28 @@ describe('Make a request to signup with an empty email', () => {
   });
 });
 
+describe('Make a request to signup with an invalid email', () => {
+  it('returns an invalid error.', (done) => {
+    chai
+      .request(app)
+      .post('/api/v1/user/signup')
+      .send({
+        username: 'testiguserusername',
+        name: 'name',
+        password: 'some-password',
+        email: 'bademail'
+      })
+      .end((err, res) => {
+        const { status, body: { errors, success } } = res;
+        expect(status).to.be.equal(422);
+        expect(success).to.be.equal(false);
+        expect(errors).to.be.an('Array');
+        expect(errors[0]).to.be.equal('Please enter a valid email address');
+        done(err);
+      });
+  });
+});
+
 describe('Make a request to signup with an empty name', () => {
   it('returns an invalid error.', (done) => {
     chai
