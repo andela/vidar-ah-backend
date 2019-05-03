@@ -45,34 +45,6 @@ app.all('*', (req, res) => res.status(404).json({
   error: 'Page not found.',
 }));
 
-// / error handlers
-
-// development error handler
-// will print stacktrace
-if (!isProduction) {
-  app.use((err, res) => {
-    res.status(err.status || 500);
-    res.json({
-      errors: {
-        message: err.message,
-        error: err,
-      },
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use((err, res) => {
-  res.status(err.status || 500);
-  res.json({
-    errors: {
-      message: err.message,
-      error: {},
-    },
-  });
-});
-
 registerSuperAdmin();
 
 // finally, let's start our server...
