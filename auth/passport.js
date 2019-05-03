@@ -34,7 +34,8 @@ passport.use(new GoogleStrategy(
       defaults: {
         name: displayName,
         username: givenName,
-        email
+        email,
+        verified: true
       }
     });
     return done(null, user[0].dataValues);
@@ -72,7 +73,8 @@ passport.use(new FacebookStrategy(
       defaults: {
         name: displayName,
         username,
-        email
+        email,
+        verified: true
       }
     });
     return done(null, user[0].dataValues);
